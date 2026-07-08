@@ -47,13 +47,13 @@ export default function ManajemenPortoDashboard() {
             </button>
           </div>
 
-          <div className="relative overflow-visible flex-1">
+          <div className="relative overflow-visible flex-1 flex flex-col min-h-0">
             {chartLoadingPU ? (
-              <div className="h-full flex items-center justify-center rounded-2xl">
+              <div className="flex-1 flex items-center justify-center rounded-2xl">
                 <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
               </div>
             ) : (
-              <div className="h-full relative">
+              <div className="flex-1 relative flex flex-col min-h-0">
                 <KurvaSChart data={kurvaSDataPU} />
               </div>
             )}

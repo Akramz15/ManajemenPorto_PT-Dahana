@@ -82,7 +82,7 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
   }
 
   return (
-    <div className="w-full relative px-1 pt-6">
+    <div className="w-full flex-1 relative px-1 pt-6 flex flex-col min-h-0">
       
       {/* Big Headline (Stock Style Overlay) */}
       <div className="absolute top-0 left-6 z-10 flex flex-col pointer-events-none">
@@ -99,7 +99,7 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
         </div>
       </div>
 
-      <div className="w-full h-[380px] mt-16">
+      <div className="w-full flex-1 mt-16 min-h-0">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 50, right: 10, left: 10, bottom: 0 }}>
             <defs>
