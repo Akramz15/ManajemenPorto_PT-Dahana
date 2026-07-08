@@ -1,9 +1,12 @@
 import re
+import math
 from decimal import Decimal, InvalidOperation
 
 
 def normalize_indonesian_number(raw: str | int | float | None) -> float | None:
     if raw is None:
+        return None
+    if isinstance(raw, float) and math.isnan(raw):
         return None
     if isinstance(raw, (int, float)):
         return float(raw)
