@@ -32,17 +32,17 @@ function CustomTooltip({ active, payload, label }: {
       <div className="space-y-2">
         <div className="flex justify-between items-center gap-4">
           <span className="text-slate-500 font-medium">Target</span>
-          <span className="font-bold text-slate-800">{rencana?.value != null ? `${rencana.value}%` : "-"}</span>
+          <span className="font-bold text-slate-800">{rencana?.value != null ? rencana.value.toLocaleString('id-ID') : "-"}</span>
         </div>
         <div className="flex justify-between items-center gap-4">
           <span className="text-positive-600 font-medium">Realisasi</span>
-          <span className="font-bold text-slate-800">{realisasi?.value != null ? `${realisasi.value}%` : "-"}</span>
+          <span className="font-bold text-slate-800">{realisasi?.value != null ? realisasi.value.toLocaleString('id-ID') : "-"}</span>
         </div>
         {deviasi && (
           <div className="flex justify-between items-center gap-4 pt-2 mt-2 border-t border-slate-100">
             <span className="font-semibold text-slate-600">Deviasi</span>
             <span className={`font-bold ${parseFloat(deviasi) >= 0 ? "text-positive-600" : "text-negative-600"}`}>
-              {parseFloat(deviasi) > 0 ? "+" : ""}{deviasi}%
+              {parseFloat(deviasi) > 0 ? "+" : ""}{parseFloat(deviasi).toLocaleString('id-ID')}
             </span>
           </div>
         )}
@@ -60,32 +60,8 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
     );
   }
 
-  // Calculate current metrics for floating card
-  let currentMinggu = "MINGGU --";
-  let achieved = 0;
-  let deviasi = 0;
-
-  // Find last data point with realisasi
-  const lastReal = [...data].reverse().find(d => d.realisasi != null);
-  if (lastReal) {
-    currentMinggu = lastReal.periode.toUpperCase();
-    achieved = lastReal.realisasi || 0;
-    if (lastReal.rencana != null) {
-      deviasi = Number((achieved - lastReal.rencana).toFixed(1));
-    }
-  }
-
   return (
     <div className="w-full relative px-2 pt-6">
-      {/* Floating Card */}
-      <div className="absolute top-8 left-6 z-10 bg-slate-900 text-white p-4 rounded-xl shadow-lg border border-slate-800/50 flex flex-col items-center justify-center min-w-30">
-        <span className="text-[10px] font-bold text-slate-400 tracking-wider mb-1 uppercase">{currentMinggu}</span>
-        <span className="text-2xl font-black tracking-tight">{achieved}%</span>
-        <span className="text-[11px] font-semibold mt-1 text-slate-300">Achieved</span>
-        <div className={`mt-2 px-2 py-0.5 rounded text-[10px] font-bold ${deviasi >= 0 ? 'bg-positive-500/20 text-positive-400' : 'bg-negative-500/20 text-negative-400'}`}>
-          {deviasi > 0 ? "+" : ""}{deviasi}% Deviasi
-        </div>
-      </div>
 
       <div className="w-full h-95">
         <ResponsiveContainer width="100%" height="100%">
