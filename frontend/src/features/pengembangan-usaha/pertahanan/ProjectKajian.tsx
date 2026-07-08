@@ -8,7 +8,7 @@ import { MapPin, Plus, Settings, Search, User, Clock, ShieldAlert, Trash2 } from
 import type { Project } from "@/types";
 
 export default function ProjectKajian() {
-  const { session } = useAuth();
+  const { session: _session } = useAuth();
   // States
   const [selectedProject, setSelectedProject] = useState("");
   const [projectData, setProjectData] = useState<Project | null>(null);

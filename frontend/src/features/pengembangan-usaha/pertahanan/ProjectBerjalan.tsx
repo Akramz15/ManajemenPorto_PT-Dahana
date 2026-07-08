@@ -2,16 +2,13 @@ import { useState, useEffect } from "react";
 import { ExcelUploader, ProjectManager } from "@/components/shared";
 import { SCurveProgressChart } from "@/components/charts";
 import { useChartData } from "@/hooks/useChartData";
-import { useRealtime } from "@/hooks/useRealtime";
 import { useAuth } from "@/hooks/useAuth";
-import { apiClient } from "@/lib/api";
 import { supabase } from "@/lib/supabase";
 import { MapPin, Download, Plus, Settings, Search, User, Clock, ShieldAlert , Trash2 } from "lucide-react";
 import type { Project } from "@/types";
 
 export default function ProjectBerjalan() {
-  const { session } = useAuth();
-  const currentUserId = session?.user?.id;
+  const { session: _session } = useAuth();
   // States
   const [selectedProject, setSelectedProject] = useState("");
   const [projectData, setProjectData] = useState<Project | null>(null);
@@ -131,7 +128,6 @@ export default function ProjectBerjalan() {
                 <span className="text-slate-300">|</span>
                 <span className="font-bold text-slate-800 px-2 py-0.5 bg-slate-200 rounded-md">
                   {projectData?.id ? `ID-${projectData.id.split('-')[0].toUpperCase()}` : "ID-XXXX"}
-                </span>
                 </span>
               </div>
             ) : (

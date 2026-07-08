@@ -2,16 +2,13 @@ import { useState, useEffect } from "react";
 import { ExcelUploader, ProjectManager } from "@/components/shared";
 import { SCurveProgressChart } from "@/components/charts";
 import { useChartData } from "@/hooks/useChartData";
-import { useRealtime } from "@/hooks/useRealtime";
 import { useAuth } from "@/hooks/useAuth";
-import { apiClient } from "@/lib/api";
 import { supabase } from "@/lib/supabase";
 import { MapPin, Download, Plus, Settings, FolderOpen, Search, User, Clock , Trash2 } from "lucide-react";
 import type { Project } from "@/types";
 
 export default function ProjectBerjalan() {
-  const { session } = useAuth();
-  const currentUserId = session?.user?.id;
+  const { session: _session } = useAuth();
   // States
   const [selectedProject, setSelectedProject] = useState("");
   const [projectData, setProjectData] = useState<Project | null>(null);
@@ -132,7 +129,6 @@ export default function ProjectBerjalan() {
                 <span className="font-bold text-slate-800 px-2 py-0.5 bg-slate-200 rounded-md">
                   {projectData?.id ? `ID-${projectData.id.split('-')[0].toUpperCase()}` : "ID-XXXX"}
                 </span>
-                </span>
               </div>
             ) : (
               <p className="text-slate-500 mt-1">Kelola dan pantau seluruh proyek berjalan divisi komersial secara kolaboratif.</p>
@@ -224,6 +220,8 @@ export default function ProjectBerjalan() {
                         {projectData?.created_at ? new Date(projectData.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
                       </p>
                     </div>
+                 </div>
+              </div>
 
               {/* Excel Uploader for S-Curve */}
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6">
