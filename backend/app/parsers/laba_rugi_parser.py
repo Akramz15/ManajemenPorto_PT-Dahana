@@ -22,7 +22,7 @@ class LabaRugiParser(BaseExcelParser):
         month_row_idx = -1
         for i in range(min(10, len(df_raw))):
             row_vals = [str(x).upper() for x in df_raw.iloc[i].values]
-            if any("JANUARI" in val or "JAN" in val for val in row_vals if pd.notna(x)):
+            if any("JANUARI" in val or "JAN" in val for val in row_vals):
                 month_row_idx = i
                 break
 
