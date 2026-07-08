@@ -2,16 +2,13 @@ import { useState, useEffect } from "react";
 import { ExcelUploader, ProjectManager } from "@/components/shared";
 import { SCurveProgressChart } from "@/components/charts";
 import { useChartData } from "@/hooks/useChartData";
-import { useRealtime } from "@/hooks/useRealtime";
 import { useAuth } from "@/hooks/useAuth";
-import { apiClient } from "@/lib/api";
 import { supabase } from "@/lib/supabase";
 import { MapPin, Plus, Settings, FolderOpen, Search, User, Clock, Trash2 } from "lucide-react";
 import type { Project } from "@/types";
 
 export default function ProjectKajian() {
   const { session } = useAuth();
-  const currentUserId = session?.user?.id;
   // States
   const [selectedProject, setSelectedProject] = useState("");
   const [projectData, setProjectData] = useState<Project | null>(null);
@@ -193,7 +190,7 @@ export default function ProjectKajian() {
           {/* Docs & Progress Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden min-h-[400px]">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden min-h-100">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -z-10 opacity-50"></div>
                 <SCurveProgressChart data={sCurveData} />
               </div>

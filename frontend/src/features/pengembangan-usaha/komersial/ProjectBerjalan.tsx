@@ -197,7 +197,7 @@ export default function ProjectBerjalan() {
           {/* Docs & Progress Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden min-h-[400px]">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden min-h-100">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-bl-full -z-10 opacity-50"></div>
                 <SCurveProgressChart data={sCurveData} />
               </div>

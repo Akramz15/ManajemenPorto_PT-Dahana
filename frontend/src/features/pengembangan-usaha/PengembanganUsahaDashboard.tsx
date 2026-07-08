@@ -147,7 +147,7 @@ export default function PengembanganUsahaDashboard() {
       {/* Main Layout Grid */}
       <div className="mb-6 space-y-6">
         {/* Grafik Global Kurva S (Full Width) */}
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-115 w-full flex flex-col">
           <div className="absolute top-0 right-0 w-40 h-40 bg-primary-50 rounded-bl-[100px] -z-10 opacity-50"></div>
           
           <div className="flex items-center justify-between mb-6">
@@ -164,13 +164,13 @@ export default function PengembanganUsahaDashboard() {
             </button>
           </div>
 
-          <div className="relative overflow-visible min-h-[460px]">
+          <div className="relative overflow-visible flex-1">
             {chartLoadingPU ? (
-              <div className="h-[460px] flex items-center justify-center rounded-2xl">
+              <div className="h-full flex items-center justify-center rounded-2xl">
                 <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
               </div>
             ) : (
-              <div className="h-[460px] relative">
+              <div className="h-full relative">
                 <KurvaSChart data={kurvaSDataPU} />
               </div>
             )}
@@ -184,7 +184,7 @@ export default function PengembanganUsahaDashboard() {
         <div className="lg:col-span-2 space-y-6">
 
           {/* Tabel Proyek Pipeline */}
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 min-h-115 flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                 <div className={`w-2 h-6 rounded-full transition-colors ${activePipelineTab === 'kajian' ? 'bg-amber-500' : 'bg-primary-500'}`}></div>

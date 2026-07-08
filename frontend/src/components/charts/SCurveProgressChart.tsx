@@ -95,7 +95,7 @@ export function SCurveProgressChart({ data }: SCurveProgressChartProps) {
         </div>
       </div>
 
-      <div className="w-full h-[380px] mt-16">
+      <div className="w-full h-95 mt-16">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 50, right: 10, left: 10, bottom: 0 }}>
             <defs>
