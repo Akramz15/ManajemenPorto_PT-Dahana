@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, TooltipProps } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { formatRupiah } from "@/lib/formatters";
 
 interface RKAPPoint {
