@@ -27,8 +27,8 @@ export default function JODB() {
         </div>
       ) : (
         <div className="space-y-8">
-          <InventoriChart title="Mutasi Inventori ANSOL" data={invAnsol} />
-          <InventoriChart title="Mutasi Inventori Granular" data={invGranular} />
+          <InventoriChart title="Mutasi Inventori ANSOL" subtitle="Mutasi stok gudang per bulan" data={invAnsol} />
+          <InventoriChart title="Mutasi Inventori Granular" subtitle="Mutasi stok gudang per bulan" data={invGranular} />
         </div>
       )}
     </div>

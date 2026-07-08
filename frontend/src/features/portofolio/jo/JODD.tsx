@@ -27,8 +27,8 @@ export default function JODD() {
         </div>
       ) : (
         <div className="space-y-8">
-          <InventoriChart title="Mutasi Inventori Dayaprime 200gr" data={inv200} />
-          <InventoriChart title="Mutasi Inventori Dayaprime 400gr" data={inv400} />
+          <InventoriChart title="Inventori Dayaprime 200gr" subtitle="Mutasi stok gudang per bulan" data={inv200} />
+          <InventoriChart title="Inventori Dayaprime 400gr" subtitle="Mutasi stok gudang per bulan" data={inv400} />
         </div>
       )}
     </div>

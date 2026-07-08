@@ -7,10 +7,14 @@ interface RKAPPoint {
   realisasi: number;
 }
 
-function RKAPTooltip({ active, payload, label }: TooltipProps<number, string>) {
+function RKAPTooltip({ active, payload, label }: {
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+}) {
   if (!active || !payload?.length) return null;
-  const rkap = payload.find((p) => p.dataKey === "rkap");
-  const realisasi = payload.find((p) => p.dataKey === "realisasi");
+  const rkap = payload.find((p: any) => p.dataKey === "rkap");
+  const realisasi = payload.find((p: any) => p.dataKey === "realisasi");
   
   const deviasi = (realisasi?.value != null && rkap?.value != null)
     ? (Number(realisasi.value) - Number(rkap.value))
