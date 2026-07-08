@@ -1,6 +1,6 @@
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Legend
+  LineChart, Line, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, Legend, LabelList
 } from "recharts";
 
 interface KurvaSDataPoint {
@@ -31,11 +31,11 @@ function CustomTooltip({ active, payload, label }: {
       <p className="font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">{label}</p>
       <div className="space-y-2">
         <div className="flex justify-between items-center gap-4">
-          <span className="text-slate-500 font-medium">Target</span>
+          <span className="text-[#4472C4] font-medium">RKAP</span>
           <span className="font-bold text-slate-800">{rencana?.value != null ? rencana.value.toLocaleString('id-ID') : "-"}</span>
         </div>
         <div className="flex justify-between items-center gap-4">
-          <span className="text-positive-600 font-medium">Realisasi</span>
+          <span className="text-[#ED7D31] font-medium">Realisasi</span>
           <span className="font-bold text-slate-800">{realisasi?.value != null ? realisasi.value.toLocaleString('id-ID') : "-"}</span>
         </div>
         {deviasi && (
@@ -51,6 +51,12 @@ function CustomTooltip({ active, payload, label }: {
   );
 }
 
+// Custom formatter for the labels on the chart (to show e.g. "2.854" like in Excel)
+const labelFormatter = (value: number | null) => {
+  if (value == null) return "";
+  return value.toLocaleString('id-ID', { maximumFractionDigits: 0 });
+};
+
 export function KurvaSChart({ data }: KurvaSChartProps) {
   if (!data || data.length === 0) {
     return (
@@ -62,63 +68,77 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
 
   return (
     <div className="w-full relative px-2 pt-6">
-
-      <div className="w-full h-95">
+      <div className="w-full h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
-            <defs>
-              <linearGradient id="colorRealisasi" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10B981" stopOpacity={0.15} />
-                <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+          <LineChart data={data} margin={{ top: 25, right: 30, left: 10, bottom: 10 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={true} />
             <XAxis 
               dataKey="periode" 
-              tick={{ fontSize: 10, fill: "#94a3b8", fontWeight: 700 }} 
-              axisLine={{ stroke: '#f1f5f9' }} 
-              tickLine={false} 
+              tick={{ fontSize: 11, fill: "#64748b", fontWeight: 500 }} 
+              axisLine={{ stroke: '#cbd5e1' }} 
+              tickLine={{ stroke: '#cbd5e1' }} 
               tickMargin={15} 
-              tickFormatter={(v) => v.toUpperCase()}
+              tickFormatter={(v) => v.substring(0, 3).toUpperCase()} // JAN, FEB, MAR
             />
-            <YAxis hide domain={[0, 100]} />
+            <YAxis 
+              tick={{ fontSize: 11, fill: "#64748b", fontWeight: 500 }}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={(val) => val.toLocaleString('id-ID')}
+            />
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }} />
             <Legend 
-              wrapperStyle={{ fontSize: 11, fontWeight: 700, paddingTop: "10px", paddingBottom: "20px" }} 
-              iconType="plainline" 
+              wrapperStyle={{ fontSize: 12, fontWeight: 500, paddingTop: "10px" }} 
+              iconType="circle" 
               verticalAlign="top"
               align="right"
               formatter={(value) => {
-                if(value === "rencana") return <span className="text-slate-600">Garis Rencana (Target)</span>;
-                return <span className="text-positive-600">Garis Realisasi (Actual)</span>;
+                if(value === "rencana") return <span className="text-slate-700 ml-1 mr-4">RKAP</span>;
+                return <span className="text-slate-700 ml-1">Realisasi</span>;
               }}
             />
-            {/* Target Line - Dashed Gray */}
-            <Area
+            
+            {/* RKAP Line - Excel Blue */}
+            <Line
               name="rencana"
-              type="monotone"
+              type="linear"
               dataKey="rencana"
-              stroke="#94a3b8"
+              stroke="#4472C4"
               strokeWidth={2}
-              strokeDasharray="6 6"
-              fill="none"
-              dot={false}
-              activeDot={{ r: 4, fill: "#94a3b8", strokeWidth: 0 }}
+              dot={{ r: 5, fill: "#4472C4", strokeWidth: 0 }}
+              activeDot={{ r: 7, fill: "#4472C4", strokeWidth: 0 }}
               connectNulls
-            />
-            {/* Actual Line - Solid Green with Gradient Area */}
-            <Area
+            >
+              <LabelList 
+                dataKey="rencana" 
+                position="top" 
+                offset={10}
+                formatter={labelFormatter}
+                style={{ fontSize: '11px', fill: '#334155', fontWeight: 600 }}
+              />
+            </Line>
+
+            {/* Realisasi Line - Excel Orange */}
+            <Line
               name="realisasi"
-              type="monotone"
+              type="linear"
               dataKey="realisasi"
-              stroke="#10B981"
-              strokeWidth={3}
-              fill="url(#colorRealisasi)"
-              dot={false}
-              activeDot={{ r: 6, fill: "#10B981", strokeWidth: 2, stroke: "#fff" }}
+              stroke="#ED7D31"
+              strokeWidth={2}
+              dot={{ r: 5, fill: "#ED7D31", strokeWidth: 0 }}
+              activeDot={{ r: 7, fill: "#ED7D31", strokeWidth: 0 }}
               connectNulls
-            />
-          </AreaChart>
+            >
+              <LabelList 
+                dataKey="realisasi" 
+                position="bottom" 
+                offset={10}
+                formatter={labelFormatter}
+                style={{ fontSize: '11px', fill: '#334155', fontWeight: 600 }}
+              />
+            </Line>
+
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>
