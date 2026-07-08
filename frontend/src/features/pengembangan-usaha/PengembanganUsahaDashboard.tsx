@@ -243,7 +243,7 @@ export default function PengembanganUsahaDashboard() {
             </div>
             {(activePipelineTab === 'kajian' ? proyekKajian : proyekBerjalan).length > 10 && (
               <div className="mt-4 text-center">
-                <span className="text-sm text-primary-600 font-bold hover:underline cursor-pointer">Lihat semua proyek {activePipelineTab} →</span>
+                <span className="text-sm text-primary-600 font-bold hover:underline cursor-pointer">Lihat semua proyek {activePipelineTab}</span>
               </div>
             )}
           </div>

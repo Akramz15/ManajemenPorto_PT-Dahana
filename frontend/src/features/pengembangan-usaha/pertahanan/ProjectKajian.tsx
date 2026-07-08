@@ -340,7 +340,7 @@ export default function ProjectKajian() {
                           {project.user_profiles?.display_name || 'Tim Pertahanan'}
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-amber-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all">Masuk Timeline →</span>
+                      <span className="text-xs font-bold text-amber-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all">Masuk Timeline</span>
                     </div>
                   </div>
                 ))}
