@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 interface InventoriPoint {
   periode: string;
@@ -15,25 +15,49 @@ const COLORS = {
   stok_akhir: { stroke: "#10B981", fill: "#f0fdf4", label: "Stok Akhir" },
 };
 
+function InventoriTooltip({ active, payload, label }: {
+  active?: boolean;
+  payload?: Array<{ name: string; value: number; color: string; dataKey: string }>;
+  label?: string;
+}) {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="apple-tooltip min-w-[200px] !important">
+      <p className="apple-tooltip-title">{label}</p>
+      <div className="space-y-2">
+        {payload.map((item, idx) => (
+          <div key={idx} className="flex justify-between items-center gap-6">
+            <span className="font-medium" style={{ color: item.color }}>{item.name}</span>
+            <span className="font-bold text-white">{item.value.toLocaleString("id-ID")}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function InventoriChart({ data, title }: { data: InventoriPoint[]; title: string }) {
   return (
     <div className="card w-full">
-      <h3 className="text-sm font-bold text-slate-800 mb-1">{title}</h3>
-      <p className="text-xs text-slate-500 mb-6">Mutasi stok gudang per bulan</p>
+      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">{title}</h3>
+      <p className="text-xs font-medium text-slate-500 mb-8">Mutasi stok gudang per bulan</p>
       
       <div className="w-full h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
-            <XAxis dataKey="periode" tick={{ fontSize: 11, fill: "#64748b", fontWeight: 500 }} axisLine={false} tickLine={false} tickMargin={12} />
-            <YAxis tick={{ fontSize: 11, fill: "#64748b", fontWeight: 500 }} axisLine={false} tickLine={false} tickMargin={8} />
-            <Tooltip
-              cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
-              contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', minWidth: '180px' }}
-              labelStyle={{ fontWeight: 'bold', color: '#0f172a', marginBottom: '8px' }}
-              itemStyle={{ fontSize: '12px', fontWeight: 600, padding: '2px 0' }}
-            />
-            <Legend wrapperStyle={{ fontSize: 12, paddingTop: "15px" }} iconType="circle" />
+          <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+            <defs>
+              {(Object.entries(COLORS) as [keyof typeof COLORS, typeof COLORS[keyof typeof COLORS]][]).map(([key, config]) => (
+                <linearGradient key={`grad-${key}`} id={`grad-${key}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={config.stroke} stopOpacity={0.25} />
+                  <stop offset="95%" stopColor={config.stroke} stopOpacity={0} />
+                </linearGradient>
+              ))}
+            </defs>
+            <XAxis dataKey="periode" tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }} axisLine={false} tickLine={false} tickMargin={16} />
+            <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }} axisLine={false} tickLine={false} tickMargin={12} />
+            <Tooltip content={<InventoriTooltip />} cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4' }} />
+            <Legend wrapperStyle={{ fontSize: 12, paddingTop: "20px", fontWeight: 600 }} iconType="circle" />
             {(Object.entries(COLORS) as [keyof typeof COLORS, typeof COLORS[keyof typeof COLORS]][]).map(([key, config]) => (
               <Area 
                 key={key} 
@@ -41,11 +65,10 @@ export function InventoriChart({ data, title }: { data: InventoriPoint[]; title:
                 type="monotone" 
                 dataKey={key} 
                 stroke={config.stroke}
-                strokeWidth={2} 
-                fill={config.fill} 
-                fillOpacity={1} 
+                strokeWidth={3} 
+                fill={`url(#grad-${key})`}
                 dot={false}
-                activeDot={{ r: 5, strokeWidth: 0, fill: config.stroke }} 
+                activeDot={{ r: 6, strokeWidth: 0, fill: config.stroke }} 
               />
             ))}
           </AreaChart>

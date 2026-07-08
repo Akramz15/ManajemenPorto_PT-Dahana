@@ -7,8 +7,7 @@ import { TrendingUp, ArrowUpRight } from "lucide-react";
 export default function ManajemenPortoDashboard() {
   const [showUploadModal, setShowUploadModal] = useState(false);
 
-  // Fetch Global Chart Data (tetap menggunakan context pengembangan-usaha jika data di DB tersimpan begitu, 
-  // atau ubah ke portofolio. Kita pertahankan 'pengembangan-usaha' agar data lama tidak hilang)
+  // Fetch Global Chart Data untuk Dashboard Utama
   const { data: chartDataPU, loading: chartLoadingPU, refetch: refetchPU } = useChartData<any>("laba-rugi", "pengembangan-usaha");
   const kurvaSDataPU = chartDataPU?.data_points || [];
 
@@ -27,14 +26,12 @@ export default function ManajemenPortoDashboard() {
         </div>
       </div>
 
-      {/* Main Layout Grid */}
-      <div className="mb-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        {/* Grafik Global Kurva S (Full Width) */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-[500px] w-full flex flex-col">
+      <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="card !p-6 !border-0 !bg-white/80 !shadow-sm relative overflow-hidden h-[500px] w-full flex flex-col">
           <div className="absolute top-0 right-0 w-40 h-40 bg-primary-50 rounded-bl-[100px] -z-10 opacity-50"></div>
           
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <div className="w-2 h-6 bg-primary-500 rounded-full"></div>
               Laba/Rugi Pengembangan Usaha (YTD)
             </h3>
@@ -50,7 +47,7 @@ export default function ManajemenPortoDashboard() {
           <div className="relative overflow-visible flex-1 flex flex-col min-h-0">
             {chartLoadingPU ? (
               <div className="flex-1 flex items-center justify-center rounded-2xl">
-                <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
+                <div className="w-10 h-10 border-4 border-slate-200 border-t-primary-500 rounded-full animate-spin" />
               </div>
             ) : (
               <div className="flex-1 relative flex flex-col min-h-0">
@@ -61,7 +58,7 @@ export default function ManajemenPortoDashboard() {
         </div>
       </div>
 
-      {/* Upload Modal (Moved from PU Dashboard) */}
+      {/* Upload Modal untuk Dashboard Utama */}
       {showUploadModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowUploadModal(false)}></div>

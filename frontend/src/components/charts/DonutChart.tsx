@@ -24,44 +24,61 @@ function DonutTooltip({ active, payload, formatValue }: {
   const formatter = formatValue || formatRupiah;
   
   return (
-    <div className="bg-white border border-slate-200 rounded-lg shadow-card-hover p-3 text-xs min-w-32 flex flex-col items-center">
-      <div className="w-3 h-3 rounded-full mb-2" style={{ backgroundColor: item.payload.color }}></div>
-      <p className="font-bold text-slate-800 text-center">{item.name}</p>
-      <p className="text-slate-600 text-center font-medium mt-1">{formatter(item.value)}</p>
+    <div className="apple-tooltip">
+      <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-700/50">
+        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.payload.color }}></div>
+        <p className="apple-tooltip-title !mb-0 !pb-0 !border-0">{item.name}</p>
+      </div>
+      <p className="text-white font-bold">{formatter(item.value)}</p>
     </div>
   );
 }
 
 export function DonutChart({ data, title, centerLabel, formatValue }: DonutChartProps) {
+  // Format centerLabel to Miliar if it is too long (assuming centerLabel is a string starting with Rp)
+  const formatCenterLabel = (label: string | undefined) => {
+    if (!label) return "";
+    const numMatch = label.replace(/[Rp.\s]/g, "");
+    const num = parseInt(numMatch);
+    if (!isNaN(num) && num >= 1e9) {
+      return `Rp${(num / 1e9).toFixed(1)} M`;
+    }
+    return label;
+  };
+
+  const formattedCenter = centerLabel ? formatCenterLabel(centerLabel) : undefined;
+
   return (
-    <div className="card w-full flex flex-col">
-      <h3 className="text-sm font-bold text-slate-800 mb-4">{title}</h3>
-      <div className="relative w-full flex-1 min-h-[260px]">
+    <div className="card w-full flex flex-col h-full">
+      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">{title}</h3>
+      <p className="text-xs font-medium text-slate-500 mb-6">Proporsi komponen</p>
+      <div className="relative w-full flex-1 min-h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}
               cx="50%"
-              cy="45%"
-              innerRadius={70}
-              outerRadius={95}
-              paddingAngle={4}
+              cy="50%"
+              innerRadius={75}
+              outerRadius={105}
+              paddingAngle={6}
               dataKey="value"
               stroke="none"
-              cornerRadius={4}
+              cornerRadius={6}
+              isAnimationActive={false}
             >
               {data.map((entry, index) => (
-                <Cell key={index} fill={entry.color} className="transition-all hover:opacity-80" />
+                <Cell key={index} fill={entry.color} className="transition-all hover:opacity-80 hover:scale-[1.02] origin-center" />
               ))}
             </Pie>
             <Tooltip content={<DonutTooltip formatValue={formatValue} />} />
-            <Legend wrapperStyle={{ fontSize: 11, marginTop: "10px" }} iconType="circle" />
+            <Legend wrapperStyle={{ fontSize: 12, paddingTop: "20px", fontWeight: 600 }} iconType="circle" />
           </PieChart>
         </ResponsiveContainer>
-        {centerLabel && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none -mt-[15px]">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</p>
-            <p className="text-sm font-black text-slate-800 mt-0.5">{centerLabel}</p>
+        {formattedCenter && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none -mt-[30px]">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
+            <p className="text-lg font-black text-slate-900">{formattedCenter}</p>
           </div>
         )}
       </div>

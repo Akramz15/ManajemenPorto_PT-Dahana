@@ -11,11 +11,63 @@ class LabaRugiParser(BaseExcelParser):
         "SEP": "SEPTEMBER", "OKT": "OKTOBER", "NOV": "NOVEMBER", "DES": "DESEMBER"
     }
 
+    def _find_all_sheets(self, keywords: list[str]) -> list[str]:
+        xl = self._open()
+        matched_sheets = []
+        for sheet in xl.sheet_names:
+            for kw in keywords:
+                if kw.lower() in sheet.lower():
+                    if sheet not in matched_sheets:
+                        matched_sheets.append(sheet)
+        return matched_sheets
+
     def parse(self) -> dict:
-        sheet = self._find_sheet(self._SHEET_KW)
-        df = self._read_sheet(sheet)
+        sheets = self._find_all_sheets(self._SHEET_KW)
+        if not sheets:
+            raise ValueError("Tidak ada sheet Laba Rugi / RKAP yang ditemukan.")
+
+        aggregated = {}
+        used_sheets = []
+
+        for sheet in sheets:
+            try:
+                points = self._parse_single_sheet(sheet)
+                used_sheets.append(sheet)
+                for p in points:
+                    per = p["periode"]
+                    if per not in aggregated:
+                        aggregated[per] = {"periode": per, "rencana": None, "realisasi": None}
+                    
+                    if p["rencana"] is not None:
+                        aggregated[per]["rencana"] = (aggregated[per]["rencana"] or 0) + p["rencana"]
+                    if p["realisasi"] is not None:
+                        aggregated[per]["realisasi"] = (aggregated[per]["realisasi"] or 0) + p["realisasi"]
+            except Exception as e:
+                pass
+
+        if not aggregated:
+            raise ValueError("Tidak dapat mengekstrak data dari sheet manapun.")
+
+        final_points = list(aggregated.values())
         
-        # We need to read without headers to parse horizontal layout
+        # Round the values
+        for p in final_points:
+            if p["rencana"] is not None:
+                p["rencana"] = round(p["rencana"], 2)
+            if p["realisasi"] is not None:
+                p["realisasi"] = round(p["realisasi"], 2)
+
+        # Sort by month
+        month_order = list(self._MONTHS_MAP.values())
+        final_points.sort(key=lambda x: month_order.index(x["periode"]) if x["periode"] in month_order else 99)
+
+        return {
+            "chart_type": "laba-rugi",
+            "data_points": final_points,
+            "sheet_used": ", ".join(used_sheets),
+        }
+
+    def _parse_single_sheet(self, sheet: str) -> list[dict]:
         df_raw = pd.read_excel(self.file_bytes, sheet_name=sheet, header=None)
 
         # 1. Find the row containing months
@@ -27,7 +79,7 @@ class LabaRugiParser(BaseExcelParser):
                 break
 
         if month_row_idx == -1:
-            raise ValueError("Tidak dapat menemukan baris bulan (Januari, dsb.) di Excel Laba/Rugi")
+            raise ValueError("Tidak dapat menemukan baris bulan (Januari, dsb.) di Excel")
 
         month_row = df_raw.iloc[month_row_idx].values
         subheader_row = df_raw.iloc[month_row_idx + 1].values
@@ -48,7 +100,7 @@ class LabaRugiParser(BaseExcelParser):
                     break
 
         if laba_row_idx == -1:
-            raise ValueError("Tidak dapat menemukan baris 'Laba Setelah Pajak' atau 'Laba' pada kolom pertama")
+            raise ValueError("Tidak dapat menemukan baris Laba")
 
         laba_row = df_raw.iloc[laba_row_idx].values
         
@@ -67,10 +119,8 @@ class LabaRugiParser(BaseExcelParser):
                 rkap_ytd = None
                 real_ytd = None
                 
-                # Check subheaders in the current and next few columns
                 for c in range(col_idx, min(col_idx + 5, len(subheader_row))):
                     sub = str(subheader_row[c]).upper()
-                    # Kita butuh nilai YTD (Year To Date)
                     if "YTD RKAP" in sub or ("RKAP" in sub and "YTD" in sub):
                         val = laba_row[c]
                         rkap_ytd = normalize_indonesian_number(val)
@@ -80,11 +130,10 @@ class LabaRugiParser(BaseExcelParser):
 
                 data_points.append({
                     "periode": matched_month,
-                    "rencana": round(rkap_ytd, 2) if rkap_ytd is not None else None,
-                    "realisasi": round(real_ytd, 2) if real_ytd is not None else None,
+                    "rencana": rkap_ytd,
+                    "realisasi": real_ytd,
                 })
 
-        # Remove duplicates from data_points (if multiple columns match the same month, take the first valid)
         unique_points = []
         seen = set()
         for dp in data_points:
@@ -93,10 +142,6 @@ class LabaRugiParser(BaseExcelParser):
                 seen.add(dp["periode"])
 
         if not unique_points:
-            raise ValueError("Tidak ada data bulan yang valid ditemukan di Excel")
+            raise ValueError("Tidak ada data bulan yang valid")
 
-        return {
-            "chart_type": "laba-rugi",
-            "data_points": unique_points,
-            "sheet_used": sheet,
-        }
+        return unique_points

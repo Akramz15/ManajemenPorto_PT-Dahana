@@ -1,5 +1,5 @@
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  AreaChart, Area, XAxis, YAxis,
   Tooltip, ResponsiveContainer, Legend
 } from "recharts";
 
@@ -13,10 +13,16 @@ interface KurvaSChartProps {
   data: KurvaSDataPoint[];
 }
 
+const ALL_MONTHS = [
+  "JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI",
+  "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
+];
+
 const formatYAxis = (value: number) => {
   if (value >= 1_000_000_000_000) return `Rp ${(value / 1_000_000_000_000).toFixed(1)}T`;
-  if (value >= 1_000_000_000) return `Rp ${(value / 1_000_000_000).toFixed(1)}M`;
+  if (value >= 1_000_000_000) return `Rp ${(value / 1_000_000_000).toFixed(0)}M`;
   if (value >= 1_000_000) return `Rp ${(value / 1_000_000).toFixed(0)}Jt`;
+  if (value === 0) return "Rp 0";
   return value.toLocaleString('id-ID');
 };
 
@@ -34,24 +40,24 @@ function CustomTooltip({ active, payload, label }: {
     : null;
 
   return (
-    <div className="bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-5 text-sm min-w-56 z-50">
-      <p className="font-bold text-slate-800 mb-4 pb-3 border-b border-slate-100 uppercase tracking-widest text-[11px]">{label}</p>
-      <div className="space-y-3">
+    <div className="apple-tooltip">
+      <p className="apple-tooltip-title">{label}</p>
+      <div className="space-y-2">
         <div className="flex justify-between items-center gap-6">
-          <span className="text-slate-500 font-medium text-xs">Target (RKAP)</span>
-          <span className="font-bold text-slate-700">{rencana?.value != null ? rencana.value.toLocaleString('id-ID') : "-"}</span>
+          <span className="text-slate-400 font-medium">Target (RKAP)</span>
+          <span className="font-bold text-white">{rencana?.value != null ? rencana.value.toLocaleString('id-ID') : "-"}</span>
         </div>
         <div className="flex justify-between items-center gap-6">
-          <span className="text-emerald-500 font-medium text-xs flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+          <span className="text-emerald-400 font-medium flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
             Realisasi
           </span>
-          <span className="font-black text-slate-900 text-base">{realisasi?.value != null ? realisasi.value.toLocaleString('id-ID') : "-"}</span>
+          <span className="font-black text-white">{realisasi?.value != null ? realisasi.value.toLocaleString('id-ID') : "-"}</span>
         </div>
         {deviasi && (
-          <div className="flex justify-between items-center gap-6 pt-3 mt-3 border-t border-slate-100/80">
+          <div className="flex justify-between items-center gap-6 pt-2 mt-2 border-t border-slate-700/50">
             <span className="font-semibold text-slate-400 text-xs">Deviasi</span>
-            <span className={`font-bold px-2 py-0.5 rounded-md text-xs ${parseFloat(deviasi) >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"}`}>
+            <span className={`font-bold text-xs ${parseFloat(deviasi) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
               {parseFloat(deviasi) > 0 ? "+" : ""}{parseFloat(deviasi).toLocaleString('id-ID')}
             </span>
           </div>
@@ -81,11 +87,23 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
     }
   }
 
+  // Pad data up to 12 months
+  const paddedData = ALL_MONTHS.map(month => {
+    const existing = data.find(d => {
+      if (!d.periode) return false;
+      const p = d.periode.toUpperCase();
+      const m = month.toUpperCase();
+      return p === m || m.startsWith(p) || p.startsWith(m.substring(0, 3));
+    });
+    if (existing) return { ...existing, periode: month };
+    return { periode: month, rencana: null, realisasi: null };
+  });
+
   return (
-    <div className="w-full flex-1 relative px-1 pt-6 flex flex-col min-h-0">
+    <div className="w-full flex-1 relative flex flex-col min-h-0">
       
-      {/* Big Headline (Stock Style Overlay) */}
-      <div className="absolute top-0 left-6 z-10 flex flex-col pointer-events-none">
+      {/* Big Headline (Stock Style Normal Flow) */}
+      <div className="px-6 flex flex-col mb-4">
         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Realisasi Terkini</span>
         <div className="flex items-baseline gap-3">
           <span className="text-4xl font-black text-slate-900 tracking-tighter">
@@ -99,16 +117,15 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
         </div>
       </div>
 
-      <div className="w-full flex-1 mt-16 min-h-0">
+      <div className="w-full flex-1 min-h-0">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 50, right: 10, left: 10, bottom: 0 }}>
+          <AreaChart data={paddedData} margin={{ top: 10, right: 20, left: 20, bottom: 0 }}>
             <defs>
               <linearGradient id="colorRealisasi" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10B981" stopOpacity={0.3} />
+                <stop offset="0%" stopColor="#10B981" stopOpacity={0.4} />
                 <stop offset="100%" stopColor="#10B981" stopOpacity={0.0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
             <XAxis 
               dataKey="periode" 
               tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }} 
@@ -122,10 +139,10 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
               tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }}
               axisLine={false}
               tickLine={false}
-              tickMargin={10}
+              tickMargin={15}
               tickFormatter={formatYAxis}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4' }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#f1f5f9', strokeWidth: 40, opacity: 0.5 }} />
             <Legend 
               wrapperStyle={{ fontSize: 12, fontWeight: 600, top: "-10px" }} 
               iconType="circle" 
@@ -143,7 +160,7 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
               type="monotone"
               dataKey="rencana"
               stroke="#cbd5e1"
-              strokeWidth={2}
+              strokeWidth={3}
               strokeDasharray="6 6"
               fill="none"
               dot={false}
@@ -157,7 +174,7 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
               type="monotone"
               dataKey="realisasi"
               stroke="#10B981"
-              strokeWidth={3}
+              strokeWidth={4}
               fill="url(#colorRealisasi)"
               dot={false}
               activeDot={{ r: 6, fill: "#10B981", strokeWidth: 3, stroke: "#ffffff", className: "shadow-sm" }}

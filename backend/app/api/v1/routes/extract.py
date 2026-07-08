@@ -38,21 +38,49 @@ async def extract_excel(
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
 
-    parser_class = _PARSER_MAP[context]
-    parser = parser_class(file_bytes=file_bytes, context=context)
-
-    try:
-        result = parser.parse()
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
-
     svc = SupabaseService()
-    svc.save_chart_data(
-        context=context,
-        sub_context=sub_context,
-        data_json=result,
-        source_file=file.filename or "upload.xlsx",
-        uploaded_by=user["user_id"],
-    )
+    
+    if context in ["dic", "kan", "jodb", "jodd"]:
+        contexts_to_parse = ["dic", "kan", "jodb", "jodd"]
+        primary_result = None
+        for ctx in contexts_to_parse:
+            file_bytes.seek(0)
+            try:
+                parser = PortofolioParser(file_bytes=file_bytes, context=ctx)
+                res = parser.parse()
+                if ctx == context:
+                    primary_result = res
+                svc.save_chart_data(
+                    context=ctx,
+                    sub_context=sub_context,
+                    data_json=res,
+                    source_file=file.filename or "upload.xlsx",
+                    uploaded_by=user["user_id"],
+                )
+            except Exception as e:
+                # Lanjutkan ke context lain jika salah satu gagal
+                continue
+                
+        if not primary_result:
+            raise HTTPException(status_code=422, detail="Gagal memproses data untuk context ini.")
+            
+        return ChartResponse(context=context, data=primary_result, uploaded_by=user["user_id"])
+    else:
+        # Untuk kurva-s dan laba-rugi
+        parser_class = _PARSER_MAP[context]
+        parser = parser_class(file_bytes=file_bytes, context=context)
 
-    return ChartResponse(context=context, data=result, uploaded_by=user["user_id"])
+        try:
+            result = parser.parse()
+        except ValueError as e:
+            raise HTTPException(status_code=422, detail=str(e))
+
+        svc.save_chart_data(
+            context=context,
+            sub_context=sub_context,
+            data_json=result,
+            source_file=file.filename or "upload.xlsx",
+            uploaded_by=user["user_id"],
+        )
+
+        return ChartResponse(context=context, data=result, uploaded_by=user["user_id"])

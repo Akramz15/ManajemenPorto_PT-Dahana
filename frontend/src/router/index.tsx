@@ -12,7 +12,6 @@ const ProjectBerjalanKomersial = lazy(() => import("@/features/pengembangan-usah
 const ProjectKajianKomersial = lazy(() => import("@/features/pengembangan-usaha/komersial/ProjectKajian"));
 const ProjectBerjalanPertahanan = lazy(() => import("@/features/pengembangan-usaha/pertahanan/ProjectBerjalan"));
 const ProjectKajianPertahanan = lazy(() => import("@/features/pengembangan-usaha/pertahanan/ProjectKajian"));
-const ManajemenPortoDashboard = lazy(() => import("@/features/portofolio/ManajemenPortoDashboard"));
 const DIC = lazy(() => import("@/features/portofolio/anak-cucu/DIC"));
 const KAN = lazy(() => import("@/features/portofolio/anak-cucu/KAN"));
 const JODD = lazy(() => import("@/features/portofolio/jo/JODD"));
@@ -74,10 +73,6 @@ const router = createBrowserRouter([
       {
         path: "porto",
         children: [
-          {
-            path: "dashboard",
-            element: <Suspense fallback={<PageLoader />}><ManajemenPortoDashboard /></Suspense>,
-          },
           {
             path: "anak-cucu/dic",
             element: <Suspense fallback={<PageLoader />}><DIC /></Suspense>,
