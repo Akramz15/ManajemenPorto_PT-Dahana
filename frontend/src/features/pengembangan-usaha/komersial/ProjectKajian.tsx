@@ -127,6 +127,14 @@ export default function ProjectKajian() {
                 <span className="font-bold text-slate-800 px-2 py-0.5 bg-slate-200 rounded-md">
                   {projectData?.id ? `ID-${projectData.id.split('-')[0].toUpperCase()}` : "ID-XXXX"}
                 </span>
+                {sCurveData && sCurveData.length > 0 && (
+                  <>
+                    <span className="text-slate-300">|</span>
+                    <span className="font-bold text-emerald-700 px-2 py-0.5 bg-emerald-100/80 rounded-md flex items-center gap-1.5">
+                      Progres Saat Ini: {[...sCurveData].reverse().find(d => d.realisasi != null)?.realisasi || 0}%
+                    </span>
+                  </>
+                )}
               </div>
             ) : (
               <p className="text-slate-500 mt-1">Kelola timeline proposal dan studi kelayakan proyek divisi komersial.</p>
