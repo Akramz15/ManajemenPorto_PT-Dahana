@@ -94,7 +94,7 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
 
       <div className="w-full h-[380px] mt-16">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+          <AreaChart data={data} margin={{ top: 50, right: 0, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorRealisasi" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#10B981" stopOpacity={0.3} />
@@ -113,7 +113,7 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
             <YAxis hide domain={['auto', 'auto']} />
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4' }} />
             <Legend 
-              wrapperStyle={{ fontSize: 12, fontWeight: 600, paddingTop: "20px" }} 
+              wrapperStyle={{ fontSize: 12, fontWeight: 600, top: "-10px" }} 
               iconType="circle" 
               verticalAlign="top"
               align="right"
