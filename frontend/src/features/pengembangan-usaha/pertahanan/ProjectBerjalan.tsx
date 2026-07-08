@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { DocumentGallery, ProgressTracker, ProjectManager } from "@/components/shared";
+import { ExcelUploader, ProjectManager } from "@/components/shared";
+import { SCurveProgressChart } from "@/components/charts";
+import { useChartData } from "@/hooks/useChartData";
 import { useRealtime } from "@/hooks/useRealtime";
 import { useAuth } from "@/hooks/useAuth";
 import { apiClient } from "@/lib/api";
@@ -79,37 +81,10 @@ export default function ProjectBerjalan() {
   }, [selectedProject, allProjects]);
 
   // Data Fetching
-  const tasks = useRealtime<any>({ table: "progress_tasks", filter: { project_id: selectedProject } }).records;
-  const documents = useRealtime<any>({ table: "documents", filter: { project_id: selectedProject } }).records;
+  const { data: chartData, refetch: refetchChart } = useChartData<any>("kurva-s", selectedProject);
+  const sCurveData = chartData?.data_points || [];
 
-  const handleStatusChange = async (taskId: string, status: string) => {
-    try {
-      await apiClient.patch(`/api/v1/progress/${taskId}`, { status });
-    } catch (e) {
-      console.error("Failed to update status", e);
-    }
-  };
 
-  const handleAddTask = async (title: string) => {
-    if (!currentUserId || !selectedProject) return;
-    try {
-      await supabase.from("progress_tasks").insert([{
-        project_id: selectedProject,
-        title,
-        assigned_to: currentUserId
-      }]);
-    } catch (e) {
-      console.error("Failed to add task", e);
-    }
-  };
-
-  const handleDeleteTask = async (taskId: string) => {
-    try {
-      await supabase.from("progress_tasks").delete().eq("id", taskId);
-    } catch (e) {
-      console.error("Failed to delete task", e);
-    }
-  };
 
   const handleDeleteProject = async (projectId: string) => {
     if (!window.confirm("Apakah Anda yakin ingin menghapus proyek ini? Seluruh data dan task akan ikut terhapus secara permanen.")) return;
@@ -157,14 +132,7 @@ export default function ProjectBerjalan() {
                 <span className="font-bold text-slate-800 px-2 py-0.5 bg-slate-200 rounded-md">
                   {projectData?.id ? `ID-${projectData.id.split('-')[0].toUpperCase()}` : "ID-XXXX"}
                 </span>
-                {projectData?.mitra && (
-                   <>
-                    <span className="text-slate-300">|</span>
-                    <span className="flex items-center gap-1">
-                      Mitra: <span className="font-bold text-slate-900">{projectData.mitra}</span>
-                    </span>
-                   </>
-                )}
+                </span>
               </div>
             ) : (
               <p className="text-slate-500 mt-1">Kelola dan pantau seluruh proyek berjalan divisi pertahanan secara kolaboratif.</p>
@@ -229,15 +197,9 @@ export default function ProjectBerjalan() {
           {/* Docs & Progress Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              {/* Task Board */}
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden min-h-125">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden min-h-[400px]">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-bl-full -z-10 opacity-50"></div>
-                <ProgressTracker 
-                  tasks={tasks}
-                  onStatusChange={handleStatusChange}
-                  onAddTask={handleAddTask}
-                  onDeleteTask={handleDeleteTask}
-                />
+                <SCurveProgressChart data={sCurveData} />
               </div>
             </div>
 
@@ -250,12 +212,6 @@ export default function ProjectBerjalan() {
                  </h3>
                  <div className="space-y-4">
                     <div>
-                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">Nilai Kontrak</p>
-                      <p className="text-xl font-black text-primary-700">
-                        {projectData?.nilai_kontrak ? `Rp ${projectData.nilai_kontrak.toLocaleString('id-ID')}` : '-'}
-                      </p>
-                    </div>
-                    <div className="pt-4 border-t border-slate-100">
                       <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5"><User size={12}/> Ditambahkan Oleh</p>
                       <p className="text-sm font-semibold text-slate-700">
                         {/* @ts-ignore */}
@@ -271,11 +227,15 @@ export default function ProjectBerjalan() {
                  </div>
               </div>
 
-              {/* Documents */}
+              {/* Excel Uploader for S-Curve */}
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6">
-                <DocumentGallery 
-                  documents={documents} 
-                  projectId={selectedProject}
+                <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                  Upload Excel S-Curve
+                </h3>
+                <ExcelUploader 
+                  context="kurva-s" 
+                  subContext={selectedProject} 
+                  onSuccess={() => refetchChart()} 
                 />
               </div>
             </div>
@@ -336,7 +296,6 @@ export default function ProjectBerjalan() {
                     </div>
 
                     <h4 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 leading-tight group-hover:text-slate-900 transition-colors">{project.nama_proyek}</h4>
-                    <p className="text-sm text-slate-500 mb-6 line-clamp-1">{project.mitra || "Internal / Tidak ada mitra spesifik"}</p>
                     
                     <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
                       <div className="flex items-center gap-2">

@@ -212,8 +212,6 @@ export default function PengembanganUsahaDashboard() {
                   <tr className="border-b border-slate-200">
                     <th className="px-4 py-4 font-bold text-slate-400 uppercase tracking-wider text-xs">Divisi</th>
                     <th className="px-4 py-4 font-bold text-slate-400 uppercase tracking-wider text-xs">Nama Proyek / Kajian</th>
-                    <th className="px-4 py-4 font-bold text-slate-400 uppercase tracking-wider text-xs">Mitra</th>
-                    <th className="px-4 py-4 font-bold text-slate-400 uppercase tracking-wider text-xs text-right">Nilai Kontrak</th>
                   </tr>
                 </thead>
                 <tbody className="text-slate-700 divide-y divide-slate-100">
@@ -225,17 +223,11 @@ export default function PengembanganUsahaDashboard() {
                         </span>
                       </td>
                       <td className="py-4 px-4 font-bold text-slate-800 max-w-xs truncate">{p.nama_proyek}</td>
-                      <td className="py-4 px-4 text-slate-500">{p.mitra || "-"}</td>
-                      <td className="py-4 px-4 text-right">
-                        <span className="font-bold text-slate-900">
-                          {p.nilai_kontrak ? `Rp ${p.nilai_kontrak.toLocaleString('id-ID')}` : 'Belum Ditentukan'}
-                        </span>
-                      </td>
                     </tr>
                   ))}
                   {(activePipelineTab === 'kajian' ? proyekKajian : proyekBerjalan).length === 0 && (
                     <tr>
-                      <td colSpan={4} className="py-12 text-center text-slate-400 font-medium">Belum ada proyek {activePipelineTab}.</td>
+                      <td colSpan={2} className="py-12 text-center text-slate-400 font-medium">Belum ada proyek {activePipelineTab}.</td>
                     </tr>
                   )}
                 </tbody>
