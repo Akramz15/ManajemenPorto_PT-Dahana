@@ -139,7 +139,7 @@ export default function PengembanganUsahaDashboard() {
         <div className="lg:col-span-2 space-y-6">
 
           {/* Tabel Proyek Pipeline */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 min-h-115 flex flex-col">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 min-h-[500px] flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                 <div className={`w-2 h-6 rounded-full transition-colors ${activePipelineTab === 'kajian' ? 'bg-amber-500' : 'bg-primary-500'}`}></div>

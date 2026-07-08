@@ -30,7 +30,7 @@ export default function ManajemenPortoDashboard() {
       {/* Main Layout Grid */}
       <div className="mb-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {/* Grafik Global Kurva S (Full Width) */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-115 w-full flex flex-col">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-[500px] w-full flex flex-col">
           <div className="absolute top-0 right-0 w-40 h-40 bg-primary-50 rounded-bl-[100px] -z-10 opacity-50"></div>
           
           <div className="flex items-center justify-between mb-6">
