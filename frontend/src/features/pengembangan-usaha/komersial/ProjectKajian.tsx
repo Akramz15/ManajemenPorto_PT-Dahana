@@ -204,12 +204,6 @@ export default function ProjectKajian() {
                  </h3>
                  <div className="space-y-4">
                     <div>
-                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">Nilai Kontrak</p>
-                      <p className="text-xl font-black text-amber-700">
-                        {projectData?.nilai_kontrak ? `Rp ${projectData.nilai_kontrak.toLocaleString('id-ID')}` : '-'}
-                      </p>
-                    </div>
-                    <div className="pt-4 border-t border-slate-100">
                       <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5"><User size={12}/> Ditambahkan Oleh</p>
                       <p className="text-sm font-semibold text-slate-700">
                         {/* @ts-ignore */}
