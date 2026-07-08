@@ -25,7 +25,7 @@ create policy "docs_bucket_auth_download"
     and auth.uid() is not null
   );
 
-create policy "docs_bucket_uploader_delete"
+create policy "docs_bucket_all_delete"
   on storage.objects for delete
   using (
     bucket_id = 'project-documents'

@@ -18,8 +18,12 @@ create policy "docs_all_insert"
   on public.documents for insert
   with check (auth.uid() is not null);
 
-create policy "docs_uploader_delete"
+create policy "docs_all_delete"
   on public.documents for delete
-  using (auth.uid() = uploaded_by);
+  using (auth.uid() is not null);
+
+create policy "docs_all_update"
+  on public.documents for update
+  using (auth.uid() is not null);
 
 create index idx_docs_project_id on public.documents(project_id);
