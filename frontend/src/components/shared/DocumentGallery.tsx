@@ -71,6 +71,14 @@ export function DocumentGallery({ documents, onDelete, onUpload, projectId }: Do
     const file = e.target.files?.[0];
     if (!file || !projectId || !user) return;
 
+    // Validasi ukuran file maks 10MB
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size > MAX_FILE_SIZE) {
+      alert("Ukuran file terlalu besar! Maksimal 10 MB.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
     setIsUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
@@ -162,7 +170,7 @@ export function DocumentGallery({ documents, onDelete, onUpload, projectId }: Do
                 )}
               </div>
               <h4 className="text-sm font-bold text-slate-800 mb-1">{isUploading ? 'Sedang Mengunggah...' : 'Tarik file ke sini untuk mengunggah'}</h4>
-              <p className="text-[11px] text-slate-500 font-medium">Mendukung PDF, DOCX, XLSX, JPG, PNG (Maks. 25MB)</p>
+              <p className="text-[11px] text-slate-500 font-medium">Mendukung PDF, DOCX, XLSX, JPG, PNG (Maks. 10MB)</p>
             </div>
           </>
         )}

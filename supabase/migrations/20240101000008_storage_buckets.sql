@@ -3,7 +3,7 @@ values (
   'project-documents',
   'project-documents',
   false,
-  52428800,
+  10485760,
   array['application/pdf', 'application/msword',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'application/vnd.ms-excel',
