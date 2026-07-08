@@ -73,7 +73,7 @@ export default function PengembanganUsahaDashboard() {
 
   // Fetch Global PU Chart Data
   const { data: chartDataPU, loading: chartLoadingPU, refetch: refetchPU } = useChartData<any>("laba-rugi", "pengembangan-usaha");
-  const kurvaSDataPU = chartDataPU?.data?.series || [];
+  const kurvaSDataPU = chartDataPU?.data_json?.data_points || [];
 
   // KPIs Calculation
   const proyekBerjalan = semuaProyek.filter(p => p.kategori === "berjalan");
