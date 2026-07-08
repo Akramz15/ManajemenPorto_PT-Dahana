@@ -182,7 +182,7 @@ export function DocumentGallery({ documents, onDelete, onUpload, projectId }: Do
             <p className="text-xs font-medium">Belum ada dokumen yang diunggah.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-3">
             {documents.map((doc) => (
               <div
                 key={doc.id}
