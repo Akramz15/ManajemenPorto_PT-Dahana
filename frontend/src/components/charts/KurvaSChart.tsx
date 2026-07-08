@@ -13,6 +13,13 @@ interface KurvaSChartProps {
   data: KurvaSDataPoint[];
 }
 
+const formatYAxis = (value: number) => {
+  if (value >= 1_000_000_000_000) return `Rp ${(value / 1_000_000_000_000).toFixed(1)}T`;
+  if (value >= 1_000_000_000) return `Rp ${(value / 1_000_000_000).toFixed(1)}M`;
+  if (value >= 1_000_000) return `Rp ${(value / 1_000_000).toFixed(0)}Jt`;
+  return value.toLocaleString('id-ID');
+};
+
 function CustomTooltip({ active, payload, label }: {
   active?: boolean;
   payload?: Array<{ name: string; value: number; color: string }>;
@@ -94,7 +101,7 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
 
       <div className="w-full h-[380px] mt-16">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 50, right: 0, left: 0, bottom: 0 }}>
+          <AreaChart data={data} margin={{ top: 50, right: 10, left: 10, bottom: 0 }}>
             <defs>
               <linearGradient id="colorRealisasi" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#10B981" stopOpacity={0.3} />
@@ -110,7 +117,14 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
               tickMargin={15} 
               tickFormatter={(v) => v.substring(0, 3).toUpperCase()}
             />
-            <YAxis hide domain={['auto', 'auto']} />
+            <YAxis 
+              domain={['auto', 'auto']} 
+              tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }}
+              axisLine={false}
+              tickLine={false}
+              tickMargin={10}
+              tickFormatter={formatYAxis}
+            />
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4' }} />
             <Legend 
               wrapperStyle={{ fontSize: 12, fontWeight: 600, top: "-10px" }} 
