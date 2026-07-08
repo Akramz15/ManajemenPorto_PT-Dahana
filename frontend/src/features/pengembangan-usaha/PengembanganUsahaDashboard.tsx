@@ -143,7 +143,7 @@ export default function PengembanganUsahaDashboard() {
       {/* Main Layout Grid */}
       <div className="mb-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {/* Grafik Global Kurva S (Full Width) */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-[500px] w-full flex flex-col">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-125 w-full flex flex-col">
           <div className="absolute top-0 right-0 w-40 h-40 bg-primary-50 rounded-bl-[100px] -z-10 opacity-50"></div>
           
           <div className="flex items-center justify-between mb-6">
@@ -180,7 +180,7 @@ export default function PengembanganUsahaDashboard() {
         <div className="lg:col-span-2 space-y-6">
 
           {/* Tabel Proyek Pipeline */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 min-h-[500px] flex flex-col">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 min-h-125 flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                 <div className={`w-2 h-6 rounded-full transition-colors ${activePipelineTab === 'kajian' ? 'bg-amber-500' : 'bg-primary-500'}`}></div>
@@ -298,7 +298,7 @@ export default function PengembanganUsahaDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowUploadModal(false)}></div>
           <div className="bg-white rounded-3xl shadow-xl w-full max-w-lg relative z-10 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-primary-50 to-primary-100/50 -z-10"></div>
+            <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-br from-primary-50 to-primary-100/50 -z-10"></div>
             
             <div className="p-8">
               <div className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-primary-600 mb-6">

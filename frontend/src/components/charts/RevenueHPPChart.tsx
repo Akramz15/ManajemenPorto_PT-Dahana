@@ -48,7 +48,7 @@ export function RevenueHPPChart({ data }: { data: DataPoint[] }) {
       <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">Penjualan & HPP</h3>
       <p className="text-xs font-medium text-slate-500 mb-8">Tren pendapatan operasional</p>
       
-      <div className="w-full h-[280px]">
+      <div className="w-full h-70">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <defs>

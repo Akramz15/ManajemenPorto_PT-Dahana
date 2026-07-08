@@ -27,7 +27,7 @@ export default function ManajemenPortoDashboard() {
       </div>
 
       <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="card !p-6 !border-0 !bg-white/80 !shadow-sm relative overflow-hidden h-[500px] w-full flex flex-col">
+        <div className="card p-6! border-0! bg-white/80! shadow-sm! relative overflow-hidden h-125 w-full flex flex-col">
           <div className="absolute top-0 right-0 w-40 h-40 bg-primary-50 rounded-bl-[100px] -z-10 opacity-50"></div>
           
           <div className="flex items-center justify-between mb-6">
@@ -63,7 +63,7 @@ export default function ManajemenPortoDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowUploadModal(false)}></div>
           <div className="bg-white rounded-3xl shadow-xl w-full max-w-lg relative z-10 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-primary-50 to-primary-100/50 -z-10"></div>
+            <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-br from-primary-50 to-primary-100/50 -z-10"></div>
             
             <div className="p-8">
               <div className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-primary-600 mb-6">

@@ -23,7 +23,7 @@ function InventoriTooltip({ active, payload, label }: {
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="apple-tooltip min-w-[200px] !important">
+    <div className="apple-tooltip min-w-50 !important">
       <p className="apple-tooltip-title">{label}</p>
       <div className="space-y-2">
         {payload.map((item, idx) => (
@@ -37,13 +37,13 @@ function InventoriTooltip({ active, payload, label }: {
   );
 }
 
-export function InventoriChart({ data, title }: { data: InventoriPoint[]; title: string }) {
+export function InventoriChart({ data, title, subtitle }: { data: InventoriPoint[]; title: string; subtitle: string }) {
   return (
-    <div className="card w-full">
+    <div className="card w-full min-w-50">
       <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">{title}</h3>
-      <p className="text-xs font-medium text-slate-500 mb-8">Mutasi stok gudang per bulan</p>
+      <p className="text-xs font-medium text-slate-500 mb-8">{subtitle}</p>
       
-      <div className="w-full h-[300px]">
+      <div className="w-full h-75 relative">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <defs>

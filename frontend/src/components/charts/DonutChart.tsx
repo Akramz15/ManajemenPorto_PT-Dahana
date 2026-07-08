@@ -27,7 +27,7 @@ function DonutTooltip({ active, payload, formatValue }: {
     <div className="apple-tooltip">
       <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-700/50">
         <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.payload.color }}></div>
-        <p className="apple-tooltip-title !mb-0 !pb-0 !border-0">{item.name}</p>
+        <p className="apple-tooltip-title mb-0! pb-0! border-0!">{item.name}</p>
       </div>
       <p className="text-white font-bold">{formatter(item.value)}</p>
     </div>
@@ -49,10 +49,9 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
   const formattedCenter = centerLabel ? formatCenterLabel(centerLabel) : undefined;
 
   return (
-    <div className="card w-full flex flex-col h-full">
-      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">{title}</h3>
-      <p className="text-xs font-medium text-slate-500 mb-6">Proporsi komponen</p>
-      <div className="relative w-full flex-1 min-h-[280px]">
+    <div className="card w-full flex flex-col mb-0 pb-0 border-0 relative">
+      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-4 z-10">{title}</h3>
+      <div className="flex-1 w-full relative z-10 min-h-70 flex items-center justify-center -mt-7.5">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -76,7 +75,7 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
           </PieChart>
         </ResponsiveContainer>
         {formattedCenter && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none -mt-[30px]">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none -mt-7.5">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
             <p className="text-lg font-black text-slate-900">{formattedCenter}</p>
           </div>

@@ -47,7 +47,7 @@ export function ExcelUploader({ context, subContext, compact = false, onSuccess 
     return (
       <div
         {...getRootProps()}
-        className={`border border-dashed rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 flex items-center gap-4 min-h-[72px]
+        className={`border border-dashed rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 flex items-center gap-4 min-h-18
           ${isDragActive ? "border-primary-500 bg-primary-50 scale-[0.98]" : "border-slate-300 hover:border-primary-400 hover:bg-slate-50 hover:shadow-sm"}`}
       >
         <input {...getInputProps()} />
@@ -73,7 +73,7 @@ export function ExcelUploader({ context, subContext, compact = false, onSuccess 
   return (
     <div
       {...getRootProps()}
-      className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-3 min-h-40
+      className={`p-4 rounded-xl border-2 border-dashed transition-all duration-300 min-h-36 flex flex-col items-center justify-center text-center
         ${isDragActive ? "border-primary-400 bg-primary-50 scale-[0.99]" : "border-slate-200 hover:border-primary-300 hover:bg-slate-50"}`}
     >
       <input {...getInputProps()} />

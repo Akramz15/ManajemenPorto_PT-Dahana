@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, TooltipProps } from "recharts";
 import { formatRupiah } from "@/lib/formatters";
 
 interface RKAPPoint {
@@ -7,21 +7,13 @@ interface RKAPPoint {
   realisasi: number;
 }
 
-function RKAPTooltip({ active, payload, label }: {
-  active?: boolean;
-  payload?: Array<{ name: string; value: number; color: string }>;
-  label?: string;
-}) {
+function RKAPTooltip({ active, payload, label }: TooltipProps<number, string>) {
   if (!active || !payload?.length) return null;
-  const rkap = payload.find((p) => p.name === "rkap");
-  const realisasi = payload.find((p) => p.name === "realisasi");
+  const rkap = payload.find((p) => p.dataKey === "rkap");
+  const realisasi = payload.find((p) => p.dataKey === "realisasi");
   
-  const percentage = rkap && realisasi && rkap.value > 0
-    ? ((realisasi.value / rkap.value) * 100).toFixed(1)
-    : null;
-    
   const deviasi = (realisasi?.value != null && rkap?.value != null)
-    ? (realisasi.value - rkap.value)
+    ? (Number(realisasi.value) - Number(rkap.value))
     : null;
 
   return (
@@ -69,7 +61,7 @@ const formatYAxis = (value: number) => {
 export function RKAPChart({ data }: { data: RKAPPoint[] }) {
   if (!data || data.length === 0) {
     return (
-      <div className="card flex items-center justify-center min-h-[400px] text-slate-400">
+      <div className="card flex items-center justify-center min-h-100 text-slate-400">
         <p className="text-sm font-medium">Data grafik belum tersedia</p>
       </div>
     );
@@ -99,7 +91,7 @@ export function RKAPChart({ data }: { data: RKAPPoint[] }) {
   });
 
   return (
-    <div className="card !p-6 !border-0 !bg-white/80 !shadow-sm relative overflow-hidden h-[500px] w-full flex flex-col">
+    <div className="card p-6! border-0! bg-white/80! shadow-sm! relative overflow-hidden h-125 w-full flex flex-col">
       <div className="flex items-center justify-between z-10 mb-6 px-1 relative">
         <h3 className="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
           Target RKAP vs Realisasi (Terkini)
