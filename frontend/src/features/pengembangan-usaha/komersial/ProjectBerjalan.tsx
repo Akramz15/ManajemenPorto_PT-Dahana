@@ -275,7 +275,7 @@ export default function ProjectBerjalan() {
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6">
                 <DocumentGallery 
                   documents={documents} 
-                  onUpload={() => alert("Fitur upload dokumen terintegrasi di komponen")}
+                  projectId={selectedProject}
                 />
               </div>
             </div>

@@ -3,12 +3,15 @@ import { supabase } from "@/lib/supabase";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 import { formatFileSize } from "@/lib/formatters";
+import { useAuth } from "@/hooks/useAuth";
+import { useRef, useState } from "react";
 import type { Document } from "@/types";
 
 interface DocumentGalleryProps {
   documents: Document[];
   onDelete?: (docId: string) => void;
   onUpload?: () => void;
+  projectId?: string;
 }
 
 const getFileIcon = (fileName: string) => {
@@ -46,7 +49,11 @@ const getFileColor = (fileName: string) => {
   }
 };
 
-export function DocumentGallery({ documents, onDelete, onUpload }: DocumentGalleryProps) {
+export function DocumentGallery({ documents, onDelete, onUpload, projectId }: DocumentGalleryProps) {
+  const { user } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   const handleDownload = async (path: string, name: string) => {
     const { data } = await supabase.storage
       .from("project-documents")
@@ -58,6 +65,68 @@ export function DocumentGallery({ documents, onDelete, onUpload }: DocumentGalle
     a.download = name;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !projectId || !user) return;
+
+    setIsUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+      const storagePath = `${projectId}/${fileName}`;
+
+      // Upload to Storage
+      const { error: uploadError } = await supabase.storage
+        .from("project-documents")
+        .upload(storagePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Insert record to documents table
+      const { error: dbError } = await supabase.from("documents").insert({
+        project_id: projectId,
+        file_name: file.name,
+        file_size: file.size,
+        storage_path: storagePath,
+        uploaded_by: user.id
+      });
+
+      if (dbError) throw dbError;
+      
+      alert("Dokumen berhasil diunggah!");
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      alert("Gagal mengunggah dokumen: " + error.message);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleClickUpload = () => {
+    if (projectId) {
+      fileInputRef.current?.click();
+    } else if (onUpload) {
+      onUpload();
+    }
+  };
+
+  const handleDeleteDocument = async (docId: string, storagePath: string) => {
+    if (!confirm("Apakah Anda yakin ingin menghapus dokumen ini?")) return;
+    
+    try {
+      // Hapus dari Storage
+      await supabase.storage.from("project-documents").remove([storagePath]);
+      
+      // Hapus dari database
+      await supabase.from("documents").delete().eq("id", docId);
+      
+    } catch (error: any) {
+      console.error("Delete error:", error);
+      alert("Gagal menghapus dokumen: " + error.message);
+    }
   };
 
   return (
@@ -72,17 +141,30 @@ export function DocumentGallery({ documents, onDelete, onUpload }: DocumentGalle
 
       <div className="flex-1 flex flex-col gap-4">
         {/* Upload Dropzone */}
-        {onUpload && (
-          <div 
-            onClick={onUpload}
-            className="w-full rounded-2xl border-2 border-dashed border-primary-200 bg-primary-50/50 hover:bg-primary-50 transition-colors cursor-pointer flex flex-col items-center justify-center p-6 text-center"
-          >
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-primary-100 mb-3 text-primary-600">
-              <CloudUpload size={24} />
+        {(onUpload || projectId) && (
+          <>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              className="hidden" 
+              onChange={handleFileChange}
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+            />
+            <div 
+              onClick={isUploading ? undefined : handleClickUpload}
+              className={`w-full rounded-2xl border-2 border-dashed border-primary-200 bg-primary-50/50 hover:bg-primary-50 transition-colors flex flex-col items-center justify-center p-6 text-center ${isUploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+            >
+              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-primary-100 mb-3 text-primary-600">
+                {isUploading ? (
+                  <div className="w-6 h-6 border-2 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+                ) : (
+                  <CloudUpload size={24} />
+                )}
+              </div>
+              <h4 className="text-sm font-bold text-slate-800 mb-1">{isUploading ? 'Sedang Mengunggah...' : 'Tarik file ke sini untuk mengunggah'}</h4>
+              <p className="text-[11px] text-slate-500 font-medium">Mendukung PDF, DOCX, XLSX, JPG, PNG (Maks. 25MB)</p>
             </div>
-            <h4 className="text-sm font-bold text-slate-800 mb-1">Tarik file ke sini untuk mengunggah</h4>
-            <p className="text-[11px] text-slate-500 font-medium">Mendukung PDF, DOCX, XLSX (Maks. 25MB)</p>
-          </div>
+          </>
         )}
 
         {/* Document Grid */}
@@ -119,9 +201,12 @@ export function DocumentGallery({ documents, onDelete, onUpload }: DocumentGalle
                   >
                     <Download size={14} />
                   </button>
-                  {onDelete && (
+                  {(onDelete || projectId) && (
                     <button
-                      onClick={() => onDelete(doc.id)}
+                      onClick={() => {
+                        if (projectId) handleDeleteDocument(doc.id, doc.storage_path);
+                        else if (onDelete) onDelete(doc.id);
+                      }}
                       className="p-1.5 rounded-md hover:bg-negative-50 text-slate-400 hover:text-negative-600 transition-colors"
                       title="Hapus"
                     >
