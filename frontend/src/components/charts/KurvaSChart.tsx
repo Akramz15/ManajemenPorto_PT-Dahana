@@ -1,6 +1,6 @@
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Legend, LabelList
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, Legend
 } from "recharts";
 
 interface KurvaSDataPoint {
@@ -27,21 +27,24 @@ function CustomTooltip({ active, payload, label }: {
     : null;
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm border border-slate-200 rounded-lg shadow-card-hover p-4 text-xs min-w-40 z-50">
-      <p className="font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">{label}</p>
-      <div className="space-y-2">
-        <div className="flex justify-between items-center gap-4">
-          <span className="text-[#4472C4] font-medium">RKAP</span>
-          <span className="font-bold text-slate-800">{rencana?.value != null ? rencana.value.toLocaleString('id-ID') : "-"}</span>
+    <div className="bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-5 text-sm min-w-56 z-50">
+      <p className="font-bold text-slate-800 mb-4 pb-3 border-b border-slate-100 uppercase tracking-widest text-[11px]">{label}</p>
+      <div className="space-y-3">
+        <div className="flex justify-between items-center gap-6">
+          <span className="text-slate-500 font-medium text-xs">Target (RKAP)</span>
+          <span className="font-bold text-slate-700">{rencana?.value != null ? rencana.value.toLocaleString('id-ID') : "-"}</span>
         </div>
-        <div className="flex justify-between items-center gap-4">
-          <span className="text-[#ED7D31] font-medium">Realisasi</span>
-          <span className="font-bold text-slate-800">{realisasi?.value != null ? realisasi.value.toLocaleString('id-ID') : "-"}</span>
+        <div className="flex justify-between items-center gap-6">
+          <span className="text-emerald-500 font-medium text-xs flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+            Realisasi
+          </span>
+          <span className="font-black text-slate-900 text-base">{realisasi?.value != null ? realisasi.value.toLocaleString('id-ID') : "-"}</span>
         </div>
         {deviasi && (
-          <div className="flex justify-between items-center gap-4 pt-2 mt-2 border-t border-slate-100">
-            <span className="font-semibold text-slate-600">Deviasi</span>
-            <span className={`font-bold ${parseFloat(deviasi) >= 0 ? "text-positive-600" : "text-negative-600"}`}>
+          <div className="flex justify-between items-center gap-6 pt-3 mt-3 border-t border-slate-100/80">
+            <span className="font-semibold text-slate-400 text-xs">Deviasi</span>
+            <span className={`font-bold px-2 py-0.5 rounded-md text-xs ${parseFloat(deviasi) >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"}`}>
               {parseFloat(deviasi) > 0 ? "+" : ""}{parseFloat(deviasi).toLocaleString('id-ID')}
             </span>
           </div>
@@ -50,12 +53,6 @@ function CustomTooltip({ active, payload, label }: {
     </div>
   );
 }
-
-// Custom formatter for the labels on the chart (to show e.g. "2.854" like in Excel)
-const labelFormatter = (value: number | null) => {
-  if (value == null) return "";
-  return value.toLocaleString('id-ID', { maximumFractionDigits: 0 });
-};
 
 export function KurvaSChart({ data }: KurvaSChartProps) {
   if (!data || data.length === 0) {
@@ -66,79 +63,94 @@ export function KurvaSChart({ data }: KurvaSChartProps) {
     );
   }
 
+  // Calculate the current active Realisasi to show as a big headline (Stock style)
+  let latestReal = 0;
+  let devStatus = 0;
+  const lastRealNode = [...data].reverse().find(d => d.realisasi != null);
+  if (lastRealNode) {
+    latestReal = lastRealNode.realisasi || 0;
+    if (lastRealNode.rencana != null) {
+      devStatus = latestReal - lastRealNode.rencana;
+    }
+  }
+
   return (
-    <div className="w-full relative px-2 pt-6">
-      <div className="w-full h-[400px]">
+    <div className="w-full relative px-1 pt-6">
+      
+      {/* Big Headline (Stock Style Overlay) */}
+      <div className="absolute top-0 left-6 z-10 flex flex-col pointer-events-none">
+        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Realisasi Terkini</span>
+        <div className="flex items-baseline gap-3">
+          <span className="text-4xl font-black text-slate-900 tracking-tighter">
+            Rp {latestReal.toLocaleString('id-ID')}
+          </span>
+          {devStatus !== 0 && (
+            <span className={`text-sm font-bold flex items-center ${devStatus > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+              {devStatus > 0 ? '▲' : '▼'} {Math.abs(devStatus).toLocaleString('id-ID')}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="w-full h-[380px] mt-16">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 25, right: 30, left: 10, bottom: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={true} />
+          <AreaChart data={data} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorRealisasi" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#10B981" stopOpacity={0.3} />
+                <stop offset="100%" stopColor="#10B981" stopOpacity={0.0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
             <XAxis 
               dataKey="periode" 
-              tick={{ fontSize: 11, fill: "#64748b", fontWeight: 500 }} 
-              axisLine={{ stroke: '#cbd5e1' }} 
-              tickLine={{ stroke: '#cbd5e1' }} 
+              tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }} 
+              axisLine={false} 
+              tickLine={false} 
               tickMargin={15} 
-              tickFormatter={(v) => v.substring(0, 3).toUpperCase()} // JAN, FEB, MAR
+              tickFormatter={(v) => v.substring(0, 3).toUpperCase()}
             />
-            <YAxis 
-              tick={{ fontSize: 11, fill: "#64748b", fontWeight: 500 }}
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(val) => val.toLocaleString('id-ID')}
-            />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }} />
+            <YAxis hide domain={['auto', 'auto']} />
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4' }} />
             <Legend 
-              wrapperStyle={{ fontSize: 12, fontWeight: 500, paddingTop: "10px" }} 
+              wrapperStyle={{ fontSize: 12, fontWeight: 600, paddingTop: "20px" }} 
               iconType="circle" 
               verticalAlign="top"
               align="right"
               formatter={(value) => {
-                if(value === "rencana") return <span className="text-slate-700 ml-1 mr-4">RKAP</span>;
-                return <span className="text-slate-700 ml-1">Realisasi</span>;
+                if(value === "rencana") return <span className="text-slate-400 ml-1 mr-4">Target (RKAP)</span>;
+                return <span className="text-emerald-600 ml-1">Realisasi</span>;
               }}
             />
             
-            {/* RKAP Line - Excel Blue */}
-            <Line
+            {/* Target Line - Subtle Dashed */}
+            <Area
               name="rencana"
-              type="linear"
+              type="monotone"
               dataKey="rencana"
-              stroke="#4472C4"
+              stroke="#cbd5e1"
               strokeWidth={2}
-              dot={{ r: 5, fill: "#4472C4", strokeWidth: 0 }}
-              activeDot={{ r: 7, fill: "#4472C4", strokeWidth: 0 }}
+              strokeDasharray="6 6"
+              fill="none"
+              dot={false}
+              activeDot={{ r: 5, fill: "#cbd5e1", strokeWidth: 0 }}
               connectNulls
-            >
-              <LabelList 
-                dataKey="rencana" 
-                position="top" 
-                offset={10}
-                formatter={labelFormatter}
-                style={{ fontSize: '11px', fill: '#334155', fontWeight: 600 }}
-              />
-            </Line>
+            />
 
-            {/* Realisasi Line - Excel Orange */}
-            <Line
+            {/* Actual Line - Smooth Stock Curve */}
+            <Area
               name="realisasi"
-              type="linear"
+              type="monotone"
               dataKey="realisasi"
-              stroke="#ED7D31"
-              strokeWidth={2}
-              dot={{ r: 5, fill: "#ED7D31", strokeWidth: 0 }}
-              activeDot={{ r: 7, fill: "#ED7D31", strokeWidth: 0 }}
+              stroke="#10B981"
+              strokeWidth={3}
+              fill="url(#colorRealisasi)"
+              dot={false}
+              activeDot={{ r: 6, fill: "#10B981", strokeWidth: 3, stroke: "#ffffff", className: "shadow-sm" }}
               connectNulls
-            >
-              <LabelList 
-                dataKey="realisasi" 
-                position="bottom" 
-                offset={10}
-                formatter={labelFormatter}
-                style={{ fontSize: '11px', fill: '#334155', fontWeight: 600 }}
-              />
-            </Line>
-
-          </LineChart>
+              animationDuration={1500}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>
