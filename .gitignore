@@ -63,3 +63,6 @@ supabase/.temp/
 
 # TypeScript
 *.tsbuildinfo
+
+# Documentation
+docs/
