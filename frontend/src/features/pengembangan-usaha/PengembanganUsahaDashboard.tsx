@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
-import { KurvaSChart } from "@/components/charts";
-import { ExcelUploader } from "@/components/shared";
-import { useChartData } from "@/hooks/useChartData";
 import { supabase } from "@/lib/supabase";
 import type { Project } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
-import { TrendingUp, Clock, AlertTriangle, CheckCircle2, FolderOpen, Activity, ArrowUpRight } from "lucide-react";
+import { TrendingUp, Clock, AlertTriangle, CheckCircle2, FolderOpen, Activity } from "lucide-react";
 
 export default function PengembanganUsahaDashboard() {
   const [semuaProyek, setSemuaProyek] = useState<Project[]>([]);
   const [recentUpdates, setRecentUpdates] = useState<any[]>([]);
-  const [showUploadModal, setShowUploadModal] = useState(false);
   const [activePipelineTab, setActivePipelineTab] = useState<'kajian' | 'berjalan'>('kajian');
 
   // KPI States
@@ -71,17 +67,9 @@ export default function PengembanganUsahaDashboard() {
     fetchDashboardData();
   }, []);
 
-  // Fetch Global PU Chart Data
-  const { data: chartDataPU, loading: chartLoadingPU, refetch: refetchPU } = useChartData<any>("laba-rugi", "pengembangan-usaha");
-  const kurvaSDataPU = chartDataPU?.data_points || [];
-
-  // KPIs Calculation
   const proyekBerjalan = semuaProyek.filter(p => p.kategori === "berjalan");
   const proyekKajian = semuaProyek.filter(p => p.kategori === "kajian");
   
-  // Status Kesehatan Proyek (Just as an example KPI based on recent updates or tasks)
-  // Let's calculate from recent progress if they are on track or not, or just a dummy metric if we don't have project status
-  // We'll calculate it by iterating through all projects (if we had a status field) or we just infer.
   // We can say: 
   const totalAktif = proyekBerjalan.length;
   const totalKajian = proyekKajian.length;
@@ -144,39 +132,6 @@ export default function PengembanganUsahaDashboard() {
         </div>
       </div>
 
-      {/* Main Layout Grid */}
-      <div className="mb-6 space-y-6">
-        {/* Grafik Global Kurva S (Full Width) */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-115 w-full flex flex-col">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-primary-50 rounded-bl-[100px] -z-10 opacity-50"></div>
-          
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <div className="w-2 h-6 bg-primary-500 rounded-full"></div>
-              Laba/Rugi Pengembangan Usaha (YTD)
-            </h3>
-            <button 
-              onClick={() => setShowUploadModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 rounded-xl font-bold text-sm hover:bg-primary-100 hover:text-primary-700 transition-colors border border-primary-100"
-            >
-              <ArrowUpRight size={16} />
-              Update Data
-            </button>
-          </div>
-
-          <div className="relative overflow-visible flex-1">
-            {chartLoadingPU ? (
-              <div className="h-full flex items-center justify-center rounded-2xl">
-                <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
-              </div>
-            ) : (
-              <div className="h-full relative">
-                <KurvaSChart data={kurvaSDataPU} />
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -297,28 +252,6 @@ export default function PengembanganUsahaDashboard() {
 
       </div>
 
-      {showUploadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 relative">
-            <button 
-              onClick={() => setShowUploadModal(false)} 
-              className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
-            >
-              ✕
-            </button>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">Upload Data Laba/Rugi</h3>
-            <p className="text-sm text-slate-500 mb-6">Unggah file Excel Laba/Rugi untuk memperbarui grafik global Divisi Pengembangan Usaha.</p>
-            <ExcelUploader 
-              context="laba-rugi" 
-              subContext="pengembangan-usaha"
-              onSuccess={() => {
-                refetchPU();
-                setShowUploadModal(false);
-              }} 
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

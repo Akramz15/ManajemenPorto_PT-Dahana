@@ -53,6 +53,12 @@ export const navConfig: Record<string, NavSection[]> = {
   ],
   portofolio: [
     {
+      label: "Dashboard",
+      items: [
+        { label: "Dashboard Utama", path: "/porto/dashboard", icon: TrendingUp },
+      ],
+    },
+    {
       label: "Anak Cucu",
       items: [
         { label: "DIC", path: "/porto/anak-cucu/dic", icon: Building2 },
