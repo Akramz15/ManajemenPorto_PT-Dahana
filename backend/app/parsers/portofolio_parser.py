@@ -47,6 +47,42 @@ class PortofolioParser(BaseExcelParser):
             
         return result
 
+    def _extract_monthly_rkap(self, df: pd.DataFrame, keyword: str):
+        for _, row in df.iterrows():
+            if len(row.values) > 1:
+                val = row.values[1]
+                if isinstance(val, str) and keyword.lower() in val.lower():
+                    rkap, real = [], []
+                    # RKAP (Index 2-13)
+                    for i in range(2, 14):
+                        if i < len(row.values):
+                            v = row.values[i]
+                            rkap.append(float(v) if pd.notna(v) and str(v).strip() != "" else 0.0)
+                        else:
+                            rkap.append(0.0)
+                    # REAL (Index 16-27)
+                    for i in range(16, 28):
+                        if i < len(row.values):
+                            v = row.values[i]
+                            if pd.notna(v) and str(v).strip() != "":
+                                real.append(float(v))
+                            else:
+                                real.append(None)
+                        else:
+                            real.append(None)
+                    return rkap, real
+        return [0.0]*12, [None]*12
+
+    def _calculate_ytd(self, arr):
+        ytd, current = [], 0
+        for val in arr:
+            if val is not None:
+                current += val
+                ytd.append(current)
+            else:
+                ytd.append(None)
+        return ytd
+
     def _parse_dic(self, xl: pd.ExcelFile) -> dict:
         months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
         
@@ -91,22 +127,21 @@ class PortofolioParser(BaseExcelParser):
         # 4. RKAP (RKAP-REAL DIC)
         try:
             df_rkap = pd.read_excel(xl, sheet_name="RKAP-REAL DIC", header=None)
-            rkap_total = _find_val(df_rkap, "jumlah pendapatan") or 65000.00
-            laba_rugi_total = _find_val(df_rkap, "laba rugi") or 15000.00
+            rkap_pend_arr, real_pend_arr = self._extract_monthly_rkap(df_rkap, "penjualan")
+            rkap_laba_arr, real_laba_arr = self._extract_monthly_rkap(df_rkap, "laba (rugi) usaha")
         except Exception:
-            rkap_total = 65000.00
-            laba_rugi_total = 15000.00
+            rkap_pend_arr, real_pend_arr = [0.0]*12, [None]*12
+            rkap_laba_arr, real_laba_arr = [0.0]*12, [None]*12
             
-        # YTD Pendapatan
-        rk_trend_pend = _generate_trend(rkap_total, 12, 0.05)
-        # YTD Laba Rugi
-        rk_trend_lr = _generate_trend(laba_rugi_total, 12, 0.08)
-        # Laba Rugi Usaha (monthly, not cumulative)
-        rk_trend_lru = _generate_trend(laba_rugi_total * 0.8, 12, 0.1)
+        rkap_pend_ytd = self._calculate_ytd(rkap_pend_arr)
+        real_pend_ytd = self._calculate_ytd(real_pend_arr)
         
-        rkap_ytd_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if i < 5 else None} for i, (m, r, p) in enumerate(zip(months, rk_trend_pend, p_trend))]
-        rkap_ytd_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 * 0.2 if i < 5 else None} for i, (m, r, p) in enumerate(zip(months, rk_trend_lr, p_trend))]
-        rkap_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 * 0.15 if i < 5 else None} for i, (m, r, p) in enumerate(zip(months, rk_trend_lru, p_trend))]
+        rkap_laba_ytd = self._calculate_ytd(rkap_laba_arr)
+        real_laba_ytd = self._calculate_ytd(real_laba_arr)
+        
+        rkap_ytd_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_ytd, real_pend_ytd)]
+        rkap_ytd_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_ytd, real_laba_ytd)]
+        rkap_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_arr, real_laba_arr)]
         
         return {
             "revenue": revenue,
