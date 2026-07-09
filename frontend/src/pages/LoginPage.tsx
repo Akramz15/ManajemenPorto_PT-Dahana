@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth, useSignIn } from "@/hooks/useAuth";
 import { Spinner } from "@/components/ui/Spinner";
 import { Eye, EyeOff } from "lucide-react";
+import logoDahana from "@/assets/Logo_Dahana.png";
 
 export default function LoginPage() {
   const { session } = useAuth();
@@ -24,23 +25,8 @@ export default function LoginPage() {
         
         {/* Header Section */}
         <div className="flex flex-col items-center mb-10">
-          <div className="flex items-center gap-4">
-            {/* Logo Graphic (Initials DB) */}
-            <div className="w-14 h-14 shrink-0 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-500/30">
-              <span className="text-white font-black text-xl tracking-tight leading-none">
-                DB
-              </span>
-            </div>
-            
-            {/* Title */}
-            <div className="flex flex-col justify-center">
-              <h1 className="text-2xl font-black italic tracking-tight text-slate-900 leading-none mb-1">
-                DAHANA BIZPORT
-              </h1>
-              <p className="text-[10px] font-bold text-primary-600 uppercase tracking-widest leading-tight">
-                WORKSPACE KOLABORATIF
-              </p>
-            </div>
+          <div className="flex items-center justify-center mb-6">
+            <img src={logoDahana} alt="PT Dahana BizPort" className="h-16 w-auto object-contain drop-shadow-sm" />
           </div>
           
           <div className="mt-10 text-center">

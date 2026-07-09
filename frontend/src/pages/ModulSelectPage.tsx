@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { TrendingUp, PieChart } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useAuth } from "@/hooks/useAuth";
+import logoDahana from "@/assets/Logo_Dahana.png";
 
 const modules = [
   {
@@ -39,20 +40,8 @@ export default function ModulSelectPage() {
       
       {/* Floating Navbar Logo */}
       <div className="w-full flex justify-center pt-10">
-        <div className="bg-white/70 backdrop-blur-xl border border-white/60 shadow-floating px-8 py-4 rounded-4xl flex items-center gap-4">
-          <div className="w-12 h-12 shrink-0 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-500/30">
-            <span className="text-white font-black text-2xl tracking-tighter leading-none">
-              DB
-            </span>
-          </div>
-          <div className="flex flex-col justify-center">
-            <h1 className="text-2xl font-black italic tracking-tight text-slate-900 leading-none mb-1">
-              DAHANA BIZPORT
-            </h1>
-            <p className="text-[11px] font-bold text-primary-600 uppercase tracking-widest leading-none">
-              Workspace Kolaboratif
-            </p>
-          </div>
+        <div className="bg-white/70 backdrop-blur-xl border border-white/60 shadow-floating px-8 py-5 rounded-4xl flex items-center justify-center">
+          <img src={logoDahana} alt="PT Dahana BizPort" className="h-14 w-auto object-contain drop-shadow-sm" />
         </div>
       </div>
 
