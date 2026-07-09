@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 import { formatRupiah } from "@/lib/formatters";
 
@@ -17,51 +18,33 @@ function CashFlowTooltip({ active, payload, label }: {
   label?: string;
 }) {
   if (!active || !payload?.length) return null;
-
-  const totalTerima = payload.filter(p => p.dataKey.includes('terima')).reduce((sum, p) => sum + (p.value || 0), 0);
-  const totalKeluar = payload.filter(p => p.dataKey.includes('keluar')).reduce((sum, p) => sum + (p.value || 0), 0);
+  const penerimaan = payload.find((p) => p.dataKey === "penerimaan");
+  const pengeluaran = payload.find((p) => p.dataKey === "pengeluaran");
 
   return (
-    <div className="apple-tooltip min-w-[280px]">
+    <div className="apple-tooltip">
       <p className="apple-tooltip-title">{label}</p>
-      
-      <div className="mb-3 pb-3 border-b border-slate-700/50 space-y-1">
-        <div className="flex justify-between items-center">
-          <span className="text-emerald-400 font-bold text-xs uppercase tracking-wider">Total Penerimaan</span>
-          <span className="font-bold text-white">{formatRupiah(totalTerima)}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-rose-400 font-bold text-xs uppercase tracking-wider">Total Pengeluaran</span>
-          <span className="font-bold text-white">{formatRupiah(totalKeluar)}</span>
-        </div>
-      </div>
-
       <div className="space-y-2">
-        {payload.filter(p => p.value).map((item, idx) => (
-          <div key={idx} className="flex justify-between items-center gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-              <span className="text-slate-300">{item.name}</span>
-            </div>
-            <span className="font-medium text-white">{formatRupiah(item.value)}</span>
-          </div>
-        ))}
+        <div className="flex justify-between items-center gap-6">
+          <span className="text-emerald-400 font-medium">Penerimaan</span>
+          <span className="font-bold text-white">{formatRupiah(penerimaan?.value ?? 0)}</span>
+        </div>
+        <div className="flex justify-between items-center gap-6">
+          <span className="text-rose-400 font-medium">Pengeluaran</span>
+          <span className="font-bold text-white">{formatRupiah(pengeluaran?.value ?? 0)}</span>
+        </div>
       </div>
     </div>
   );
 }
 
 export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
-  // We need to make sure Pengeluaran values are positive for stacked bar chart stacking downwards
-  // Wait, in Recharts, if values are positive they stack UP. If we want them to go DOWN, 
-  // we could just leave them as is (since backend returns positive numbers for pengeluaran due to abs())
-  // Ah, wait! The backend returns POSITIVE numbers because I used `abs()`!
-  // If I want them to stack DOWN on the chart, I should negate them before passing to BarChart.
+  const [kategori, setKategori] = useState<"cfo" | "cfi" | "cff">("cfo");
+
   const chartData = data.map(d => ({
-    ...d,
-    cfo_keluar: d.cfo_keluar ? -d.cfo_keluar : null,
-    cfi_keluar: d.cfi_keluar ? -d.cfi_keluar : null,
-    cff_keluar: d.cff_keluar ? -d.cff_keluar : null,
+    periode: d.periode,
+    penerimaan: d[`${kategori}_terima`],
+    pengeluaran: d[`${kategori}_keluar`] ? -d[`${kategori}_keluar`] : null
   }));
 
   const yAxisFormatter = (v: number) => {
@@ -70,25 +53,36 @@ export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
 
   return (
     <div className="card w-full">
-      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">Arus Kas (Cash Flow)</h3>
-      <p className="text-xs font-medium text-slate-500 mb-8">Rincian Operasi, Investasi, dan Pendanaan per bulan</p>
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
+        <div>
+          <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">Arus Kas (Cash Flow)</h3>
+          <p className="text-xs font-medium text-slate-500">Penerimaan vs Pengeluaran per kategori</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-semibold text-slate-600">Kategori:</label>
+          <select 
+            value={kategori} 
+            onChange={(e) => setKategori(e.target.value as "cfo" | "cfi" | "cff")}
+            className="text-sm border-slate-200 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500 bg-white font-medium text-slate-700 py-1.5 px-3 cursor-pointer outline-none transition-all duration-200 hover:bg-slate-50"
+          >
+            <option value="cfo">Aktivitas Operasi (CFO)</option>
+            <option value="cfi">Aktivitas Investasi (CFI)</option>
+            <option value="cff">Aktivitas Funding (CFF)</option>
+          </select>
+        </div>
+      </div>
       
-      <div className="w-full h-80">
+      <div className="w-full h-70">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} barGap={0} margin={{ top: 10, right: 10, left: -10, bottom: 0 }} stackOffset="sign">
+          <BarChart data={chartData} barGap={4} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <XAxis dataKey="periode" tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }} axisLine={false} tickLine={false} tickMargin={12} />
             <YAxis tickFormatter={yAxisFormatter} tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }} axisLine={false} tickLine={false} tickMargin={12} />
             <Tooltip content={<CashFlowTooltip />} cursor={{ fill: '#f1f5f9', opacity: 0.4 }} />
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: "20px", fontWeight: 600 }} iconType="circle" />
             <ReferenceLine y={0} stroke="#cbd5e1" />
             
-            <Bar name="Terima Operasi" dataKey="cfo_terima" stackId="terima" fill="#10B981" />
-            <Bar name="Terima Investasi" dataKey="cfi_terima" stackId="terima" fill="#34D399" />
-            <Bar name="Terima Funding" dataKey="cff_terima" stackId="terima" fill="#6EE7B7" radius={[4, 4, 0, 0]} />
-            
-            <Bar name="Keluar Operasi" dataKey="cfo_keluar" stackId="keluar" fill="#F43F5E" />
-            <Bar name="Keluar Investasi" dataKey="cfi_keluar" stackId="keluar" fill="#FB7185" />
-            <Bar name="Keluar Funding" dataKey="cff_keluar" stackId="keluar" fill="#FDA4AF" radius={[0, 0, 4, 4]} />
+            <Bar name="Penerimaan" dataKey="penerimaan" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={32} />
+            <Bar name="Pengeluaran" dataKey="pengeluaran" fill="#F43F5E" radius={[0, 0, 4, 4]} maxBarSize={32} />
           </BarChart>
         </ResponsiveContainer>
       </div>
