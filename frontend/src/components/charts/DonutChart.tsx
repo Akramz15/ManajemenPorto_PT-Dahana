@@ -35,27 +35,14 @@ function DonutTooltip({ active, payload, formatValue }: {
 }
 
 export function DonutChart({ data, title, centerLabel, formatValue }: DonutChartProps) {
-  // Format centerLabel to Miliar if it is too long (assuming centerLabel is a string starting with Rp)
-  const formatCenterLabel = (label: string | undefined) => {
-    if (!label) return "";
-    const numMatch = label.replace(/[Rp.\s]/g, "");
-    const num = parseInt(numMatch);
-    if (!isNaN(num) && num >= 1e9) {
-      return `Rp${(num / 1e9).toFixed(1)} M`;
-    }
-    return label;
-  };
-
-  const formattedCenter = centerLabel ? formatCenterLabel(centerLabel) : undefined;
-
   return (
     <div className="card w-full flex flex-col h-full">
       <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1 z-10">{title}</h3>
       <div className="w-full flex-1 relative z-10 min-h-[250px] flex items-center justify-center">
-        {formattedCenter && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-[-20px]">
+        {centerLabel && (
+          <div className="absolute left-0 right-0 top-[45%] -translate-y-1/2 flex flex-col items-center justify-center pointer-events-none">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
-            <p className="text-lg font-black text-slate-900">{formattedCenter}</p>
+            <p className="text-lg font-black text-slate-900">{centerLabel}</p>
           </div>
         )}
         <ResponsiveContainer width="100%" height="100%" className="relative z-10">
