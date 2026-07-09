@@ -62,19 +62,25 @@ export default function DIC() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 flex flex-col gap-8">
-            <RevenueHPPChart data={revenueData} />
-            <CashFlowChart data={cashFlow} />
-          </div>
-          <div className="lg:col-span-1 flex flex-col gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="lg:col-span-1">
             <DonutChart 
               title="Komposisi Aset"
               data={komposisiAset} 
               centerLabel={formatRupiah(totalAset, true)}
             />
+          </div>
+          <div className="lg:col-span-1">
             <EkuitasChart data={ekuitasDetail} />
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8">
+          <CashFlowChart data={cashFlow} />
+        </div>
+
+        <div className="grid grid-cols-1 gap-8">
+          <RevenueHPPChart data={revenueData} />
         </div>
       </div>
     </div>
