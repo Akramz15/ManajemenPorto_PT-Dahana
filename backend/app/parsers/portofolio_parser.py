@@ -245,7 +245,6 @@ class PortofolioParser(BaseExcelParser):
                     prod = row.values[4]
                     keluar = row.values[5]
                     akhir = row.values[6]
-                    
                     def safe_float(v):
                         if pd.notna(v) and str(v).strip() != "":
                             try:
@@ -254,12 +253,21 @@ class PortofolioParser(BaseExcelParser):
                                 return None
                         return None
                         
+                    awal_val = safe_float(awal)
+                    prod_val = safe_float(prod)
+                    keluar_val = safe_float(keluar)
+                    akhir_val = safe_float(akhir)
+                    
+                    # If all inputs are empty but akhir is 0 (due to excel formula), treat as None
+                    if awal_val is None and prod_val is None and keluar_val is None and akhir_val == 0.0:
+                        akhir_val = None
+                        
                     inventory.append({
                         "periode": months[month_idx] if month_idx < 12 else "Unknown",
-                        "stok_awal": safe_float(awal),
-                        "produksi": safe_float(prod),
-                        "pengeluaran": safe_float(keluar),
-                        "stok_akhir": safe_float(akhir)
+                        "stok_awal": awal_val,
+                        "produksi": prod_val,
+                        "pengeluaran": keluar_val,
+                        "stok_akhir": akhir_val
                     })
                     month_idx += 1
                     if month_idx >= 12:
