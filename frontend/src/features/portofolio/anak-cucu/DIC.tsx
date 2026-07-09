@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useChartData } from "@/hooks/useChartData";
-import { RevenueHPPChart, DonutChart, CashFlowChart, RKAPChart } from "@/components/charts";
+import { RevenueHPPChart, DonutChart, CashFlowChart, RKAPChart, EkuitasChart } from "@/components/charts";
 import { formatRupiah } from "@/lib/formatters";
 import { ExcelUploader } from "@/components/shared";
 
@@ -12,6 +12,7 @@ export default function DIC() {
 
   const revenueData = chartData?.data?.revenue || [];
   const komposisiAset = chartData?.data?.komposisi_aset || [];
+  const ekuitasDetail = chartData?.data?.ekuitas_detail || { modal_saham: 0, disagio_saham: 0, tambahan_modal: 0, saldo_laba: 0 };
   const cashFlow = chartData?.data?.cash_flow || [];
   
   const rkapDataLabaRugi = chartData?.data?.rkap_laba_rugi || [];
@@ -62,20 +63,18 @@ export default function DIC() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 flex flex-col gap-8">
             <RevenueHPPChart data={revenueData} />
+            <CashFlowChart data={cashFlow} />
           </div>
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 flex flex-col gap-8">
             <DonutChart 
               title="Komposisi Aset"
               data={komposisiAset} 
               centerLabel={formatRupiah(totalAset, true)}
             />
+            <EkuitasChart data={ekuitasDetail} />
           </div>
-        </div>
-        
-        <div className="grid grid-cols-1 gap-8">
-          <CashFlowChart data={cashFlow} />
         </div>
       </div>
     </div>

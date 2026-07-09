@@ -125,6 +125,19 @@ class PortofolioParser(BaseExcelParser):
                             return float(row.values[k])
         return 0.0
 
+    def _extract_ekuitas_detail(self, df: pd.DataFrame) -> dict:
+        modal_saham = self._extract_first_num(df, "modal saham")
+        disagio_saham = self._extract_first_num(df, "disagio saham")
+        tambahan_modal = self._extract_first_num(df, "tambahan modal disetor")
+        saldo_laba = self._extract_first_num(df, "saldo laba")
+        
+        return {
+            "modal_saham": modal_saham * 1e6,
+            "disagio_saham": disagio_saham * 1e6,
+            "tambahan_modal": tambahan_modal * 1e6,
+            "saldo_laba": saldo_laba * 1e6
+        }
+
     def _parse_dic(self, xl: pd.ExcelFile) -> dict:
         months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
         
@@ -164,6 +177,17 @@ class PortofolioParser(BaseExcelParser):
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
         ]
         
+        try:
+            df_dic_r1 = pd.read_excel(xl, sheet_name="Lap. DIC-R1", header=None)
+            ekuitas_detail = self._extract_ekuitas_detail(df_dic_r1)
+        except Exception:
+            ekuitas_detail = {
+                "modal_saham": 0.0,
+                "disagio_saham": 0.0,
+                "tambahan_modal": 0.0,
+                "saldo_laba": 0.0
+            }
+        
         cash_flow = [
             {
                 "periode": m,
@@ -190,6 +214,7 @@ class PortofolioParser(BaseExcelParser):
         return {
             "revenue": revenue,
             "komposisi_aset": komposisi_aset,
+            "ekuitas_detail": ekuitas_detail,
             "cash_flow": cash_flow,
             "rkap": rkap_ytd_pendapatan,
             "rkap_laba_rugi": rkap_laba_rugi,
@@ -247,8 +272,16 @@ class PortofolioParser(BaseExcelParser):
             # 1209712 * 1e6 = 1.2 Trillion. Yes, usually in Jutaan (Millions).
             atl_val = aset_tidak_lancar * 1e6
             eq_val = ekuitas * 1e6
+            
+            ekuitas_detail = self._extract_ekuitas_detail(df_kan_r1)
         except Exception:
             atl_val, eq_val = 0.0, 0.0
+            ekuitas_detail = {
+                "modal_saham": 0.0,
+                "disagio_saham": 0.0,
+                "tambahan_modal": 0.0,
+                "saldo_laba": 0.0
+            }
             
         komposisi_aset = [
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
@@ -276,6 +309,7 @@ class PortofolioParser(BaseExcelParser):
             "rkap_ytd_pendapatan": rkap_ytd_pendapatan,
             "rkap_ytd_laba_rugi": rkap_ytd_laba_rugi,
             "komposisi_aset": komposisi_aset,
+            "ekuitas_detail": ekuitas_detail,
             "cash_flow": cash_flow
         }
         

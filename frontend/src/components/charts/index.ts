@@ -4,6 +4,7 @@ export * from "./RevenueHPPChart";
 export * from "./DonutChart";
 export * from "./CashFlowChart";
 export * from "./RKAPChart";
+export * from "./EkuitasChart";
 export * from "./InventoriChart";
 export * from "./InvestasiBubbleChart";
 export * from "./colors";
