@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useChartData } from "@/hooks/useChartData";
-import { RKAPChart, RevenueHPPChart } from "@/components/charts";
+import { RKAPChart, RevenueHPPChart, CashFlowChart } from "@/components/charts";
 import { ExcelUploader } from "@/components/shared";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
@@ -38,6 +38,7 @@ export default function KAN() {
 
   const produksiData = chartData?.data?.produksi || [];
   const revenueData = chartData?.data?.revenue || [];
+  const cashFlow = chartData?.data?.cash_flow || [];
   
   const rkapDataLabaRugi = chartData?.data?.rkap_laba_rugi || [];
   const rkapDataYtdPendapatan = chartData?.data?.rkap_ytd_pendapatan || [];
@@ -105,6 +106,10 @@ export default function KAN() {
         
         <div className="grid grid-cols-1 gap-8">
           <RevenueHPPChart data={revenueData} />
+        </div>
+
+        <div className="grid grid-cols-1 gap-8">
+          <CashFlowChart data={cashFlow} />
         </div>
       </div>
     </div>
