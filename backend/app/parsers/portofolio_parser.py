@@ -85,56 +85,71 @@ class PortofolioParser(BaseExcelParser):
                 ytd.append(None)
         return ytd
 
+    def _extract_cashflow(self, df: pd.DataFrame, keyword: str):
+        for idx, row in df.iterrows():
+            if len(row.values) > 6:
+                val = row.values[6]
+                if isinstance(val, str) and keyword.lower() in val.lower():
+                    cf = []
+                    for i in range(7, 19):
+                        if i < len(row.values):
+                            v = row.values[i]
+                            if pd.notna(v) and str(v).strip() != "":
+                                cf.append(abs(float(v)))
+                            else:
+                                cf.append(None)
+                        else:
+                            cf.append(None)
+                    return cf
+        return [None]*12
+
+    def _extract_first_num(self, df: pd.DataFrame, keyword: str) -> float:
+        for idx, row in df.iterrows():
+            for j, cell in enumerate(row.values):
+                if isinstance(cell, str) and keyword.lower() in cell.lower():
+                    for k in range(j + 1, len(row.values)):
+                        if pd.notna(row.values[k]) and isinstance(row.values[k], (int, float)):
+                            return float(row.values[k])
+        return 0.0
+
     def _parse_dic(self, xl: pd.ExcelFile) -> dict:
         months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
         
-        # 1. Revenue & HPP (Lap. DIC-R1)
-        try:
-            df_pnl = pd.read_excel(xl, sheet_name="Lap. DIC-R1", header=None)
-            penjualan = _find_val(df_pnl, "penjualan") or 59743.83
-            hpp = _find_val(df_pnl, "hpp") or 49365.92
-        except Exception:
-            penjualan, hpp = 59743.83, 49365.92
-            
-        p_trend = _generate_trend(penjualan, 12)
-        h_trend = _generate_trend(hpp, 12)
-        revenue = [{"periode": m, "penjualan": p * 1e6, "hpp": h * 1e6} for m, p, h in zip(months, p_trend, h_trend)]
-        
-        # 2. Komposisi Aset (Neraca&CF DIC)
-        try:
-            df_neraca = pd.read_excel(xl, sheet_name="Neraca&CF DIC", header=None)
-            aset_lancar = _find_val(df_neraca, "aset lancar") or 100639.43
-            aset_tidak_lancar = 351951.38
-            penerimaan = _find_val(df_neraca, "penerimaan") or 53449.94
-            pengeluaran = _find_val(df_neraca, "pengeluaran") or 40000.00
-        except Exception:
-            aset_lancar, aset_tidak_lancar = 100639.43, 351951.38
-            penerimaan, pengeluaran = 53449.94, 40000.00
-            
-        al_mult = 1 if aset_lancar > 1e9 else 1e6
-        atl_mult = 1 if aset_tidak_lancar > 1e9 else 1e6
-        
-        komposisi_aset = [
-            {"name": "Aset Lancar", "value": aset_lancar * al_mult, "color": "#3B82F6"},
-            {"name": "Aset Tidak Lancar", "value": aset_tidak_lancar * atl_mult, "color": "#10B981"}
-        ]
-        
-        # 3. Cash Flow
-        pen_mult = 1 if penerimaan > 1e9 else 1e6
-        peng_mult = 1 if pengeluaran > 1e9 else 1e6
-        cf_terima = _generate_trend(penerimaan, 12)
-        cf_keluar = _generate_trend(pengeluaran, 12)
-        cash_flow = [{"periode": m, "penerimaan": t * pen_mult, "pengeluaran": k * peng_mult} for m, t, k in zip(months, cf_terima, cf_keluar)]
-        
-        # 4. RKAP (RKAP-REAL DIC)
+        # 1, 3, 4. Data dari RKAP-REAL DIC (Penjualan, HPP, Laba Rugi, RKAP)
         try:
             df_rkap = pd.read_excel(xl, sheet_name="RKAP-REAL DIC", header=None)
             rkap_pend_arr, real_pend_arr = self._extract_monthly_rkap(df_rkap, "penjualan")
             rkap_laba_arr, real_laba_arr = self._extract_monthly_rkap(df_rkap, "laba (rugi) usaha")
+            _, real_hpp_arr = self._extract_monthly_rkap(df_rkap, "hpp")
         except Exception:
             rkap_pend_arr, real_pend_arr = [0.0]*12, [None]*12
             rkap_laba_arr, real_laba_arr = [0.0]*12, [None]*12
+            _, real_hpp_arr = [0.0]*12, [None]*12
             
+        revenue = [{"periode": m, "penjualan": (p * 1e6) if p is not None else None, "hpp": (h * 1e6) if h is not None else None} for m, p, h in zip(months, real_pend_arr, real_hpp_arr)]
+        
+        # 2, 5. Komposisi Aset & Cash Flow dari Neraca&CF DIC
+        try:
+            df_neraca = pd.read_excel(xl, sheet_name="Neraca&CF DIC", header=None)
+            aset_lancar = self._extract_first_num(df_neraca, "aset lancar")
+            aset_tidak_lancar = self._extract_first_num(df_neraca, "aset tidak lancar")
+            
+            al_val = aset_lancar * 1e6 if aset_lancar < 1e9 else aset_lancar
+            atl_val = aset_tidak_lancar * 1e6 if aset_tidak_lancar < 1e9 else aset_tidak_lancar
+            
+            cf_terima = self._extract_cashflow(df_neraca, "penerimaan")
+            cf_keluar = self._extract_cashflow(df_neraca, "pengeluaran")
+        except Exception:
+            al_val, atl_val = 0.0, 0.0
+            cf_terima, cf_keluar = [None]*12, [None]*12
+            
+        komposisi_aset = [
+            {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
+            {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
+        ]
+        
+        cash_flow = [{"periode": m, "penerimaan": (t * 1e6) if t is not None else None, "pengeluaran": (k * 1e6) if k is not None else None} for m, t, k in zip(months, cf_terima, cf_keluar)]
+        
         rkap_pend_ytd = self._calculate_ytd(rkap_pend_arr)
         real_pend_ytd = self._calculate_ytd(real_pend_arr)
         
