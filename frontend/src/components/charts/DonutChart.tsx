@@ -49,11 +49,11 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
   const formattedCenter = centerLabel ? formatCenterLabel(centerLabel) : undefined;
 
   return (
-    <div className="card w-full flex flex-col h-full mb-0! pb-0! border-0! relative">
-      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-4 z-10">{title}</h3>
-      <div className="w-full relative z-10 min-h-72 h-[280px] -mt-7.5">
+    <div className="card w-full flex flex-col h-full">
+      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1 z-10">{title}</h3>
+      <div className="w-full flex-1 relative z-10 min-h-[250px] flex items-center justify-center">
         {formattedCenter && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-8">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-[-20px]">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
             <p className="text-lg font-black text-slate-900">{formattedCenter}</p>
           </div>
@@ -63,9 +63,9 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
             <Pie
               data={data}
               cx="50%"
-              cy="50%"
+              cy="45%"
               innerRadius={75}
-              outerRadius={105}
+              outerRadius={100}
               paddingAngle={6}
               dataKey="value"
               stroke="none"
