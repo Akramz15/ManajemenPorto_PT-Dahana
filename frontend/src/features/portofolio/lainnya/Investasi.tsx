@@ -1,6 +1,6 @@
 export default function Investasi() {
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-8 max-w-7xl mx-auto space-y-8 min-h-125">
       <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
         <h2 className="text-xl font-bold text-slate-900 tracking-tight">Investasi & Portofolio Lainnya</h2>
         <p className="text-sm text-slate-500 mt-1">Peta sebaran portofolio investasi beserta tingkat pengembalian (ROI) dan risiko</p>

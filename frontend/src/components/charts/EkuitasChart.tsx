@@ -15,10 +15,10 @@ function EkuitasTooltip({ active, payload }: any) {
   const isNegative = value < 0;
 
   return (
-    <div className="apple-tooltip min-w-[200px]">
+    <div className="apple-tooltip min-w-50">
       <div className="flex items-center gap-2 mb-2">
         <div className={`w-3 h-3 rounded-full ${isNegative ? 'bg-rose-500' : 'bg-emerald-500'}`} />
-        <p className="apple-tooltip-title !mb-0">{data.name}</p>
+        <p className="apple-tooltip-title mb-0!">{data.name}</p>
       </div>
       <div className="flex justify-between items-center gap-4">
         <span className="text-slate-400 font-medium">Nilai</span>
@@ -54,14 +54,14 @@ export function EkuitasChart({ data }: { data: EkuitasDetail }) {
 
   return (
     <div className="card w-full h-full flex flex-col">
-      <div className="mb-6">
+      <div className="space-y-3 mb-0!">
         <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">Rincian Ekuitas</h3>
         <p className="text-xs font-medium text-slate-500">
           Total Ekuitas: <span className="font-bold text-slate-800">{formatRupiah(totalEkuitas, true)}</span>
         </p>
       </div>
       
-      <div className="flex-1 w-full min-h-[200px]">
+      <div className="w-full relative flex-1 min-h-50 flex flex-col justify-center">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
             data={chartData} 

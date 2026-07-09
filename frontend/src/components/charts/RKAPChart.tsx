@@ -102,7 +102,7 @@ export function RKAPChart({ data, title = "Target RKAP vs Realisasi (Terkini)", 
           {title}
         </h3>
         {headerAction && (
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             {headerAction}
           </div>
         )}
