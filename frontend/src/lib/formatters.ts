@@ -3,9 +3,9 @@ export const formatRupiah = (value: number | null | undefined, abbreviated = fal
 
   if (abbreviated) {
     const abs = Math.abs(value);
-    if (abs >= 1e12) return `Rp ${(value / 1e12).toFixed(2)}T`;
-    if (abs >= 1e9) return `Rp ${(value / 1e9).toFixed(2)}M`;
-    if (abs >= 1e6) return `Rp ${(value / 1e6).toFixed(2)}Jt`;
+    if (abs >= 1e12) return `Rp ${(value / 1e12).toFixed(1)}T`;
+    if (abs >= 1e9) return `Rp ${(value / 1e9).toFixed(1)}M`;
+    if (abs >= 1e6) return `Rp ${(value / 1e6).toFixed(1)}Jt`;
   }
 
   return new Intl.NumberFormat("id-ID", {

@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend, Label } from "recharts";
 import { formatRupiah } from "@/lib/formatters";
 
 interface DonutSlice {
@@ -35,24 +35,37 @@ function DonutTooltip({ active, payload, formatValue }: {
 }
 
 export function DonutChart({ data, title, centerLabel, formatValue }: DonutChartProps) {
+  // Format centerLabel to Miliar if it is too long (assuming centerLabel is a string starting with Rp)
+  const formatCenterLabel = (label: string | undefined) => {
+    if (!label) return "";
+    const numMatch = label.replace(/[Rp.\s]/g, "");
+    const num = parseInt(numMatch);
+    if (!isNaN(num) && num >= 1e9) {
+      return `Rp${(num / 1e9).toFixed(1)} M`;
+    }
+    return label;
+  };
+
+  const formattedCenter = centerLabel ? formatCenterLabel(centerLabel) : undefined;
+
   return (
     <div className="card w-full flex flex-col h-full">
-      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1 z-10">{title}</h3>
-      <div className="w-full flex-1 relative z-10 min-h-[250px] flex items-center justify-center">
-        {centerLabel && (
-          <div className="absolute left-0 right-0 top-[45%] -translate-y-1/2 flex flex-col items-center justify-center pointer-events-none">
+      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-2">{title}</h3>
+      <div className="w-full flex-1 min-h-[250px] relative">
+        {formattedCenter && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-6">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
-            <p className="text-lg font-black text-slate-900">{centerLabel}</p>
+            <p className="text-lg font-black text-slate-900">{formattedCenter}</p>
           </div>
         )}
-        <ResponsiveContainer width="100%" height="100%" className="relative z-10">
+        <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}
               cx="50%"
-              cy="45%"
-              innerRadius="60%"
-              outerRadius="80%"
+              cy="50%"
+              innerRadius={75}
+              outerRadius={105}
               paddingAngle={6}
               dataKey="value"
               stroke="none"
@@ -64,7 +77,7 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
               ))}
             </Pie>
             <Tooltip content={<DonutTooltip formatValue={formatValue} />} />
-            <Legend wrapperStyle={{ fontSize: 12, paddingTop: "20px", fontWeight: 600 }} iconType="circle" />
+            <Legend verticalAlign="bottom" wrapperStyle={{ fontSize: 12, paddingTop: "10px", fontWeight: 600 }} iconType="circle" />
           </PieChart>
         </ResponsiveContainer>
       </div>
