@@ -69,6 +69,7 @@ export function InventoriChart({ data, title, subtitle }: { data: InventoriPoint
                 fill={`url(#grad-${key})`}
                 dot={false}
                 activeDot={{ r: 6, strokeWidth: 0, fill: config.stroke }} 
+                connectNulls={true}
               />
             ))}
           </AreaChart>

@@ -261,6 +261,10 @@ class PortofolioParser(BaseExcelParser):
                     # If all inputs are empty but akhir is 0 (due to excel formula), treat as None
                     if awal_val is None and prod_val is None and keluar_val is None and akhir_val == 0.0:
                         akhir_val = None
+                    elif akhir_val is not None:
+                        # If the month is valid, empty production or pengeluaran means 0
+                        if prod_val is None: prod_val = 0.0
+                        if keluar_val is None: keluar_val = 0.0
                         
                     inventory.append({
                         "periode": months[month_idx] if month_idx < 12 else "Unknown",
