@@ -90,6 +90,19 @@ export default function KAN() {
           />
         </div>
 
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-1">
+            <DonutChart 
+              title="Komposisi Aset"
+              data={komposisiAset} 
+              centerLabel={formatRupiah(totalAset, true)}
+            />
+          </div>
+          <div className="lg:col-span-2">
+            <EkuitasChart data={ekuitasDetail} />
+          </div>
+        </div>
+
         <div className="card w-full">
           <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">Pencapaian Produksi Amonium Nitrat (AN)</h3>
           <p className="text-xs font-medium text-slate-500 mb-8">Volume target vs realisasi (Ton)</p>
@@ -105,19 +118,6 @@ export default function KAN() {
                 <Bar name="realisasi" dataKey="realisasi" fill="#10B981" radius={[6, 6, 0, 0]} maxBarSize={50} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1">
-            <DonutChart 
-              title="Komposisi Aset"
-              data={komposisiAset} 
-              centerLabel={formatRupiah(totalAset, true)}
-            />
-          </div>
-          <div className="lg:col-span-2">
-            <EkuitasChart data={ekuitasDetail} />
           </div>
         </div>
 
