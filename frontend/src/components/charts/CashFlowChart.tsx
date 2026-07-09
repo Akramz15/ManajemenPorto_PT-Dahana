@@ -35,11 +35,11 @@ function CashFlowTooltip({ active, payload, label }: {
 
 export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
   return (
-    <div className="card w-full h-full flex flex-col">
+    <div className="card w-full">
       <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">Arus Kas (Cash Flow)</h3>
       <p className="text-xs font-medium text-slate-500 mb-8">Penerimaan vs Pengeluaran per bulan</p>
       
-      <div className="w-full flex-1 min-h-[280px]">
+      <div className="w-full h-70">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} barGap={6} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <XAxis dataKey="periode" tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }} axisLine={false} tickLine={false} tickMargin={12} />

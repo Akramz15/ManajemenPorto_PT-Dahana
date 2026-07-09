@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useChartData } from "@/hooks/useChartData";
-import { RevenueHPPChart, DonutChart, RKAPChart, NeracaChart } from "@/components/charts";
+import { RevenueHPPChart, DonutChart, CashFlowChart, RKAPChart } from "@/components/charts";
 import { formatRupiah } from "@/lib/formatters";
 import { ExcelUploader } from "@/components/shared";
 
@@ -12,7 +12,7 @@ export default function DIC() {
 
   const revenueData = chartData?.data?.revenue || [];
   const komposisiAset = chartData?.data?.komposisi_aset || [];
-  const neracaData = chartData?.data?.neraca || [];
+  const cashFlow = chartData?.data?.cash_flow || [];
   
   const rkapDataLabaRugi = chartData?.data?.rkap_laba_rugi || [];
   const rkapDataYtdPendapatan = chartData?.data?.rkap_ytd_pendapatan || [];
@@ -61,21 +61,21 @@ export default function DIC() {
           />
         </div>
 
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-          <NeracaChart data={neracaData} />
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-            <div className="lg:col-span-1 flex">
-              <DonutChart 
-                title="Komposisi Aset"
-                data={komposisiAset} 
-                centerLabel={formatRupiah(totalAset, true)}
-              />
-            </div>
-            <div className="lg:col-span-2 flex">
-              <RevenueHPPChart data={revenueData} />
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <RevenueHPPChart data={revenueData} />
           </div>
+          <div className="lg:col-span-1">
+            <DonutChart 
+              title="Komposisi Aset"
+              data={komposisiAset} 
+              centerLabel={formatRupiah(totalAset, true)}
+            />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 gap-8">
+          <CashFlowChart data={cashFlow} />
         </div>
       </div>
     </div>

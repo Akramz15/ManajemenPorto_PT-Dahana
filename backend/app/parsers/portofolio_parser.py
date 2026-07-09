@@ -112,20 +112,6 @@ class PortofolioParser(BaseExcelParser):
                             return float(row.values[k])
         return 0.0
 
-    def _extract_monthly_neraca_field(self, df: pd.DataFrame, keyword: str) -> list[float]:
-        results = []
-        for idx, row in df.iterrows():
-            if isinstance(row.values[1], str) and keyword.lower() in row.values[1].lower():
-                val = row.values[3]
-                try:
-                    val = float(val) if pd.notna(val) else 0.0
-                except:
-                    val = 0.0
-                results.append(val)
-        while len(results) < 12:
-            results.append(0.0)
-        return results[:12]
-
     def _parse_dic(self, xl: pd.ExcelFile) -> dict:
         months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
         
@@ -147,31 +133,19 @@ class PortofolioParser(BaseExcelParser):
             df_neraca = pd.read_excel(xl, sheet_name="Neraca&CF DIC", header=None)
             aset_lancar = self._extract_first_num(df_neraca, "aset lancar")
             aset_tidak_lancar = self._extract_first_num(df_neraca, "aset tidak lancar")
+            
             al_val = aset_lancar * 1e6 if aset_lancar < 1e9 else aset_lancar
             atl_val = aset_tidak_lancar * 1e6 if aset_tidak_lancar < 1e9 else aset_tidak_lancar
-            
-            ta_arr = self._extract_monthly_neraca_field(df_neraca, "total aset")
-            tl_arr = self._extract_monthly_neraca_field(df_neraca, "total liabilitas")
-            te_arr = self._extract_monthly_neraca_field(df_neraca, "total ekuitas")
             
             cf_terima = self._extract_cashflow(df_neraca, "penerimaan")
             cf_keluar = self._extract_cashflow(df_neraca, "pengeluaran")
         except Exception:
             al_val, atl_val = 0.0, 0.0
-            ta_arr, tl_arr, te_arr = [0.0]*12, [0.0]*12, [0.0]*12
             cf_terima, cf_keluar = [None]*12, [None]*12
             
         komposisi_aset = [
             {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
-        ]
-        
-        def scale(v):
-            return v * 1e6 if v > 0 and v < 1e9 else v
-            
-        neraca = [
-            {"periode": m, "aset": scale(a), "liabilitas": scale(l), "ekuitas": scale(e)}
-            for m, a, l, e in zip(months, ta_arr, tl_arr, te_arr)
         ]
         
         cash_flow = [{"periode": m, "penerimaan": (t * 1e6) if t is not None else None, "pengeluaran": (k * 1e6) if k is not None else None} for m, t, k in zip(months, cf_terima, cf_keluar)]
@@ -189,7 +163,6 @@ class PortofolioParser(BaseExcelParser):
         return {
             "revenue": revenue,
             "komposisi_aset": komposisi_aset,
-            "neraca": neraca,
             "cash_flow": cash_flow,
             "rkap": rkap_ytd_pendapatan,
             "rkap_laba_rugi": rkap_laba_rugi,
@@ -232,31 +205,19 @@ class PortofolioParser(BaseExcelParser):
             df_neraca = pd.read_excel(xl, sheet_name="Neraca KAN", header=None)
             aset_lancar = self._extract_first_num(df_neraca, "aset lancar")
             aset_tidak_lancar = self._extract_first_num(df_neraca, "aset tidak lancar")
+            
             al_val = aset_lancar * 1e6 if aset_lancar < 1e9 else aset_lancar
             atl_val = aset_tidak_lancar * 1e6 if aset_tidak_lancar < 1e9 else aset_tidak_lancar
-            
-            ta_arr = self._extract_monthly_neraca_field(df_neraca, "total aset")
-            tl_arr = self._extract_monthly_neraca_field(df_neraca, "total liabilitas")
-            te_arr = self._extract_monthly_neraca_field(df_neraca, "total ekuitas")
             
             cf_terima = self._extract_cashflow(df_neraca, "penerimaan")
             cf_keluar = self._extract_cashflow(df_neraca, "pengeluaran")
         except Exception:
             al_val, atl_val = 0.0, 0.0
-            ta_arr, tl_arr, te_arr = [0.0]*12, [0.0]*12, [0.0]*12
             cf_terima, cf_keluar = [None]*12, [None]*12
             
         komposisi_aset = [
             {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
-        ]
-        
-        def scale(v):
-            return v * 1e6 if v > 0 and v < 1e9 else v
-            
-        neraca = [
-            {"periode": m, "aset": scale(a), "liabilitas": scale(l), "ekuitas": scale(e)}
-            for m, a, l, e in zip(months, ta_arr, tl_arr, te_arr)
         ]
         
         cash_flow = [{"periode": m, "penerimaan": (t * 1e6) if t is not None else None, "pengeluaran": (k * 1e6) if k is not None else None} for m, t, k in zip(months, cf_terima, cf_keluar)]
@@ -269,7 +230,6 @@ class PortofolioParser(BaseExcelParser):
             "rkap_ytd_pendapatan": rkap_ytd_pendapatan,
             "rkap_ytd_laba_rugi": rkap_ytd_laba_rugi,
             "komposisi_aset": komposisi_aset,
-            "neraca": neraca,
             "cash_flow": cash_flow
         }
         

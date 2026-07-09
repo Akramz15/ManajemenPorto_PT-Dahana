@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useChartData } from "@/hooks/useChartData";
-import { RKAPChart, RevenueHPPChart, NeracaChart } from "@/components/charts";
+import { RKAPChart, RevenueHPPChart } from "@/components/charts";
 import { ExcelUploader } from "@/components/shared";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
@@ -38,7 +38,6 @@ export default function KAN() {
 
   const produksiData = chartData?.data?.produksi || [];
   const revenueData = chartData?.data?.revenue || [];
-  const neracaData = chartData?.data?.neraca || [];
   
   const rkapDataLabaRugi = chartData?.data?.rkap_laba_rugi || [];
   const rkapDataYtdPendapatan = chartData?.data?.rkap_ytd_pendapatan || [];
@@ -104,13 +103,8 @@ export default function KAN() {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-          <div className="lg:col-span-2 flex">
-            <RevenueHPPChart data={revenueData} />
-          </div>
-          <div className="lg:col-span-1 flex">
-            <NeracaChart data={neracaData} />
-          </div>
+        <div className="grid grid-cols-1 gap-8">
+          <RevenueHPPChart data={revenueData} />
         </div>
       </div>
     </div>
