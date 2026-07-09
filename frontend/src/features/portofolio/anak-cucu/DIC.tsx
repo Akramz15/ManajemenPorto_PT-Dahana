@@ -61,21 +61,20 @@ export default function DIC() {
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-8 mb-8">
-          <div className="flex">
-            <RevenueHPPChart data={revenueData} />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-          <div className="flex">
-            <DonutChart 
-              title="Komposisi Aset"
-              data={komposisiAset} 
-              centerLabel={formatRupiah(totalAset, true)}
-            />
-          </div>
-          <div className="flex">
-            <NeracaChart data={neracaData} />
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+          <NeracaChart data={neracaData} />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            <div className="lg:col-span-1 flex">
+              <DonutChart 
+                title="Komposisi Aset"
+                data={komposisiAset} 
+                centerLabel={formatRupiah(totalAset, true)}
+              />
+            </div>
+            <div className="lg:col-span-2 flex">
+              <RevenueHPPChart data={revenueData} />
+            </div>
           </div>
         </div>
       </div>
