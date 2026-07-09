@@ -92,18 +92,30 @@ class PortofolioParser(BaseExcelParser):
         try:
             df_rkap = pd.read_excel(xl, sheet_name="RKAP-REAL DIC", header=None)
             rkap_total = _find_val(df_rkap, "jumlah pendapatan") or 65000.00
+            laba_rugi_total = _find_val(df_rkap, "laba rugi") or 15000.00
         except Exception:
             rkap_total = 65000.00
+            laba_rugi_total = 15000.00
             
-        rk_trend = _generate_trend(rkap_total, 12, 0.05)
-        # Realisasi is only up to May (first 5 months), after that it's None
-        rkap = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if i < 5 else None} for i, (m, r, p) in enumerate(zip(months, rk_trend, p_trend))]
+        # YTD Pendapatan
+        rk_trend_pend = _generate_trend(rkap_total, 12, 0.05)
+        # YTD Laba Rugi
+        rk_trend_lr = _generate_trend(laba_rugi_total, 12, 0.08)
+        # Laba Rugi Usaha (monthly, not cumulative)
+        rk_trend_lru = _generate_trend(laba_rugi_total * 0.8, 12, 0.1)
+        
+        rkap_ytd_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if i < 5 else None} for i, (m, r, p) in enumerate(zip(months, rk_trend_pend, p_trend))]
+        rkap_ytd_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 * 0.2 if i < 5 else None} for i, (m, r, p) in enumerate(zip(months, rk_trend_lr, p_trend))]
+        rkap_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 * 0.15 if i < 5 else None} for i, (m, r, p) in enumerate(zip(months, rk_trend_lru, p_trend))]
         
         return {
             "revenue": revenue,
             "komposisi_aset": komposisi_aset,
             "cash_flow": cash_flow,
-            "rkap": rkap
+            "rkap": rkap_ytd_pendapatan,
+            "rkap_laba_rugi": rkap_laba_rugi,
+            "rkap_ytd_pendapatan": rkap_ytd_pendapatan,
+            "rkap_ytd_laba_rugi": rkap_ytd_laba_rugi
         }
 
     def _parse_kan(self, xl: pd.ExcelFile) -> dict:

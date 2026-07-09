@@ -62,7 +62,7 @@ const formatYAxis = (value: number) => {
   return value.toLocaleString('id-ID');
 };
 
-export function RKAPChart({ data }: { data: RKAPPoint[] }) {
+export function RKAPChart({ data, title = "Target RKAP vs Realisasi (Terkini)" }: { data: RKAPPoint[], title?: string }) {
   if (!data || data.length === 0) {
     return (
       <div className="card flex items-center justify-center min-h-100 text-slate-400">
@@ -97,8 +97,9 @@ export function RKAPChart({ data }: { data: RKAPPoint[] }) {
   return (
     <div className="card p-6! border-0! bg-white/80! shadow-sm! relative overflow-hidden h-125 w-full flex flex-col">
       <div className="flex items-center justify-between z-10 mb-6 px-1 relative">
-        <h3 className="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
-          Target RKAP vs Realisasi (Terkini)
+        <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+          <div className="w-2 h-6 bg-primary-500 rounded-full"></div>
+          {title}
         </h3>
       </div>
 

@@ -9,7 +9,9 @@ export default function DIC() {
   const revenueData = chartData?.data?.revenue || [];
   const komposisiAset = chartData?.data?.komposisi_aset || [];
   const cashFlow = chartData?.data?.cash_flow || [];
-  const rkapData = chartData?.data?.rkap || [];
+  const rkapDataLabaRugi = chartData?.data?.rkap_laba_rugi || [];
+  const rkapDataYtdPendapatan = chartData?.data?.rkap_ytd_pendapatan || [];
+  const rkapDataYtdLabaRugi = chartData?.data?.rkap_ytd_laba_rugi || [];
   const totalAset = komposisiAset.reduce((acc: number, d: any) => acc + d.value, 0);
 
   return (
@@ -26,8 +28,12 @@ export default function DIC() {
       </div>
 
       <div className="space-y-8">
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <RKAPChart data={rkapData} />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <RKAPChart data={rkapDataLabaRugi} title="Laba Rugi Usaha DIC 2026 RKAP vs Realisasi" />
+          <RKAPChart data={rkapDataYtdPendapatan} title="YTD Pendapatan DIC 2026 RKAP vs Realisasi" />
+          <div className="xl:col-span-2">
+            <RKAPChart data={rkapDataYtdLabaRugi} title="YTD Laba Rugi DIC 2026 RKAP vs Realisasi" />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
