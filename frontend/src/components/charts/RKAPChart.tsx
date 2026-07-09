@@ -157,8 +157,7 @@ export function RKAPChart({ data, title = "Target RKAP vs Realisasi (Terkini)", 
                   if(value === "rkap") return <span className="text-slate-400 ml-1 mr-4">Target (RKAP)</span>;
                   return <span className="text-emerald-600 ml-1">Realisasi</span>;
                 }}
-              />
-              
+              />              
               <Area 
                 name="rkap" 
                 type="monotone" 

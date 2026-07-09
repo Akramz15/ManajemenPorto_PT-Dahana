@@ -173,34 +173,53 @@ class PortofolioParser(BaseExcelParser):
     def _parse_kan(self, xl: pd.ExcelFile) -> dict:
         months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
         
+        # 1. Revenue, Produksi, RKAP dari RKAP-REAL KAN
         try:
-            df_pnl = pd.read_excel(xl, sheet_name="Lap. KAN-R1", header=None)
-            penjualan = _find_val(df_pnl, "penjualan") or 23929.02
-            hpp = _find_val(df_pnl, "hpp") or 15066.17
+            df_rkap = pd.read_excel(xl, sheet_name="RKAP-REAL KAN", header=None)
+            rkap_pend_arr, real_pend_arr = self._extract_monthly_rkap(df_rkap, "penjualan")
+            _, real_hpp_arr = self._extract_monthly_rkap(df_rkap, "hpp")
+            target_prod_arr, real_prod_arr = self._extract_monthly_rkap(df_rkap, "produksi")
         except Exception:
-            penjualan, hpp = 23929.02, 15066.17
+            rkap_pend_arr, real_pend_arr = [0.0]*12, [None]*12
+            _, real_hpp_arr = [0.0]*12, [None]*12
+            target_prod_arr, real_prod_arr = [0.0]*12, [None]*12
             
-        p_trend = _generate_trend(penjualan, 12)
-        h_trend = _generate_trend(hpp, 12)
-        revenue = [{"periode": m, "penjualan": p * 1e6, "hpp": h * 1e6} for m, p, h in zip(months, p_trend, h_trend)]
+        revenue = [{"periode": m, "penjualan": (p * 1e6) if p is not None else None, "hpp": (h * 1e6) if h is not None else None} for m, p, h in zip(months, real_pend_arr, real_hpp_arr)]
         
+        produksi = [{"periode": m, "target": int(t) if t is not None else None, "realisasi": int(r) if r is not None else None} for m, t, r in zip(months, target_prod_arr, real_prod_arr)]
+        
+        rkap_pend_ytd = self._calculate_ytd(rkap_pend_arr)
+        real_pend_ytd = self._calculate_ytd(real_pend_arr)
+        rkap = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_ytd, real_pend_ytd)]
+        
+        # 2. Komposisi Aset & Cash Flow dari Neraca KAN
         try:
-            df_prod = pd.read_excel(xl, sheet_name="KAN", header=None)
-            target = _find_val(df_prod, "target produksi") or 30000
-            realisasi = _find_val(df_prod, "realisasi") or 32000
-        except Exception:
-            target, realisasi = 30000, 32000
+            df_neraca = pd.read_excel(xl, sheet_name="Neraca KAN", header=None)
+            aset_lancar = self._extract_first_num(df_neraca, "aset lancar")
+            aset_tidak_lancar = self._extract_first_num(df_neraca, "aset tidak lancar")
             
-        t_trend = _generate_trend(target, 12, 0.02)
-        r_trend = _generate_trend(realisasi, 12, 0.05)
-        produksi = [{"periode": m, "target": int(t), "realisasi": int(r) if i < 5 else None} for i, (m, t, r) in enumerate(zip(months, t_trend, r_trend))]
+            al_val = aset_lancar * 1e6 if aset_lancar < 1e9 else aset_lancar
+            atl_val = aset_tidak_lancar * 1e6 if aset_tidak_lancar < 1e9 else aset_tidak_lancar
+            
+            cf_terima = self._extract_cashflow(df_neraca, "penerimaan")
+            cf_keluar = self._extract_cashflow(df_neraca, "pengeluaran")
+        except Exception:
+            al_val, atl_val = 0.0, 0.0
+            cf_terima, cf_keluar = [None]*12, [None]*12
+            
+        komposisi_aset = [
+            {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
+            {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
+        ]
         
-        rkap = [{"periode": m, "rkap": p * 1e6 * 1.1, "realisasi": p * 1e6 if i < 5 else None} for i, (m, p) in enumerate(zip(months, p_trend))]
+        cash_flow = [{"periode": m, "penerimaan": (t * 1e6) if t is not None else None, "pengeluaran": (k * 1e6) if k is not None else None} for m, t, k in zip(months, cf_terima, cf_keluar)]
         
         return {
             "revenue": revenue,
             "produksi": produksi,
-            "rkap": rkap
+            "rkap": rkap,
+            "komposisi_aset": komposisi_aset,
+            "cash_flow": cash_flow
         }
 
     def _parse_jodb(self, xl: pd.ExcelFile) -> dict:
