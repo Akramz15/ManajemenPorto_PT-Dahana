@@ -48,7 +48,9 @@ class PortofolioParser(BaseExcelParser):
         return result
 
     def _extract_monthly_rkap(self, df: pd.DataFrame, keyword: str):
-        for _, row in df.iterrows():
+        for idx, row in df.iterrows():
+            if idx < 20:
+                continue # Skip the first table (alternating format)
             if len(row.values) > 1:
                 val = row.values[1]
                 if isinstance(val, str) and keyword.lower() in val.lower():
