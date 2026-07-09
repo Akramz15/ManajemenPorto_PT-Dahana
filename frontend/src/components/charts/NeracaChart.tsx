@@ -46,15 +46,13 @@ export function NeracaChart({ data, title = "Neraca Keseluruhan" }: { data: Nera
   };
 
   return (
-    <div className="card w-full h-full flex flex-col">
+    <div className="card w-full">
       <div className="mb-6">
         <h3 className="text-base font-extrabold text-slate-900 tracking-tight">{title}</h3>
         <p className="text-xs font-medium text-slate-500 mt-1">Aset, Liabilitas, dan Ekuitas</p>
-        {/* DEBUG: */}
-        <p className="text-[10px] text-red-500 max-h-20 overflow-auto">{JSON.stringify(data).substring(0, 300)}</p>
       </div>
       
-      <div className="w-full flex-1 min-h-[280px]">
+      <div className="w-full h-[320px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} barGap={4} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <XAxis 
