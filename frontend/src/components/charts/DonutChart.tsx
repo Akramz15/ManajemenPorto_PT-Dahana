@@ -49,9 +49,9 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
   const formattedCenter = centerLabel ? formatCenterLabel(centerLabel) : undefined;
 
   return (
-    <div className="card w-full relative">
+    <div className="card w-full h-full flex flex-col relative">
       <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-8 z-10">{title}</h3>
-      <div className="w-full relative z-10 h-70">
+      <div className="w-full flex-1 relative z-10 min-h-[280px]">
         {formattedCenter && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-8">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>

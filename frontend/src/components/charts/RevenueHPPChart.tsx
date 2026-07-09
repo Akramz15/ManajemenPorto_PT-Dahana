@@ -44,11 +44,11 @@ function RevenueTooltip({ active, payload, label }: {
 
 export function RevenueHPPChart({ data }: { data: DataPoint[] }) {
   return (
-    <div className="card w-full">
+    <div className="card w-full h-full flex flex-col">
       <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1">Penjualan & HPP</h3>
       <p className="text-xs font-medium text-slate-500 mb-8">Tren pendapatan operasional</p>
       
-      <div className="w-full h-70">
+      <div className="w-full flex-1 min-h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <defs>
