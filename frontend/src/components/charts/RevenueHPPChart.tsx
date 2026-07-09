@@ -66,9 +66,11 @@ export function RevenueHPPChart({ data }: { data: DataPoint[] }) {
             <Tooltip content={<RevenueTooltip />} cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4' }} />
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: "20px", fontWeight: 600 }} iconType="circle" />
             <Area type="monotone" name="penjualan" dataKey="penjualan" stroke="#3B82F6" strokeWidth={3.5}
-              fill="url(#gPenjualan)" dot={false} activeDot={{ r: 6, strokeWidth: 0, fill: '#3B82F6' }} connectNulls />
+              fill="url(#gPenjualan)" dot={false} activeDot={{ r: 6, strokeWidth: 0, fill: '#3B82F6' }} connectNulls 
+              isAnimationActive={true} animationDuration={1500} animationEasing="ease-out" />
             <Area type="monotone" name="hpp" dataKey="hpp" stroke="#F43F5E" strokeWidth={3.5}
-              fill="url(#gHPP)" dot={false} activeDot={{ r: 6, strokeWidth: 0, fill: '#F43F5E' }} connectNulls />
+              fill="url(#gHPP)" dot={false} activeDot={{ r: 6, strokeWidth: 0, fill: '#F43F5E' }} connectNulls 
+              isAnimationActive={true} animationDuration={1500} animationEasing="ease-out" />
           </AreaChart>
         </ResponsiveContainer>
       </div>

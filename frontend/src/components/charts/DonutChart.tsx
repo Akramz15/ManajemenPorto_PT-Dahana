@@ -70,7 +70,10 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
               dataKey="value"
               stroke="none"
               cornerRadius={6}
-              isAnimationActive={false}
+              isAnimationActive={true}
+              animationBegin={0}
+              animationDuration={1500}
+              animationEasing="ease-out"
             >
               {data.map((entry, index) => (
                 <Cell key={index} fill={entry.color} className="transition-all hover:opacity-80 hover:scale-[1.02] origin-center" />

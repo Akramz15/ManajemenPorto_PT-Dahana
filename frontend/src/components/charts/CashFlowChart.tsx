@@ -81,8 +81,8 @@ export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: "20px", fontWeight: 600 }} iconType="circle" />
             <ReferenceLine y={0} stroke="#cbd5e1" />
             
-            <Bar name="Penerimaan" dataKey="penerimaan" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={32} />
-            <Bar name="Pengeluaran" dataKey="pengeluaran" fill="#F43F5E" radius={[0, 0, 4, 4]} maxBarSize={32} />
+            <Bar name="Penerimaan" dataKey="penerimaan" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={32} isAnimationActive={true} animationDuration={1500} animationEasing="ease-out" />
+            <Bar name="Pengeluaran" dataKey="pengeluaran" fill="#F43F5E" radius={[0, 0, 4, 4]} maxBarSize={32} isAnimationActive={true} animationDuration={1500} animationEasing="ease-out" />
           </BarChart>
         </ResponsiveContainer>
       </div>

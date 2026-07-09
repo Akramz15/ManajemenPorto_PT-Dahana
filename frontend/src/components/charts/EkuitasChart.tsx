@@ -86,7 +86,14 @@ export function EkuitasChart({ data }: { data: EkuitasDetail }) {
             <Tooltip content={<EkuitasTooltip />} cursor={{ fill: '#f1f5f9', opacity: 0.4 }} />
             <ReferenceLine x={0} stroke="#cbd5e1" />
             
-            <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
+            <Bar 
+              dataKey="value" 
+              radius={[0, 4, 4, 0]} 
+              barSize={24} 
+              isAnimationActive={true} 
+              animationDuration={1500} 
+              animationEasing="ease-out"
+            >
               {chartData.map((entry, index) => {
                 const isNegative = entry.value < 0;
                 // If negative, radius should be on the left [4, 0, 0, 4]

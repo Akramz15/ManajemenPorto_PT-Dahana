@@ -114,8 +114,8 @@ export default function KAN() {
                 <YAxis tickFormatter={(v) => `${v.toLocaleString("id-ID")}T`} tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }} axisLine={false} tickLine={false} tickMargin={12} />
                 <Tooltip content={<KANProduksiTooltip />} cursor={{ fill: '#f1f5f9', opacity: 0.4 }} />
                 <Legend wrapperStyle={{ fontSize: 12, paddingTop: "20px", fontWeight: 600 }} iconType="circle" />
-                <Bar name="target" dataKey="target" fill="#94A3B8" radius={[6, 6, 0, 0]} maxBarSize={50} fillOpacity={0.4} />
-                <Bar name="realisasi" dataKey="realisasi" fill="#10B981" radius={[6, 6, 0, 0]} maxBarSize={50} />
+                <Bar name="target" dataKey="target" fill="#94A3B8" radius={[6, 6, 0, 0]} maxBarSize={50} fillOpacity={0.4} isAnimationActive={true} animationDuration={1500} animationEasing="ease-out" />
+                <Bar name="realisasi" dataKey="realisasi" fill="#10B981" radius={[6, 6, 0, 0]} maxBarSize={50} isAnimationActive={true} animationDuration={1500} animationEasing="ease-out" />
               </BarChart>
             </ResponsiveContainer>
           </div>
