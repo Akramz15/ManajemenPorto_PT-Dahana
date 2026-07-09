@@ -53,7 +53,7 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
       <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-4 z-10">{title}</h3>
       <div className="w-full relative z-10 min-h-72 h-[280px] -mt-7.5">
         {formattedCenter && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-8">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
             <p className="text-lg font-black text-slate-900">{formattedCenter}</p>
           </div>
