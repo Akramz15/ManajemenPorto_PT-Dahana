@@ -12,8 +12,8 @@ export function Sidebar() {
 
   return (
     <aside className="w-64 h-[calc(100vh-2rem)] bg-white/70 backdrop-blur-2xl border border-white/60 flex flex-col fixed left-4 top-4 z-40 shadow-floating rounded-3xl overflow-hidden">
-      <div className="px-6 py-6 border-b border-white/40 bg-white/40 flex items-center">
-        <img src={logoDahana} alt="PT Dahana BizPort" className="h-10 w-auto object-contain drop-shadow-sm" />
+      <div className="px-6 py-6 border-b border-white/40 bg-white/40 flex items-center justify-center">
+        <img src={logoDahana} alt="PT Dahana BizPort" className="h-14 w-auto object-contain drop-shadow-sm" />
       </div>
 
       <nav className="flex-1 px-3 pb-3 overflow-y-auto mt-2">
