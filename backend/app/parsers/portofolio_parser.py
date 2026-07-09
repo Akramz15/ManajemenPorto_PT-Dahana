@@ -179,10 +179,12 @@ class PortofolioParser(BaseExcelParser):
             rkap_pend_arr, real_pend_arr = self._extract_monthly_rkap(df_rkap, "penjualan")
             _, real_hpp_arr = self._extract_monthly_rkap(df_rkap, "hpp")
             target_prod_arr, real_prod_arr = self._extract_monthly_rkap(df_rkap, "produksi")
+            rkap_laba_arr, real_laba_arr = self._extract_monthly_rkap(df_rkap, "laba (rugi) usaha")
         except Exception:
             rkap_pend_arr, real_pend_arr = [0.0]*12, [None]*12
             _, real_hpp_arr = [0.0]*12, [None]*12
             target_prod_arr, real_prod_arr = [0.0]*12, [None]*12
+            rkap_laba_arr, real_laba_arr = [0.0]*12, [None]*12
             
         revenue = [{"periode": m, "penjualan": (p * 1e6) if p is not None else None, "hpp": (h * 1e6) if h is not None else None} for m, p, h in zip(months, real_pend_arr, real_hpp_arr)]
         
@@ -190,7 +192,13 @@ class PortofolioParser(BaseExcelParser):
         
         rkap_pend_ytd = self._calculate_ytd(rkap_pend_arr)
         real_pend_ytd = self._calculate_ytd(real_pend_arr)
-        rkap = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_ytd, real_pend_ytd)]
+        
+        rkap_laba_ytd = self._calculate_ytd(rkap_laba_arr)
+        real_laba_ytd = self._calculate_ytd(real_laba_arr)
+        
+        rkap_ytd_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_ytd, real_pend_ytd)]
+        rkap_ytd_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_ytd, real_laba_ytd)]
+        rkap_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_arr, real_laba_arr)]
         
         # 2. Komposisi Aset & Cash Flow dari Neraca KAN
         try:
@@ -217,7 +225,10 @@ class PortofolioParser(BaseExcelParser):
         return {
             "revenue": revenue,
             "produksi": produksi,
-            "rkap": rkap,
+            "rkap": rkap_ytd_pendapatan,
+            "rkap_laba_rugi": rkap_laba_rugi,
+            "rkap_ytd_pendapatan": rkap_ytd_pendapatan,
+            "rkap_ytd_laba_rugi": rkap_ytd_laba_rugi,
             "komposisi_aset": komposisi_aset,
             "cash_flow": cash_flow
         }

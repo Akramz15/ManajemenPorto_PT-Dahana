@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { useChartData } from "@/hooks/useChartData";
 import { RKAPChart, RevenueHPPChart } from "@/components/charts";
 import { ExcelUploader } from "@/components/shared";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+
+type RkapType = "laba_rugi" | "ytd_pendapatan" | "ytd_laba_rugi";
 
 function KANProduksiTooltip({ active, payload, label }: {
   active?: boolean;
@@ -31,9 +34,24 @@ function KANProduksiTooltip({ active, payload, label }: {
 
 export default function KAN() {
   const { data: chartData, refetch } = useChartData<any>("kan");
+  const [selectedRkap, setSelectedRkap] = useState<RkapType>("ytd_pendapatan");
 
   const produksiData = chartData?.data?.produksi || [];
   const revenueData = chartData?.data?.revenue || [];
+  
+  const rkapDataLabaRugi = chartData?.data?.rkap_laba_rugi || [];
+  const rkapDataYtdPendapatan = chartData?.data?.rkap_ytd_pendapatan || [];
+  const rkapDataYtdLabaRugi = chartData?.data?.rkap_ytd_laba_rugi || [];
+
+  const getActiveRkapData = () => {
+    switch (selectedRkap) {
+      case "laba_rugi": return { data: rkapDataLabaRugi, title: "Laba Rugi Usaha KAN 2026 RKAP vs Realisasi" };
+      case "ytd_pendapatan": return { data: rkapDataYtdPendapatan, title: "YTD Pendapatan KAN 2026 RKAP vs Realisasi" };
+      case "ytd_laba_rugi": return { data: rkapDataYtdLabaRugi, title: "YTD Laba Rugi KAN 2026 RKAP vs Realisasi" };
+    }
+  };
+
+  const activeRkap = getActiveRkapData();
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8 min-h-screen">
@@ -50,7 +68,21 @@ export default function KAN() {
 
       <div className="space-y-8">
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <RKAPChart data={chartData?.data?.rkap || []} />
+          <RKAPChart 
+            data={activeRkap.data} 
+            title={activeRkap.title} 
+            headerAction={
+              <select 
+                value={selectedRkap}
+                onChange={(e) => setSelectedRkap(e.target.value as RkapType)}
+                className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 font-medium cursor-pointer shadow-sm"
+              >
+                <option value="ytd_pendapatan">YTD Pendapatan</option>
+                <option value="laba_rugi">Laba Rugi Usaha</option>
+                <option value="ytd_laba_rugi">YTD Laba Rugi</option>
+              </select>
+            }
+          />
         </div>
 
         <div className="card w-full">
