@@ -97,7 +97,6 @@ export function EkuitasChart({ data }: { data: EkuitasDetail }) {
               {chartData.map((entry, index) => {
                 const isNegative = entry.value < 0;
                 // If negative, radius should be on the left [4, 0, 0, 4]
-                const radius: any = isNegative ? [4, 0, 0, 4] : [0, 4, 4, 0];
                 return (
                   <Cell 
                     key={`cell-${index}`} 
