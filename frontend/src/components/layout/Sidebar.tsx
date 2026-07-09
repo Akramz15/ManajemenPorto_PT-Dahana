@@ -3,6 +3,7 @@ import { useAppStore } from "@/store/useAppStore";
 
 import { UserPanel } from "./UserPanel";
 import { navConfig } from "@/router/navConfig";
+import logoDahana from "@/assets/Logo_Dahana.png";
 
 export function Sidebar() {
   const { activeModule } = useAppStore();
@@ -11,11 +12,8 @@ export function Sidebar() {
 
   return (
     <aside className="w-64 h-[calc(100vh-2rem)] bg-white/70 backdrop-blur-2xl border border-white/60 flex flex-col fixed left-4 top-4 z-40 shadow-floating rounded-3xl overflow-hidden">
-      <div className="px-6 py-6 border-b border-white/40 bg-white/40">
-        <p className="text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">PT Dahana</p>
-        <h1 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-          BizPort <span className="w-2.5 h-2.5 rounded-full bg-explosive-500 shadow-[0_0_10px_rgba(249,115,22,0.6)] animate-pulse"></span>
-        </h1>
+      <div className="px-6 py-6 border-b border-white/40 bg-white/40 flex items-center">
+        <img src={logoDahana} alt="PT Dahana BizPort" className="h-10 w-auto object-contain drop-shadow-sm" />
       </div>
 
       <nav className="flex-1 px-3 pb-3 overflow-y-auto mt-2">
