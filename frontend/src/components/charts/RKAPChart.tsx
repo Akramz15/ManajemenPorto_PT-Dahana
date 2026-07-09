@@ -168,7 +168,6 @@ export function RKAPChart({ data, title = "Target RKAP vs Realisasi (Terkini)", 
                 fill="none"
                 dot={false} 
                 activeDot={{ r: 5, fill: "#cbd5e1", strokeWidth: 0 }} 
-                connectNulls
                 isAnimationActive={true}
                 animationDuration={1500}
                 animationEasing="ease-out"
@@ -182,7 +181,6 @@ export function RKAPChart({ data, title = "Target RKAP vs Realisasi (Terkini)", 
                 fill="url(#colorRKAPRealisasi)"
                 dot={false} 
                 activeDot={{ r: 6, fill: "#10B981", strokeWidth: 3, stroke: "#ffffff", className: "shadow-sm" }} 
-                connectNulls
                 isAnimationActive={true}
                 animationDuration={1500}
                 animationEasing="ease-out"
