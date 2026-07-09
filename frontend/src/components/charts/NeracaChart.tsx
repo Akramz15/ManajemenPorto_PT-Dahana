@@ -32,13 +32,13 @@ export function NeracaChart({ data, title = "Neraca Keseluruhan" }: { data: Nera
   };
 
   return (
-    <div className="card w-full h-full min-h-[350px]">
+    <div className="card w-full">
       <div className="mb-6">
         <h3 className="text-base font-extrabold text-slate-900 tracking-tight">{title}</h3>
         <p className="text-xs font-medium text-slate-500 mt-1">Aset, Liabilitas, dan Ekuitas</p>
       </div>
       
-      <div className="w-full h-64">
+      <div className="w-full h-70">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
             <XAxis 

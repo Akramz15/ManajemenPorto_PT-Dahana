@@ -63,8 +63,9 @@ export default function DIC() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-8">
             <RevenueHPPChart data={revenueData} />
+            <CashFlowChart data={cashFlow} />
           </div>
           <div className="lg:col-span-1 space-y-8">
             <DonutChart 
@@ -74,10 +75,6 @@ export default function DIC() {
             />
             <NeracaChart data={neracaData} />
           </div>
-        </div>
-        
-        <div className="grid grid-cols-1 gap-8">
-          <CashFlowChart data={cashFlow} />
         </div>
       </div>
     </div>
