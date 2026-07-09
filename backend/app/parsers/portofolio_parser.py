@@ -232,27 +232,58 @@ class PortofolioParser(BaseExcelParser):
             "komposisi_aset": komposisi_aset,
             "cash_flow": cash_flow
         }
+        
+    def _extract_jod_inventory(self, df: pd.DataFrame, keyword: str) -> list:
+        inventory = []
+        months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
+        month_idx = 0
+        for idx, row in df.iterrows():
+            if len(row.values) > 6:
+                jenis = str(row.values[2])
+                if keyword.lower() in jenis.lower():
+                    awal = row.values[3]
+                    prod = row.values[4]
+                    keluar = row.values[5]
+                    akhir = row.values[6]
+                    
+                    def safe_float(v):
+                        if pd.notna(v) and str(v).strip() != "":
+                            try:
+                                return float(v)
+                            except ValueError:
+                                return None
+                        return None
+                        
+                    inventory.append({
+                        "periode": months[month_idx] if month_idx < 12 else "Unknown",
+                        "stok_awal": safe_float(awal),
+                        "produksi": safe_float(prod),
+                        "pengeluaran": safe_float(keluar),
+                        "stok_akhir": safe_float(akhir)
+                    })
+                    month_idx += 1
+                    if month_idx >= 12:
+                        break
+        
+        while len(inventory) < 12:
+            inventory.append({
+                "periode": months[len(inventory)],
+                "stok_awal": None,
+                "produksi": None,
+                "pengeluaran": None,
+                "stok_akhir": None
+            })
+            
+        return inventory
 
     def _parse_jodb(self, xl: pd.ExcelFile) -> dict:
-        rng = random.Random(123)
-        months = ["Jan", "Feb", "Mar", "Apr", "Mei"]
-        # Simulasi pergerakan inventori JODB (Solution & Granular)
-        ansol = []
-        granular = []
-        stok_ansol = 487.49
-        stok_gran = 1154.40
-        for m in months:
-            prod_a = rng.uniform(2800, 4000)
-            keluar_a = rng.uniform(2800, 4000)
-            akhir_a = stok_ansol + prod_a - keluar_a
-            ansol.append({"periode": m, "stok_awal": stok_ansol, "produksi": prod_a, "pengeluaran": keluar_a, "stok_akhir": akhir_a})
-            stok_ansol = akhir_a
-            
-            prod_g = rng.uniform(0, 500)
-            keluar_g = rng.uniform(100, 400)
-            akhir_g = stok_gran + prod_g - keluar_g
-            granular.append({"periode": m, "stok_awal": stok_gran, "produksi": prod_g, "pengeluaran": keluar_g, "stok_akhir": akhir_g})
-            stok_gran = akhir_g
+        try:
+            df_jodb = pd.read_excel(xl, sheet_name="JODB", header=None)
+            ansol = self._extract_jod_inventory(df_jodb, "solution")
+            granular = self._extract_jod_inventory(df_jodb, "granul")
+        except Exception:
+            ansol = []
+            granular = []
             
         return {
             "inventori_ansol": ansol,
@@ -260,24 +291,13 @@ class PortofolioParser(BaseExcelParser):
         }
 
     def _parse_jodd(self, xl: pd.ExcelFile) -> dict:
-        rng = random.Random(456)
-        months = ["Jan", "Feb", "Mar", "Apr", "Mei"]
-        inv200 = []
-        inv400 = []
-        stok_200 = 36203
-        stok_400 = 153108
-        for m in months:
-            prod_2 = rng.randint(14000, 45000)
-            keluar_2 = rng.randint(500, 15000)
-            akhir_2 = stok_200 + prod_2 - keluar_2
-            inv200.append({"periode": m, "stok_awal": stok_200, "produksi": prod_2, "pengeluaran": keluar_2, "stok_akhir": akhir_2})
-            stok_200 = akhir_2
-            
-            prod_4 = rng.randint(22000, 55000)
-            keluar_4 = rng.randint(8000, 30000)
-            akhir_4 = stok_400 + prod_4 - keluar_4
-            inv400.append({"periode": m, "stok_awal": stok_400, "produksi": prod_4, "pengeluaran": keluar_4, "stok_akhir": akhir_4})
-            stok_400 = akhir_4
+        try:
+            df_jodd = pd.read_excel(xl, sheet_name="JODD", header=None)
+            inv200 = self._extract_jod_inventory(df_jodd, "200 gr")
+            inv400 = self._extract_jod_inventory(df_jodd, "400 gr")
+        except Exception:
+            inv200 = []
+            inv400 = []
             
         return {
             "inventori_200gr": inv200,
