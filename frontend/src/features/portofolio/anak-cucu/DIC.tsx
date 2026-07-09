@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useChartData } from "@/hooks/useChartData";
-import { RevenueHPPChart, DonutChart, CashFlowChart, RKAPChart, NeracaChart } from "@/components/charts";
+import { RevenueHPPChart, DonutChart, RKAPChart, NeracaChart } from "@/components/charts";
 import { formatRupiah } from "@/lib/formatters";
 import { ExcelUploader } from "@/components/shared";
 
@@ -13,7 +13,6 @@ export default function DIC() {
   const revenueData = chartData?.data?.revenue || [];
   const komposisiAset = chartData?.data?.komposisi_aset || [];
   const neracaData = chartData?.data?.neraca || [];
-  const cashFlow = chartData?.data?.cash_flow || [];
   
   const rkapDataLabaRugi = chartData?.data?.rkap_laba_rugi || [];
   const rkapDataYtdPendapatan = chartData?.data?.rkap_ytd_pendapatan || [];
@@ -62,21 +61,20 @@ export default function DIC() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-          <div className="lg:col-span-2 flex">
+        <div className="grid grid-cols-1 gap-8 mb-8">
+          <div className="flex">
             <RevenueHPPChart data={revenueData} />
           </div>
-          <div className="lg:col-span-1 flex">
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+          <div className="flex">
             <DonutChart 
               title="Komposisi Aset"
               data={komposisiAset} 
               centerLabel={formatRupiah(totalAset, true)}
             />
           </div>
-          <div className="lg:col-span-2 flex">
-            <CashFlowChart data={cashFlow} />
-          </div>
-          <div className="lg:col-span-1 flex">
+          <div className="flex">
             <NeracaChart data={neracaData} />
           </div>
         </div>
