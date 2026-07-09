@@ -20,9 +20,8 @@ export function Sidebar() {
 
 
       <nav className="flex-1 px-3 pb-3 overflow-y-auto mt-2">
-        {sections.map((section) => (
-          <div key={section.label} className="mb-2">
-            <div className="h-px bg-slate-200/60 mb-4 mt-2 mx-2"></div>
+        {sections.map((section, idx) => (
+          <div key={section.label} className={idx > 0 ? "mt-4 mb-2" : "mb-2 mt-2"}>
             <p className="sidebar-section-label">{section.label}</p>
             {section.items.map((item) => {
               const isParentActive = location.pathname.startsWith(item.path);
