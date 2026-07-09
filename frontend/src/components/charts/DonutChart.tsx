@@ -49,9 +49,9 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
   const formattedCenter = centerLabel ? formatCenterLabel(centerLabel) : undefined;
 
   return (
-    <div className="card w-full flex flex-col mb-0 pb-0 border-0 relative">
+    <div className="card w-full flex flex-col h-full mb-0! pb-0! border-0! relative">
       <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-4 z-10">{title}</h3>
-      <div className="flex-1 w-full relative z-10 min-h-70 flex items-center justify-center -mt-7.5">
+      <div className="w-full relative z-10 min-h-72 h-[280px] -mt-7.5">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
