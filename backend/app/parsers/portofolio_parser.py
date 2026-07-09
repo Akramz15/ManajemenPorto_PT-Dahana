@@ -85,23 +85,36 @@ class PortofolioParser(BaseExcelParser):
                 ytd.append(None)
         return ytd
 
-    def _extract_cashflow(self, df: pd.DataFrame, keyword: str):
+    def _extract_cf_by_section(self, df: pd.DataFrame, section_keyword: str):
+        terima = [None]*12
+        keluar = [None]*12
+        found_section = False
+        
         for idx, row in df.iterrows():
             if len(row.values) > 6:
                 val = row.values[6]
-                if isinstance(val, str) and keyword.lower() in val.lower():
-                    cf = []
-                    for i in range(7, 19):
-                        if i < len(row.values):
-                            v = row.values[i]
-                            if pd.notna(v) and str(v).strip() != "":
-                                cf.append(abs(float(v)))
-                            else:
-                                cf.append(None)
-                        else:
-                            cf.append(None)
-                    return cf
-        return [None]*12
+                if isinstance(val, str):
+                    val_lower = val.lower()
+                    if not found_section:
+                        if section_keyword.lower() in val_lower:
+                            found_section = True
+                    else:
+                        if "penerimaan" in val_lower:
+                            terima = []
+                            for i in range(7, 19):
+                                if i < len(row.values) and pd.notna(row.values[i]) and str(row.values[i]).strip() != "":
+                                    terima.append(abs(float(row.values[i])))
+                                else:
+                                    terima.append(None)
+                        elif "pengeluaran" in val_lower:
+                            keluar = []
+                            for i in range(7, 19):
+                                if i < len(row.values) and pd.notna(row.values[i]) and str(row.values[i]).strip() != "":
+                                    keluar.append(abs(float(row.values[i])))
+                                else:
+                                    keluar.append(None)
+                            break
+        return terima, keluar
 
     def _extract_first_num(self, df: pd.DataFrame, keyword: str) -> float:
         for idx, row in df.iterrows():
@@ -137,18 +150,32 @@ class PortofolioParser(BaseExcelParser):
             al_val = aset_lancar * 1e6 if aset_lancar < 1e9 else aset_lancar
             atl_val = aset_tidak_lancar * 1e6 if aset_tidak_lancar < 1e9 else aset_tidak_lancar
             
-            cf_terima = self._extract_cashflow(df_neraca, "penerimaan")
-            cf_keluar = self._extract_cashflow(df_neraca, "pengeluaran")
+            cfo_terima, cfo_keluar = self._extract_cf_by_section(df_neraca, "aktivitas operasi")
+            cfi_terima, cfi_keluar = self._extract_cf_by_section(df_neraca, "investasi")
+            cff_terima, cff_keluar = self._extract_cf_by_section(df_neraca, "funding")
         except Exception:
             al_val, atl_val = 0.0, 0.0
-            cf_terima, cf_keluar = [None]*12, [None]*12
+            cfo_terima, cfo_keluar = [None]*12, [None]*12
+            cfi_terima, cfi_keluar = [None]*12, [None]*12
+            cff_terima, cff_keluar = [None]*12, [None]*12
             
         komposisi_aset = [
             {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
         ]
         
-        cash_flow = [{"periode": m, "penerimaan": (t * 1e6) if t is not None else None, "pengeluaran": (k * 1e6) if k is not None else None} for m, t, k in zip(months, cf_terima, cf_keluar)]
+        cash_flow = [
+            {
+                "periode": m,
+                "cfo_terima": (ot * 1e6) if ot is not None else None,
+                "cfo_keluar": (ok * 1e6) if ok is not None else None,
+                "cfi_terima": (it * 1e6) if it is not None else None,
+                "cfi_keluar": (ik * 1e6) if ik is not None else None,
+                "cff_terima": (ft * 1e6) if ft is not None else None,
+                "cff_keluar": (fk * 1e6) if fk is not None else None
+            }
+            for m, ot, ok, it, ik, ft, fk in zip(months, cfo_terima, cfo_keluar, cfi_terima, cfi_keluar, cff_terima, cff_keluar)
+        ]
         
         rkap_pend_ytd = self._calculate_ytd(rkap_pend_arr)
         real_pend_ytd = self._calculate_ytd(real_pend_arr)
@@ -209,18 +236,32 @@ class PortofolioParser(BaseExcelParser):
             al_val = aset_lancar * 1e6 if aset_lancar < 1e9 else aset_lancar
             atl_val = aset_tidak_lancar * 1e6 if aset_tidak_lancar < 1e9 else aset_tidak_lancar
             
-            cf_terima = self._extract_cashflow(df_neraca, "penerimaan")
-            cf_keluar = self._extract_cashflow(df_neraca, "pengeluaran")
+            cfo_terima, cfo_keluar = self._extract_cf_by_section(df_neraca, "aktivitas operasi")
+            cfi_terima, cfi_keluar = self._extract_cf_by_section(df_neraca, "investasi")
+            cff_terima, cff_keluar = self._extract_cf_by_section(df_neraca, "funding")
         except Exception:
             al_val, atl_val = 0.0, 0.0
-            cf_terima, cf_keluar = [None]*12, [None]*12
+            cfo_terima, cfo_keluar = [None]*12, [None]*12
+            cfi_terima, cfi_keluar = [None]*12, [None]*12
+            cff_terima, cff_keluar = [None]*12, [None]*12
             
         komposisi_aset = [
             {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
         ]
         
-        cash_flow = [{"periode": m, "penerimaan": (t * 1e6) if t is not None else None, "pengeluaran": (k * 1e6) if k is not None else None} for m, t, k in zip(months, cf_terima, cf_keluar)]
+        cash_flow = [
+            {
+                "periode": m,
+                "cfo_terima": (ot * 1e6) if ot is not None else None,
+                "cfo_keluar": (ok * 1e6) if ok is not None else None,
+                "cfi_terima": (it * 1e6) if it is not None else None,
+                "cfi_keluar": (ik * 1e6) if ik is not None else None,
+                "cff_terima": (ft * 1e6) if ft is not None else None,
+                "cff_keluar": (fk * 1e6) if fk is not None else None
+            }
+            for m, ot, ok, it, ik, ft, fk in zip(months, cfo_terima, cfo_keluar, cfi_terima, cfi_keluar, cff_terima, cff_keluar)
+        ]
         
         return {
             "revenue": revenue,
