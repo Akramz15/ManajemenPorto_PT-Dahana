@@ -25,11 +25,11 @@ export default function LoginPage() {
         
         {/* Header Section */}
         <div className="flex flex-col items-center mb-10">
-          <div className="flex items-center justify-center mb-6">
-            <img src={logoDahana} alt="PT Dahana BizPort" className="h-16 w-auto object-contain drop-shadow-sm" />
+          <div className="flex items-center justify-center">
+            <img src={logoDahana} alt="PT Dahana BizPort" className="h-24 w-auto object-contain drop-shadow-sm" />
           </div>
           
-          <div className="mt-10 text-center">
+          <div className="mt-4 text-center">
             <h2 className="text-2xl font-black text-slate-800">Masuk ke Akun Anda</h2>
             <p className="text-sm font-medium text-slate-500 mt-2">Silakan masukkan email dan kredensial Anda.</p>
           </div>
