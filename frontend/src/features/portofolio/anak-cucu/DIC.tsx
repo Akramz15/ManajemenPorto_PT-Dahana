@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useChartData } from "@/hooks/useChartData";
-import { RevenueHPPChart, DonutChart, CashFlowChart, RKAPChart } from "@/components/charts";
+import { RevenueHPPChart, DonutChart, CashFlowChart, RKAPChart, NeracaChart } from "@/components/charts";
 import { formatRupiah } from "@/lib/formatters";
 import { ExcelUploader } from "@/components/shared";
 
@@ -12,6 +12,7 @@ export default function DIC() {
 
   const revenueData = chartData?.data?.revenue || [];
   const komposisiAset = chartData?.data?.komposisi_aset || [];
+  const neracaData = chartData?.data?.neraca || [];
   const cashFlow = chartData?.data?.cash_flow || [];
   
   const rkapDataLabaRugi = chartData?.data?.rkap_laba_rugi || [];
@@ -65,12 +66,13 @@ export default function DIC() {
           <div className="lg:col-span-2">
             <RevenueHPPChart data={revenueData} />
           </div>
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-8">
             <DonutChart 
               title="Komposisi Aset"
               data={komposisiAset} 
               centerLabel={formatRupiah(totalAset, true)}
             />
+            <NeracaChart data={neracaData} />
           </div>
         </div>
         

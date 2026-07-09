@@ -133,19 +133,31 @@ class PortofolioParser(BaseExcelParser):
             df_neraca = pd.read_excel(xl, sheet_name="Neraca&CF DIC", header=None)
             aset_lancar = self._extract_first_num(df_neraca, "aset lancar")
             aset_tidak_lancar = self._extract_first_num(df_neraca, "aset tidak lancar")
+            total_aset = self._extract_first_num(df_neraca, "total aset")
+            total_liabilitas = self._extract_first_num(df_neraca, "total liabilitas")
+            total_ekuitas = self._extract_first_num(df_neraca, "total ekuitas")
             
             al_val = aset_lancar * 1e6 if aset_lancar < 1e9 else aset_lancar
             atl_val = aset_tidak_lancar * 1e6 if aset_tidak_lancar < 1e9 else aset_tidak_lancar
+            ta_val = total_aset * 1e6 if total_aset < 1e9 else total_aset
+            tl_val = total_liabilitas * 1e6 if total_liabilitas < 1e9 else total_liabilitas
+            te_val = total_ekuitas * 1e6 if total_ekuitas < 1e9 else total_ekuitas
             
             cf_terima = self._extract_cashflow(df_neraca, "penerimaan")
             cf_keluar = self._extract_cashflow(df_neraca, "pengeluaran")
         except Exception:
-            al_val, atl_val = 0.0, 0.0
+            al_val, atl_val, ta_val, tl_val, te_val = 0.0, 0.0, 0.0, 0.0, 0.0
             cf_terima, cf_keluar = [None]*12, [None]*12
             
         komposisi_aset = [
             {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
+        ]
+        
+        neraca = [
+            {"name": "Aset", "value": ta_val, "color": "#3B82F6"},
+            {"name": "Liabilitas", "value": tl_val, "color": "#F43F5E"},
+            {"name": "Ekuitas", "value": te_val, "color": "#10B981"},
         ]
         
         cash_flow = [{"periode": m, "penerimaan": (t * 1e6) if t is not None else None, "pengeluaran": (k * 1e6) if k is not None else None} for m, t, k in zip(months, cf_terima, cf_keluar)]
@@ -163,6 +175,7 @@ class PortofolioParser(BaseExcelParser):
         return {
             "revenue": revenue,
             "komposisi_aset": komposisi_aset,
+            "neraca": neraca,
             "cash_flow": cash_flow,
             "rkap": rkap_ytd_pendapatan,
             "rkap_laba_rugi": rkap_laba_rugi,
@@ -205,19 +218,31 @@ class PortofolioParser(BaseExcelParser):
             df_neraca = pd.read_excel(xl, sheet_name="Neraca KAN", header=None)
             aset_lancar = self._extract_first_num(df_neraca, "aset lancar")
             aset_tidak_lancar = self._extract_first_num(df_neraca, "aset tidak lancar")
+            total_aset = self._extract_first_num(df_neraca, "total aset")
+            total_liabilitas = self._extract_first_num(df_neraca, "total liabilitas")
+            total_ekuitas = self._extract_first_num(df_neraca, "total ekuitas")
             
             al_val = aset_lancar * 1e6 if aset_lancar < 1e9 else aset_lancar
             atl_val = aset_tidak_lancar * 1e6 if aset_tidak_lancar < 1e9 else aset_tidak_lancar
+            ta_val = total_aset * 1e6 if total_aset < 1e9 else total_aset
+            tl_val = total_liabilitas * 1e6 if total_liabilitas < 1e9 else total_liabilitas
+            te_val = total_ekuitas * 1e6 if total_ekuitas < 1e9 else total_ekuitas
             
             cf_terima = self._extract_cashflow(df_neraca, "penerimaan")
             cf_keluar = self._extract_cashflow(df_neraca, "pengeluaran")
         except Exception:
-            al_val, atl_val = 0.0, 0.0
+            al_val, atl_val, ta_val, tl_val, te_val = 0.0, 0.0, 0.0, 0.0, 0.0
             cf_terima, cf_keluar = [None]*12, [None]*12
             
         komposisi_aset = [
             {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
+        ]
+        
+        neraca = [
+            {"name": "Aset", "value": ta_val, "color": "#3B82F6"},
+            {"name": "Liabilitas", "value": tl_val, "color": "#F43F5E"},
+            {"name": "Ekuitas", "value": te_val, "color": "#10B981"},
         ]
         
         cash_flow = [{"periode": m, "penerimaan": (t * 1e6) if t is not None else None, "pengeluaran": (k * 1e6) if k is not None else None} for m, t, k in zip(months, cf_terima, cf_keluar)]
@@ -230,6 +255,7 @@ class PortofolioParser(BaseExcelParser):
             "rkap_ytd_pendapatan": rkap_ytd_pendapatan,
             "rkap_ytd_laba_rugi": rkap_ytd_laba_rugi,
             "komposisi_aset": komposisi_aset,
+            "neraca": neraca,
             "cash_flow": cash_flow
         }
         

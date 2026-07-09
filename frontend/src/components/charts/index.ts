@@ -6,6 +6,7 @@ export * from "./CashFlowChart";
 export * from "./RKAPChart";
 export * from "./InventoriChart";
 export * from "./InvestasiBubbleChart";
+export * from "./NeracaChart";
 export * from "./colors";
 export * from "./TooltipBase";
 export * from "./ChartShell";
