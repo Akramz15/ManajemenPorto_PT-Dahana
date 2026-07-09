@@ -227,27 +227,32 @@ class PortofolioParser(BaseExcelParser):
         rkap_ytd_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_ytd, real_laba_ytd)]
         rkap_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_arr, real_laba_arr)]
         
-        # 2. Komposisi Aset & Cash Flow dari Neraca KAN
+        # 2. Komposisi Aset & Cash Flow
         try:
             df_neraca = pd.read_excel(xl, sheet_name="Neraca KAN", header=None)
-            aset_lancar = self._extract_first_num(df_neraca, "aset lancar")
-            aset_tidak_lancar = self._extract_first_num(df_neraca, "aset tidak lancar")
-            
-            al_val = aset_lancar * 1e6 if aset_lancar < 1e9 else aset_lancar
-            atl_val = aset_tidak_lancar * 1e6 if aset_tidak_lancar < 1e9 else aset_tidak_lancar
-            
             cfo_terima, cfo_keluar = self._extract_cf_by_section(df_neraca, "aktivitas operasi")
             cfi_terima, cfi_keluar = self._extract_cf_by_section(df_neraca, "investasi")
             cff_terima, cff_keluar = self._extract_cf_by_section(df_neraca, "funding")
         except Exception:
-            al_val, atl_val = 0.0, 0.0
             cfo_terima, cfo_keluar = [None]*12, [None]*12
             cfi_terima, cfi_keluar = [None]*12, [None]*12
             cff_terima, cff_keluar = [None]*12, [None]*12
+
+        try:
+            df_kan_r1 = pd.read_excel(xl, sheet_name="Lap. KAN-R1", header=None)
+            aset_tidak_lancar = self._extract_first_num(df_kan_r1, "jumlah aset tidak lancar")
+            ekuitas = self._extract_first_num(df_kan_r1, "jumlah ekuitas")
+            
+            # The values in Lap. KAN-R1 are in thousands or millions? 
+            # 1209712 * 1e6 = 1.2 Trillion. Yes, usually in Jutaan (Millions).
+            atl_val = aset_tidak_lancar * 1e6
+            eq_val = ekuitas * 1e6
+        except Exception:
+            atl_val, eq_val = 0.0, 0.0
             
         komposisi_aset = [
-            {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
+            {"name": "Ekuitas", "value": eq_val, "color": "#F59E0B"},
         ]
         
         cash_flow = [

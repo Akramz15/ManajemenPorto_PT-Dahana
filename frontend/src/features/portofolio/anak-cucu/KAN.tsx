@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useChartData } from "@/hooks/useChartData";
-import { RKAPChart, RevenueHPPChart, CashFlowChart } from "@/components/charts";
+import { RKAPChart, RevenueHPPChart, CashFlowChart, DonutChart } from "@/components/charts";
+import { formatRupiah } from "@/lib/formatters";
 import { ExcelUploader } from "@/components/shared";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
@@ -39,6 +40,8 @@ export default function KAN() {
   const produksiData = chartData?.data?.produksi || [];
   const revenueData = chartData?.data?.revenue || [];
   const cashFlow = chartData?.data?.cash_flow || [];
+  const komposisiAset = chartData?.data?.komposisi_aset || [];
+  const totalAset = komposisiAset.reduce((acc: number, d: any) => acc + d.value, 0);
   
   const rkapDataLabaRugi = chartData?.data?.rkap_laba_rugi || [];
   const rkapDataYtdPendapatan = chartData?.data?.rkap_ytd_pendapatan || [];
@@ -104,8 +107,17 @@ export default function KAN() {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 gap-8">
-          <RevenueHPPChart data={revenueData} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <RevenueHPPChart data={revenueData} />
+          </div>
+          <div className="lg:col-span-1">
+            <DonutChart 
+              title="Komposisi Aset"
+              data={komposisiAset} 
+              centerLabel={formatRupiah(totalAset, true)}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-8">
