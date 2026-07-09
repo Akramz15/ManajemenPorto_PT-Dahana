@@ -64,8 +64,8 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
               data={data}
               cx="50%"
               cy="45%"
-              innerRadius={75}
-              outerRadius={100}
+              innerRadius="60%"
+              outerRadius="80%"
               paddingAngle={6}
               dataKey="value"
               stroke="none"
