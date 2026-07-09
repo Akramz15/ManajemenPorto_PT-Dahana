@@ -18,13 +18,10 @@ export function Sidebar() {
         </h1>
       </div>
 
-
       <nav className="flex-1 px-3 pb-3 overflow-y-auto mt-2">
         {sections.map((section, idx) => (
           <div key={section.label} className="mb-1">
-            {idx > 0 && (
-              <div className="h-px bg-gradient-to-r from-slate-200/10 via-slate-200/80 to-slate-200/10 my-4 mx-2"></div>
-            )}
+            <div className="h-px bg-gradient-to-r from-slate-200/10 via-slate-200/80 to-slate-200/10 my-4 mx-2"></div>
             <p className="sidebar-section-label">{section.label}</p>
             {section.items.map((item) => {
               const isParentActive = location.pathname.startsWith(item.path);
