@@ -7,7 +7,7 @@ import { ExcelUploader } from "@/components/shared";
 type RkapType = "laba_rugi" | "ytd_pendapatan" | "ytd_laba_rugi";
 
 export default function DIC() {
-  const { data: chartData, refetch } = useChartData<any>("dic");
+  const { data: chartData, refetch, loading } = useChartData<any>("dic");
   const [selectedRkap, setSelectedRkap] = useState<RkapType>("ytd_pendapatan");
 
   const revenueData = chartData?.data?.revenue || [];
@@ -29,6 +29,17 @@ export default function DIC() {
   };
 
   const activeRkap = getActiveRkapData();
+
+  if (loading && !chartData) {
+    return (
+      <div className="p-8 max-w-7xl mx-auto min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-slate-200 border-t-primary-500 rounded-full animate-spin"></div>
+          <p className="text-sm font-medium text-slate-500 animate-pulse">Memuat data dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8 min-h-screen">

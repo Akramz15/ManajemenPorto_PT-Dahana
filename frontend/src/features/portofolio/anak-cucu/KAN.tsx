@@ -34,7 +34,7 @@ function KANProduksiTooltip({ active, payload, label }: {
 }
 
 export default function KAN() {
-  const { data: chartData, refetch } = useChartData<any>("kan");
+  const { data: chartData, refetch, loading } = useChartData<any>("kan");
   const [selectedRkap, setSelectedRkap] = useState<RkapType>("ytd_pendapatan");
 
   const produksiData = chartData?.data?.produksi || [];
@@ -57,6 +57,17 @@ export default function KAN() {
   };
 
   const activeRkap = getActiveRkapData();
+
+  if (loading && !chartData) {
+    return (
+      <div className="p-8 max-w-7xl mx-auto min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-slate-200 border-t-primary-500 rounded-full animate-spin"></div>
+          <p className="text-sm font-medium text-slate-500 animate-pulse">Memuat data dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8 min-h-screen">
