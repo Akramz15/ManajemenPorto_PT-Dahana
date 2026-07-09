@@ -1,28 +1,42 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { formatRupiah } from "@/lib/formatters";
 
-interface NeracaItem {
-  name: string;
-  value: number;
-  color: string;
+interface NeracaPoint {
+  periode: string;
+  aset: number;
+  liabilitas: number;
+  ekuitas: number;
 }
 
-function NeracaTooltip({ active, payload }: { active?: boolean; payload?: any[] }) {
+function NeracaTooltip({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) {
   if (!active || !payload?.length) return null;
-  const data = payload[0].payload as NeracaItem;
+
+  const aset = payload.find(p => p.name === "aset")?.value || 0;
+  const liabilitas = payload.find(p => p.name === "liabilitas")?.value || 0;
+  const ekuitas = payload.find(p => p.name === "ekuitas")?.value || 0;
 
   return (
     <div className="apple-tooltip !min-w-40">
-      <div className="flex items-center gap-2 mb-1">
-        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: data.color }} />
-        <span className="font-semibold text-slate-300">{data.name}</span>
+      <p className="apple-tooltip-title">{label}</p>
+      <div className="space-y-2">
+        <div className="flex justify-between items-center gap-4">
+          <span className="font-semibold" style={{ color: "#3B82F6" }}>Aset</span>
+          <span className="font-bold text-white">{formatRupiah(aset)}</span>
+        </div>
+        <div className="flex justify-between items-center gap-4">
+          <span className="font-semibold" style={{ color: "#F43F5E" }}>Liabilitas</span>
+          <span className="font-bold text-white">{formatRupiah(liabilitas)}</span>
+        </div>
+        <div className="flex justify-between items-center gap-4">
+          <span className="font-semibold" style={{ color: "#10B981" }}>Ekuitas</span>
+          <span className="font-bold text-white">{formatRupiah(ekuitas)}</span>
+        </div>
       </div>
-      <p className="font-bold text-white text-lg">{formatRupiah(data.value, true)}</p>
     </div>
   );
 }
 
-export function NeracaChart({ data, title = "Neraca Keseluruhan" }: { data: NeracaItem[]; title?: string }) {
+export function NeracaChart({ data, title = "Neraca Keseluruhan" }: { data: NeracaPoint[]; title?: string }) {
   // Format label sumbu Y agar menggunakan format M/B/T
   const yAxisFormatter = (value: number) => {
     if (value >= 1e12) return `Rp ${(value / 1e12).toFixed(1)}T`;
@@ -40,10 +54,10 @@ export function NeracaChart({ data, title = "Neraca Keseluruhan" }: { data: Nera
       
       <div className="w-full flex-1 min-h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+          <BarChart data={data} barGap={4} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <XAxis 
-              dataKey="name" 
-              tick={{ fontSize: 12, fill: "#64748b", fontWeight: 600 }} 
+              dataKey="periode" 
+              tick={{ fontSize: 11, fill: "#64748b", fontWeight: 600 }} 
               axisLine={false} 
               tickLine={false}
               tickMargin={12}
@@ -54,18 +68,11 @@ export function NeracaChart({ data, title = "Neraca Keseluruhan" }: { data: Nera
               axisLine={false}
               tickLine={false}
               tickMargin={12}
-              width={70}
             />
-            <Tooltip content={<NeracaTooltip />} cursor={{ fill: '#f8fafc' }} />
-            <Bar 
-              dataKey="value" 
-              radius={[6, 6, 0, 0]} 
-              barSize={60}
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Bar>
+            <Tooltip content={<NeracaTooltip />} cursor={{ fill: '#f1f5f9', opacity: 0.4 }} />
+            <Bar name="aset" dataKey="aset" fill="#3B82F6" radius={[4, 4, 0, 0]} maxBarSize={25} />
+            <Bar name="liabilitas" dataKey="liabilitas" fill="#F43F5E" radius={[4, 4, 0, 0]} maxBarSize={25} />
+            <Bar name="ekuitas" dataKey="ekuitas" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={25} />
           </BarChart>
         </ResponsiveContainer>
       </div>
