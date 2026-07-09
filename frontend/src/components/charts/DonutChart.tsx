@@ -52,7 +52,13 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
     <div className="card w-full flex flex-col h-full mb-0! pb-0! border-0! relative">
       <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-4 z-10">{title}</h3>
       <div className="w-full relative z-10 min-h-72 h-[280px] -mt-7.5">
-        <ResponsiveContainer width="100%" height="100%">
+        {formattedCenter && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
+            <p className="text-lg font-black text-slate-900">{formattedCenter}</p>
+          </div>
+        )}
+        <ResponsiveContainer width="100%" height="100%" className="relative z-10">
           <PieChart>
             <Pie
               data={data}
@@ -74,12 +80,6 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: "20px", fontWeight: 600 }} iconType="circle" />
           </PieChart>
         </ResponsiveContainer>
-        {formattedCenter && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none -mt-7.5">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
-            <p className="text-lg font-black text-slate-900">{formattedCenter}</p>
-          </div>
-        )}
       </div>
     </div>
   );
