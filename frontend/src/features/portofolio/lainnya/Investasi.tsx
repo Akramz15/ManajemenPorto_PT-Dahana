@@ -1,20 +1,4 @@
-
-import { InvestasiBubbleChart } from "@/components/charts";
-import { DocumentGallery } from "@/components/shared";
-import { useRealtime } from "@/hooks/useRealtime";
-
-// Dummy data since parser is not ready for bubble chart
-const DUMMY_INVESTASI = [
-  { id: "1", nama: "Proyek Ekspansi Pabrik A", nilai_investasi: 1500, roi_persen: 15.5, risiko_score: 4, status: "aktif" as const },
-  { id: "2", nama: "Akuisisi Lahan Tambang B", nilai_investasi: 800, roi_persen: 8.2, risiko_score: 7, status: "prospek" as const },
-  { id: "3", nama: "Joint Venture Logistik", nilai_investasi: 2100, roi_persen: 22.0, risiko_score: 8, status: "ditangguhkan" as const },
-  { id: "4", nama: "Modernisasi Mesin Produksi", nilai_investasi: 500, roi_persen: 12.0, risiko_score: 2, status: "aktif" as const },
-  { id: "5", nama: "Pengembangan R&D Center", nilai_investasi: 300, roi_persen: 5.5, risiko_score: 5, status: "prospek" as const },
-];
-
 export default function Investasi() {
-  const documents = useRealtime<any>({ table: "documents", filter: { project_id: "investasi-global" } }).records;
-
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
@@ -22,17 +6,16 @@ export default function Investasi() {
         <p className="text-sm text-slate-500 mt-1">Peta sebaran portofolio investasi beserta tingkat pengembalian (ROI) dan risiko</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <InvestasiBubbleChart data={DUMMY_INVESTASI} />
+      <div className="card w-full min-h-[500px] flex flex-col items-center justify-center text-center p-8">
+        <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mb-6">
+          <svg className="w-10 h-10 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+          </svg>
         </div>
-        
-        <div className="lg:col-span-1 h-112.5">
-          <DocumentGallery 
-            documents={documents} 
-            onUpload={() => alert("Fitur upload dokumen akan diimplementasi di Modul 07")}
-          />
-        </div>
+        <h3 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">Coming Soon</h3>
+        <p className="text-slate-500 max-w-md mx-auto">
+          Fitur analisis portofolio investasi dan afiliasi sedang dalam tahap pengembangan. Silakan nantikan pembaruan berikutnya dari tim kami.
+        </p>
       </div>
     </div>
   );
