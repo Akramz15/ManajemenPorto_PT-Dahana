@@ -47,6 +47,17 @@
     box-sizing: border-box;
   }
 
+  /* Global Scaling: Shrink everything proportionately on laptops (<1536px) */
+  html {
+    font-size: 14px; 
+  }
+  
+  @media (min-width: 1536px) {
+    html {
+      font-size: 16px; /* Restore 100% scale for large external monitors */
+    }
+  }
+
   body {
     background-color: #f8fafc; /* Lighter background */
     color: #0f172a;
