@@ -292,7 +292,7 @@ export default function ProjectBerjalan() {
           </div>
 
           {/* S-Curve Chart (Full Width) */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-112.5 flex flex-col">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-72 lg:h-96 2xl:h-112.5 flex flex-col">
             <div className="absolute -top-10 -right-10 w-64 h-64 bg-indigo-100 rounded-full -z-10 blur-3xl opacity-50"></div>
             <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-primary-100 rounded-full -z-10 blur-3xl opacity-50"></div>
             <SCurveProgressChart data={sCurveData} />
