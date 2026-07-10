@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { ExcelUploader, ProjectManager } from "@/components/shared";
-import { SCurveProgressChart } from "@/components/charts";
-import { useChartData } from "@/hooks/useChartData";
+import { ProjectManager, ProjectDocumentsTable } from "@/components/shared";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { MapPin, Plus, Settings, FolderOpen, Search, User, Clock, Trash2 } from "lucide-react";
@@ -77,9 +75,7 @@ export default function ProjectKajian() {
     }
   }, [selectedProject, allProjects]);
 
-  // Fetch tasks only for the selected project
-  const { data: chartData, refetch: refetchChart } = useChartData<any>("kurva-s", selectedProject);
-  const sCurveData = chartData?.data_points || [];
+
 
   const handleDeleteProject = async (projectId: string) => {
     if (!window.confirm("Apakah Anda yakin ingin menghapus proyek ini? Seluruh data dan task akan ikut terhapus secara permanen.")) return;
@@ -127,14 +123,7 @@ export default function ProjectKajian() {
                 <span className="font-bold text-slate-800 px-2 py-0.5 bg-slate-200 rounded-md">
                   {projectData?.id ? `ID-${projectData.id.split('-')[0].toUpperCase()}` : "ID-XXXX"}
                 </span>
-                {sCurveData && sCurveData.length > 0 && (
-                  <>
-                    <span className="text-slate-300">|</span>
-                    <span className="font-bold text-emerald-700 px-2 py-0.5 bg-emerald-100/80 rounded-md flex items-center gap-1.5">
-                      Progres Saat Ini: {[...sCurveData].reverse().find(d => d.realisasi != null)?.realisasi || 0}%
-                    </span>
-                  </>
-                )}
+
               </div>
             ) : (
               <p className="text-slate-500 mt-1">Kelola timeline proposal dan studi kelayakan proyek divisi komersial.</p>
@@ -195,50 +184,47 @@ export default function ProjectKajian() {
       {/* Main Content */}
       {selectedProject ? (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Docs & Progress Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden min-h-100">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -z-10 opacity-50"></div>
-                <SCurveProgressChart data={sCurveData} />
-              </div>
-            </div>
-            <div className="space-y-6">
-              {/* Info Card */}
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden">
-                 <div className="absolute -right-10 -top-10 w-40 h-40 bg-amber-50/50 rounded-full blur-2xl"></div>
-                 <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
-                   Informasi Proyek
-                 </h3>
-                 <div className="space-y-4">
+          <div className="space-y-6">
+            {/* Info Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden">
+               <div className="absolute -right-10 -top-10 w-40 h-40 bg-amber-50/50 rounded-full blur-2xl"></div>
+               <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                 Informasi Proyek
+               </h3>
+               <div className="flex flex-wrap gap-8">
+                  <div>
+                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5"><User size={12}/> Ditambahkan Oleh</p>
+                    <p className="text-sm font-semibold text-slate-700">
+                      {/* @ts-ignore */}
+                      {projectData?.user_profiles?.display_name || 'Tim Pengembangan Usaha'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5"><Clock size={12}/> Dibuat Pada</p>
+                    <p className="text-sm font-semibold text-slate-700">
+                      {projectData?.created_at ? new Date(projectData.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
+                    </p>
+                  </div>
+                  {projectData?.start_date && (
                     <div>
-                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5"><User size={12}/> Ditambahkan Oleh</p>
+                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">Start Date</p>
                       <p className="text-sm font-semibold text-slate-700">
-                        {/* @ts-ignore */}
-                        {projectData?.user_profiles?.display_name || 'Tim Pengembangan Usaha'}
+                        {new Date(projectData.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                       </p>
                     </div>
-                    <div className="pt-4 border-t border-slate-100">
-                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5"><Clock size={12}/> Dibuat Pada</p>
+                  )}
+                  {projectData?.end_date && (
+                    <div>
+                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">End Date</p>
                       <p className="text-sm font-semibold text-slate-700">
-                        {projectData?.created_at ? new Date(projectData.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
+                        {new Date(projectData.end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                       </p>
                     </div>
-                 </div>
-              </div>
-              
-              {/* Excel Uploader for S-Curve */}
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6">
-                <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  Upload Excel S-Curve
-                </h3>
-                <ExcelUploader 
-                  context="kurva-s" 
-                  subContext={selectedProject} 
-                  onSuccess={() => refetchChart()} 
-                />
-              </div>
+                  )}
+               </div>
             </div>
+            
+            <ProjectDocumentsTable projectId={selectedProject} />
           </div>
         </div>
       ) : (

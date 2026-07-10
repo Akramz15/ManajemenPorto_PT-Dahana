@@ -5,3 +5,5 @@ export * from "./KajianTimeline";
 export * from "./OnlineIndicator";
 export * from "./UploadToast";
 export * from "./ProjectManager";
+export * from "./ProjectDocumentsTable";
+export * from "./MonthlyProgressTracker";

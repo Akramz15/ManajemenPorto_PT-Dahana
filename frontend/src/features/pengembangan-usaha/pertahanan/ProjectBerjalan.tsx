@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
-import { ExcelUploader, ProjectManager } from "@/components/shared";
+import { useState, useEffect, useCallback } from "react";
+import { ProjectManager, ProjectDocumentsTable, MonthlyProgressTracker } from "@/components/shared";
 import { SCurveProgressChart } from "@/components/charts";
-import { useChartData } from "@/hooks/useChartData";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { MapPin, Download, Plus, Settings, Search, User, Clock, ShieldAlert , Trash2 } from "lucide-react";
@@ -77,12 +76,76 @@ export default function ProjectBerjalan() {
     }
   }, [selectedProject, allProjects]);
 
-  // Data Fetching
-  const { data: chartData, refetch: refetchChart } = useChartData<any>("kurva-s", selectedProject);
-  const sCurveData = chartData?.data_points || [];
+  // Dynamic S-Curve based on project_monthly_progress
+  const [sCurveData, setSCurveData] = useState<any[]>([]);
 
+  const fetchDynamicSCurve = useCallback(async () => {
+    if (!selectedProject || !projectData) return;
+    
+    const { data: progressData } = await supabase
+      .from("project_monthly_progress")
+      .select("*")
+      .eq("project_id", selectedProject)
+      .order("year", { ascending: true })
+      .order("month", { ascending: true });
 
+    const start = projectData.start_date ? new Date(projectData.start_date) : new Date(new Date().getFullYear(), 0, 1);
+    const end = projectData.end_date ? new Date(projectData.end_date) : new Date(new Date().getFullYear(), 11, 31);
+    
+    const totalMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()) + 1;
+    if (totalMonths <= 0) {
+      setSCurveData([]);
+      return;
+    }
+    
+    const step = 100 / totalMonths;
+    const curve: any[] = [];
+    const MONTHS = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+    
+    let currentRealisasi: number | null = null;
+    let expectedAccum = 0;
+    
+    // To only show realisasi up to current month if not filled
+    const today = new Date();
+    
+    for (let i = 0; i < totalMonths; i++) {
+      const currentMonthIndex = start.getMonth() + i;
+      const m = (currentMonthIndex % 12) + 1;
+      const y = start.getFullYear() + Math.floor(currentMonthIndex / 12);
+      
+      expectedAccum += step;
+      if (expectedAccum > 100) expectedAccum = 100;
 
+      const pData = progressData?.find(p => p.month === m && p.year === y);
+      
+      if (pData) {
+        if (pData.status === 'Close') {
+           currentRealisasi = 100;
+        } else if (pData.status === 'On-track') {
+           currentRealisasi = expectedAccum;
+        } else if (pData.status === 'Delay') {
+           currentRealisasi = currentRealisasi != null ? currentRealisasi + (step * 0.3) : step * 0.3;
+        }
+      } else {
+        const isPastOrCurrent = (y < today.getFullYear()) || (y === today.getFullYear() && m <= today.getMonth() + 1);
+        if (!isPastOrCurrent) {
+          // Future month without data -> leave realisasi as null so it doesn't plot
+        }
+      }
+      
+      curve.push({
+        periode: `${MONTHS[m-1]} ${y}`,
+        rencana: parseFloat(expectedAccum.toFixed(1)),
+        realisasi: currentRealisasi != null ? parseFloat(currentRealisasi.toFixed(1)) : null
+      });
+    }
+    
+    setSCurveData(curve);
+  }, [selectedProject, projectData]);
+
+  useEffect(() => {
+    fetchDynamicSCurve();
+  }, [fetchDynamicSCurve]);
   const handleDeleteProject = async (projectId: string) => {
     if (!window.confirm("Apakah Anda yakin ingin menghapus proyek ini? Seluruh data dan task akan ikut terhapus secara permanen.")) return;
     try {
@@ -198,52 +261,56 @@ export default function ProjectBerjalan() {
       {/* Main Content */}
       {selectedProject ? (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Docs & Progress Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden min-h-100">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-bl-full -z-10 opacity-50"></div>
-                <SCurveProgressChart data={sCurveData} />
-              </div>
+          
+          {/* Top Info Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><User size={12}/> Ditambahkan Oleh</p>
+              <p className="text-sm font-bold text-slate-800 truncate">
+                {/* @ts-ignore */}
+                {projectData?.user_profiles?.display_name || 'Tim Pengembangan Usaha'}
+              </p>
             </div>
-
-            <div className="space-y-6">
-              {/* Info Card */}
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden">
-                 <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary-50/50 rounded-full blur-2xl"></div>
-                 <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
-                   Informasi Proyek
-                 </h3>
-                 <div className="space-y-4">
-                    <div>
-                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5"><User size={12}/> Ditambahkan Oleh</p>
-                      <p className="text-sm font-semibold text-slate-700">
-                        {/* @ts-ignore */}
-                        {projectData?.user_profiles?.display_name || 'Tim Pengembangan Usaha'}
-                      </p>
-                    </div>
-                    <div className="pt-4 border-t border-slate-100">
-                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5"><Clock size={12}/> Dibuat Pada</p>
-                      <p className="text-sm font-semibold text-slate-700">
-                        {projectData?.created_at ? new Date(projectData.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
-                      </p>
-                    </div>
-                 </div>
-              </div>
-
-              {/* Excel Uploader for S-Curve */}
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6">
-                <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  Upload Excel S-Curve
-                </h3>
-                <ExcelUploader 
-                  context="kurva-s" 
-                  subContext={selectedProject} 
-                  onSuccess={() => refetchChart()} 
-                />
-              </div>
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><Clock size={12}/> Dibuat Pada</p>
+              <p className="text-sm font-bold text-slate-800">
+                {projectData?.created_at ? new Date(projectData.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">Start Date</p>
+              <p className="text-sm font-bold text-slate-800">
+                {projectData?.start_date ? new Date(projectData.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Tidak diatur'}
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">End Date</p>
+              <p className="text-sm font-bold text-slate-800">
+                {projectData?.end_date ? new Date(projectData.end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Tidak diatur'}
+              </p>
             </div>
           </div>
+
+          {/* S-Curve Chart (Full Width) */}
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-112.5 flex flex-col">
+            <div className="absolute -top-10 -right-10 w-64 h-64 bg-indigo-100 rounded-full -z-10 blur-3xl opacity-50"></div>
+            <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-primary-100 rounded-full -z-10 blur-3xl opacity-50"></div>
+            <SCurveProgressChart data={sCurveData} />
+          </div>
+
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {/* Monthly Progress Tracker */}
+            {projectData && (
+              <MonthlyProgressTracker 
+                project={projectData} 
+                onUpdate={fetchDynamicSCurve} 
+              />
+            )}
+            
+            {/* Project Documents */}
+            <ProjectDocumentsTable projectId={selectedProject} />
+          </div>
+
         </div>
       ) : (
         <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 min-h-[70vh] flex flex-col overflow-hidden">

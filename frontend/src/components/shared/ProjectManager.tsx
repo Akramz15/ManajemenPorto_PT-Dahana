@@ -24,6 +24,8 @@ export function ProjectManager({ divisi, kategori, onProjectSelected, selectedPr
     nama_proyek: "",
     mitra: "",
     nilai_kontrak: "",
+    start_date: "",
+    end_date: "",
   });
 
   const fetchProjects = useCallback(async () => {
@@ -57,11 +59,13 @@ export function ProjectManager({ divisi, kategori, onProjectSelected, selectedPr
         nama_proyek: formData.nama_proyek,
         mitra: formData.mitra || null,
         nilai_kontrak: formData.nilai_kontrak ? parseInt(formData.nilai_kontrak) : null,
+        start_date: formData.start_date || null,
+        end_date: formData.end_date || null,
       };
 
       if (editingProject) {
         await supabase.from("projects").update(payload).eq("id", editingProject.id);
-        setFormData({ nama_proyek: "", mitra: "", nilai_kontrak: "" });
+        setFormData({ nama_proyek: "", mitra: "", nilai_kontrak: "", start_date: "", end_date: "" });
         setEditingProject(null);
         await fetchProjects();
         if (onRefresh) onRefresh();
@@ -70,7 +74,7 @@ export function ProjectManager({ divisi, kategori, onProjectSelected, selectedPr
         if (data && onProjectSelected) {
           onProjectSelected(data[0].id);
         } else {
-          setFormData({ nama_proyek: "", mitra: "", nilai_kontrak: "" });
+          setFormData({ nama_proyek: "", mitra: "", nilai_kontrak: "", start_date: "", end_date: "" });
           await fetchProjects();
           if (onRefresh) onRefresh();
         }
@@ -98,6 +102,8 @@ export function ProjectManager({ divisi, kategori, onProjectSelected, selectedPr
       nama_proyek: project.nama_proyek,
       mitra: project.mitra || "",
       nilai_kontrak: project.nilai_kontrak ? project.nilai_kontrak.toString() : "",
+      start_date: project.start_date || "",
+      end_date: project.end_date || "",
     });
   };
 
@@ -166,25 +172,26 @@ export function ProjectManager({ divisi, kategori, onProjectSelected, selectedPr
                 placeholder="Masukkan nama proyek..."
               />
             </div>
+            {/* Removed optional fields (Mitra, Nilai Kontrak) per user request */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1.5">Mitra (Opsional)</label>
+                <label className="block text-xs font-semibold text-slate-500 mb-1.5">Mulai (Start Date) *</label>
                 <input 
-                  type="text" 
-                  value={formData.mitra}
-                  onChange={e => setFormData({...formData, mitra: e.target.value})}
-                  className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow"
-                  placeholder="Nama mitra..."
+                  type="date" 
+                  required
+                  value={formData.start_date}
+                  onChange={e => setFormData({...formData, start_date: e.target.value})}
+                  className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow text-slate-700"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1.5">Nilai Kontrak (Opsional)</label>
+                <label className="block text-xs font-semibold text-slate-500 mb-1.5">Selesai (End Date) *</label>
                 <input 
-                  type="number" 
-                  value={formData.nilai_kontrak}
-                  onChange={e => setFormData({...formData, nilai_kontrak: e.target.value})}
-                  className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow"
-                  placeholder="Contoh: 500000000"
+                  type="date" 
+                  required
+                  value={formData.end_date}
+                  onChange={e => setFormData({...formData, end_date: e.target.value})}
+                  className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow text-slate-700"
                 />
               </div>
             </div>
@@ -192,7 +199,7 @@ export function ProjectManager({ divisi, kategori, onProjectSelected, selectedPr
               {editingProject && (
                 <button 
                   type="button" 
-                  onClick={() => { setEditingProject(null); setFormData({nama_proyek: "", mitra: "", nilai_kontrak: ""}); }} 
+                  onClick={() => { setEditingProject(null); setFormData({nama_proyek: "", mitra: "", nilai_kontrak: "", start_date: "", end_date: ""}); }} 
                   className="px-5 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-colors"
                 >
                   Batal

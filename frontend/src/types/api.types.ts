@@ -32,6 +32,8 @@ export interface Project {
   nama_proyek: string;
   mitra: string | null;
   nilai_kontrak: number | null;
+  start_date?: string;
+  end_date?: string;
   created_by: string;
   created_at: string;
 }
