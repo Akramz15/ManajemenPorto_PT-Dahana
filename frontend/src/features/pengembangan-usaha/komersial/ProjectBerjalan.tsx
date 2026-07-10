@@ -3,7 +3,7 @@ import { ProjectManager, ProjectDocumentsTable, MonthlyProgressTracker } from "@
 import { SCurveProgressChart } from "@/components/charts";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { MapPin, Download, Plus, Settings, FolderOpen, Search, User, Clock , Trash2 } from "lucide-react";
+import { Plus, Settings, FolderOpen, Search, User, Clock , Trash2 } from "lucide-react";
 import type { Project } from "@/types";
 
 export default function ProjectBerjalan() {
