@@ -183,22 +183,16 @@ export default function ProjectBerjalan() {
               {selectedProject ? projectData?.nama_proyek : "Workspace: Project Berjalan"}
             </h1>
             {selectedProject ? (
-              <div className="flex items-center gap-3 mt-2 text-sm text-slate-600 font-medium">
-                <div className="flex items-center gap-1.5">
-                  <MapPin size={16} className="text-primary-600" />
-                  <span>Area Komersial</span>
-                </div>
-                <span className="text-slate-300">|</span>
-                <span className="font-bold text-slate-800 px-2 py-0.5 bg-slate-200 rounded-md">
-                  {projectData?.id ? `ID-${projectData.id.split('-')[0].toUpperCase()}` : "ID-XXXX"}
+              <div className="flex items-center flex-wrap gap-2 mt-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold border border-slate-200/60">
+                  <MapPin size={14} className="text-primary-600" />
+                  Area Komersial
                 </span>
                 {sCurveData && sCurveData.length > 0 && (
-                  <>
-                    <span className="text-slate-300">|</span>
-                    <span className="font-bold text-emerald-700 px-2 py-0.5 bg-emerald-100/80 rounded-md flex items-center gap-1.5">
-                      Progres Saat Ini: {[...sCurveData].reverse().find(d => d.realisasi != null)?.realisasi || 0}%
-                    </span>
-                  </>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-100">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                    Progres: {[...sCurveData].reverse().find(d => d.realisasi != null)?.realisasi || 0}%
+                  </span>
                 )}
               </div>
             ) : (
@@ -209,10 +203,6 @@ export default function ProjectBerjalan() {
           <div className="flex items-center gap-3">
             {selectedProject ? (
               <>
-                <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors border border-slate-200 shadow-sm">
-                  <Download size={18} />
-                  Export Report
-                </button>
                 <button 
                   onClick={() => setShowManager(true)}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/40 hover:-translate-y-0.5"
