@@ -210,6 +210,7 @@ class PortofolioParser(BaseExcelParser):
         rkap_ytd_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_ytd, real_pend_ytd)]
         rkap_ytd_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_ytd, real_laba_ytd)]
         rkap_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_arr, real_laba_arr)]
+        rkap_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_arr, real_pend_arr)]
         
         return {
             "revenue": revenue,
@@ -218,6 +219,7 @@ class PortofolioParser(BaseExcelParser):
             "cash_flow": cash_flow,
             "rkap": rkap_ytd_pendapatan,
             "rkap_laba_rugi": rkap_laba_rugi,
+            "rkap_pendapatan": rkap_pendapatan,
             "rkap_ytd_pendapatan": rkap_ytd_pendapatan,
             "rkap_ytd_laba_rugi": rkap_ytd_laba_rugi
         }
@@ -251,6 +253,7 @@ class PortofolioParser(BaseExcelParser):
         rkap_ytd_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_ytd, real_pend_ytd)]
         rkap_ytd_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_ytd, real_laba_ytd)]
         rkap_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_arr, real_laba_arr)]
+        rkap_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_arr, real_pend_arr)]
         
         # 2. Komposisi Aset & Cash Flow
         try:
@@ -306,6 +309,7 @@ class PortofolioParser(BaseExcelParser):
             "produksi": produksi,
             "rkap": rkap_ytd_pendapatan,
             "rkap_laba_rugi": rkap_laba_rugi,
+            "rkap_pendapatan": rkap_pendapatan,
             "rkap_ytd_pendapatan": rkap_ytd_pendapatan,
             "rkap_ytd_laba_rugi": rkap_ytd_laba_rugi,
             "komposisi_aset": komposisi_aset,

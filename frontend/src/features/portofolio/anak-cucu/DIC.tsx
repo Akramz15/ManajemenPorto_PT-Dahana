@@ -4,7 +4,7 @@ import { RevenueHPPChart, DonutChart, CashFlowChart, RKAPChart, EkuitasChart } f
 import { formatRupiah } from "@/lib/formatters";
 import { ExcelUploader } from "@/components/shared";
 
-type RkapType = "laba_rugi" | "ytd_pendapatan" | "ytd_laba_rugi";
+type RkapType = "ytd_pendapatan" | "pendapatan_bulanan" | "ytd_laba_rugi" | "laba_rugi_bulanan";
 
 export default function DIC() {
   const { data: chartData, refetch, loading } = useChartData<any>("dic");
@@ -16,15 +16,17 @@ export default function DIC() {
   const cashFlow = chartData?.data?.cash_flow || [];
   
   const rkapDataLabaRugi = chartData?.data?.rkap_laba_rugi || [];
+  const rkapDataPendapatan = chartData?.data?.rkap_pendapatan || [];
   const rkapDataYtdPendapatan = chartData?.data?.rkap_ytd_pendapatan || [];
   const rkapDataYtdLabaRugi = chartData?.data?.rkap_ytd_laba_rugi || [];
   const totalAset = komposisiAset.reduce((acc: number, d: any) => acc + d.value, 0);
 
   const getActiveRkapData = () => {
     switch (selectedRkap) {
-      case "laba_rugi": return { data: rkapDataLabaRugi, title: "Laba Rugi Usaha DIC 2026 RKAP vs Realisasi" };
       case "ytd_pendapatan": return { data: rkapDataYtdPendapatan, title: "YTD Pendapatan DIC 2026 RKAP vs Realisasi" };
+      case "pendapatan_bulanan": return { data: rkapDataPendapatan, title: "Pendapatan DIC 2026 RKAP vs Realisasi (Per Bulan)" };
       case "ytd_laba_rugi": return { data: rkapDataYtdLabaRugi, title: "YTD Laba Rugi DIC 2026 RKAP vs Realisasi" };
+      case "laba_rugi_bulanan": return { data: rkapDataLabaRugi, title: "Laba Rugi Usaha DIC 2026 RKAP vs Realisasi (Per Bulan)" };
     }
   };
 
@@ -66,8 +68,9 @@ export default function DIC() {
                 className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 font-medium cursor-pointer shadow-sm"
               >
                 <option value="ytd_pendapatan">YTD Pendapatan</option>
-                <option value="laba_rugi">Laba Rugi Usaha</option>
+                <option value="pendapatan_bulanan">Pendapatan (Per Bulan)</option>
                 <option value="ytd_laba_rugi">YTD Laba Rugi</option>
+                <option value="laba_rugi_bulanan">Laba Rugi (Per Bulan)</option>
               </select>
             }
           />
