@@ -118,7 +118,7 @@ export default function TodoListPage() {
         
         {/* Kolom Kiri: Tugas Aktif */}
         <div className="flex flex-col gap-6">
-          <div className="card p-6 border-t-[4px] border-t-primary-500 shadow-sm">
+          <div className="card p-6 border-t-4 border-t-primary-500 shadow-sm">
             <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
               <Calendar className="text-primary-500" size={20} />
               Fokus Hari Ini
@@ -145,7 +145,7 @@ export default function TodoListPage() {
               </button>
             </form>
 
-            <div className="space-y-3 min-h-[300px]">
+            <div className="space-y-3 min-h-75">
               {loading ? (
                 <div className="py-10 flex justify-center"><Spinner className="text-primary-500" /></div>
               ) : activeTodos.length === 0 ? (
@@ -166,7 +166,7 @@ export default function TodoListPage() {
                       <Check size={14} className="text-transparent" />
                     </button>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-700 leading-snug break-words">{todo.task}</p>
+                      <p className="text-sm font-semibold text-slate-700 leading-snug wrap-break-word">{todo.task}</p>
                       <p className="text-[10px] text-slate-400 font-medium mt-1">
                         Dibuat {format(new Date(todo.created_at), "HH:mm", { locale: idLocale })} WIB
                       </p>
@@ -186,7 +186,7 @@ export default function TodoListPage() {
 
         {/* Kolom Kanan: Riwayat Selesai */}
         <div className="flex flex-col gap-6">
-          <div className="card p-6 border-t-[4px] border-t-positive-500 shadow-sm bg-slate-50/30">
+          <div className="card p-6 border-t-4 border-t-positive-500 shadow-sm bg-slate-50/30">
             <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
               <Clock className="text-positive-500" size={20} />
               Riwayat Selesai
@@ -195,7 +195,7 @@ export default function TodoListPage() {
               </span>
             </h2>
 
-            <div className="space-y-3 min-h-[300px]">
+            <div className="space-y-3 min-h-75">
               {loading ? (
                 <div className="py-10 flex justify-center"><Spinner className="text-positive-500" /></div>
               ) : completedTodos.length === 0 ? (
@@ -216,7 +216,7 @@ export default function TodoListPage() {
                       <Check size={14} className="text-white" />
                     </button>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-500 line-through leading-snug break-words">{todo.task}</p>
+                      <p className="text-sm font-semibold text-slate-500 line-through leading-snug wrap-break-word">{todo.task}</p>
                       {todo.completed_at && (
                         <p className="text-[10px] text-positive-600 font-bold mt-1">
                           Selesai {format(new Date(todo.completed_at), "dd MMM HH:mm", { locale: idLocale })}
