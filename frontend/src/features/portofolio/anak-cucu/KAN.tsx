@@ -5,7 +5,7 @@ import { formatRupiah } from "@/lib/formatters";
 import { ExcelUploader } from "@/components/shared";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-type RkapType = "ytd_pendapatan" | "pendapatan_bulanan" | "ytd_laba_rugi" | "laba_rugi_bulanan";
+type RkapType = "ytd" | "bulanan";
 
 function KANProduksiTooltip({ active, payload, label }: {
   active?: boolean;
@@ -35,7 +35,7 @@ function KANProduksiTooltip({ active, payload, label }: {
 
 export default function KAN() {
   const { data: chartData, refetch, loading } = useChartData<any>("kan");
-  const [selectedRkap, setSelectedRkap] = useState<RkapType>("ytd_pendapatan");
+  const [selectedRkap, setSelectedRkap] = useState<RkapType>("ytd");
 
   const produksiData = chartData?.data?.produksi || [];
   const revenueData = chartData?.data?.revenue || [];
@@ -49,16 +49,7 @@ export default function KAN() {
   const rkapDataYtdPendapatan = chartData?.data?.rkap_ytd_pendapatan || [];
   const rkapDataYtdLabaRugi = chartData?.data?.rkap_ytd_laba_rugi || [];
 
-  const getActiveRkapData = () => {
-    switch (selectedRkap) {
-      case "ytd_pendapatan": return { data: rkapDataYtdPendapatan, title: "YTD Pendapatan KAN 2026 RKAP vs Realisasi" };
-      case "pendapatan_bulanan": return { data: rkapDataPendapatan, title: "Pendapatan KAN 2026 RKAP vs Realisasi (Per Bulan)" };
-      case "ytd_laba_rugi": return { data: rkapDataYtdLabaRugi, title: "YTD Laba Rugi KAN 2026 RKAP vs Realisasi" };
-      case "laba_rugi_bulanan": return { data: rkapDataLabaRugi, title: "Laba Rugi Usaha KAN 2026 RKAP vs Realisasi (Per Bulan)" };
-    }
-  };
 
-  const activeRkap = getActiveRkapData();
 
   if (loading && !chartData) {
     return (
@@ -85,22 +76,24 @@ export default function KAN() {
       </div>
 
       <div className="space-y-8">
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col gap-8">
           <RKAPChart 
-            data={activeRkap.data} 
-            title={activeRkap.title} 
+            data={selectedRkap === "ytd" ? rkapDataYtdPendapatan : rkapDataPendapatan} 
+            title={selectedRkap === "ytd" ? "YTD Pendapatan KAN 2026 RKAP vs Realisasi" : "Pendapatan KAN 2026 RKAP vs Realisasi (Per Bulan)"} 
             headerAction={
               <select 
                 value={selectedRkap}
                 onChange={(e) => setSelectedRkap(e.target.value as RkapType)}
                 className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 font-medium cursor-pointer shadow-sm"
               >
-                <option value="ytd_pendapatan">YTD Pendapatan</option>
-                <option value="pendapatan_bulanan">Pendapatan (Per Bulan)</option>
-                <option value="ytd_laba_rugi">YTD Laba Rugi</option>
-                <option value="laba_rugi_bulanan">Laba Rugi (Per Bulan)</option>
+                <option value="ytd">YTD (Akumulasi)</option>
+                <option value="bulanan">Per Bulan</option>
               </select>
             }
+          />
+          <RKAPChart 
+            data={selectedRkap === "ytd" ? rkapDataYtdLabaRugi : rkapDataLabaRugi} 
+            title={selectedRkap === "ytd" ? "YTD Laba Rugi KAN 2026 RKAP vs Realisasi" : "Laba Rugi Usaha KAN 2026 RKAP vs Realisasi (Per Bulan)"} 
           />
         </div>
 

@@ -146,13 +146,13 @@ class PortofolioParser(BaseExcelParser):
             df_rkap = pd.read_excel(xl, sheet_name="RKAP-REAL DIC", header=None)
             rkap_pend_arr, real_pend_arr = self._extract_monthly_rkap(df_rkap, "penjualan")
             rkap_laba_arr, real_laba_arr = self._extract_monthly_rkap(df_rkap, "laba (rugi) usaha")
-            _, real_hpp_arr = self._extract_monthly_rkap(df_rkap, "hpp")
+            rkap_hpp_arr, real_hpp_arr = self._extract_monthly_rkap(df_rkap, "hpp")
         except Exception:
             rkap_pend_arr, real_pend_arr = [0.0]*12, [None]*12
             rkap_laba_arr, real_laba_arr = [0.0]*12, [None]*12
-            _, real_hpp_arr = [0.0]*12, [None]*12
+            rkap_hpp_arr, real_hpp_arr = [0.0]*12, [None]*12
             
-        revenue = [{"periode": m, "penjualan": (p * 1e6) if p is not None else None, "hpp": (h * 1e6) if h is not None else None} for m, p, h in zip(months, real_pend_arr, real_hpp_arr)]
+        revenue = [{"periode": m, "penjualan": (p * 1e6) if p is not None else None, "hpp": (h * 1e6) if h is not None else None, "rkap_penjualan": (rp * 1e6) if rp is not None else None, "rkap_hpp": (rh * 1e6) if rh is not None else None} for m, rp, p, rh, h in zip(months, rkap_pend_arr, real_pend_arr, rkap_hpp_arr, real_hpp_arr)]
         
         # 2, 5. Komposisi Aset & Cash Flow dari Neraca&CF DIC
         try:
@@ -231,16 +231,16 @@ class PortofolioParser(BaseExcelParser):
         try:
             df_rkap = pd.read_excel(xl, sheet_name="RKAP-REAL KAN", header=None)
             rkap_pend_arr, real_pend_arr = self._extract_monthly_rkap(df_rkap, "penjualan")
-            _, real_hpp_arr = self._extract_monthly_rkap(df_rkap, "hpp")
+            rkap_hpp_arr, real_hpp_arr = self._extract_monthly_rkap(df_rkap, "hpp")
             target_prod_arr, real_prod_arr = self._extract_monthly_rkap(df_rkap, "produksi")
             rkap_laba_arr, real_laba_arr = self._extract_monthly_rkap(df_rkap, "laba (rugi) usaha")
         except Exception:
             rkap_pend_arr, real_pend_arr = [0.0]*12, [None]*12
-            _, real_hpp_arr = [0.0]*12, [None]*12
+            rkap_hpp_arr, real_hpp_arr = [0.0]*12, [None]*12
             target_prod_arr, real_prod_arr = [0.0]*12, [None]*12
             rkap_laba_arr, real_laba_arr = [0.0]*12, [None]*12
             
-        revenue = [{"periode": m, "penjualan": (p * 1e6) if p is not None else None, "hpp": (h * 1e6) if h is not None else None} for m, p, h in zip(months, real_pend_arr, real_hpp_arr)]
+        revenue = [{"periode": m, "penjualan": (p * 1e6) if p is not None else None, "hpp": (h * 1e6) if h is not None else None, "rkap_penjualan": (rp * 1e6) if rp is not None else None, "rkap_hpp": (rh * 1e6) if rh is not None else None} for m, rp, p, rh, h in zip(months, rkap_pend_arr, real_pend_arr, rkap_hpp_arr, real_hpp_arr)]
         
         produksi = [{"periode": m, "target": int(t) if t is not None else None, "realisasi": int(r) if r is not None else None} for m, t, r in zip(months, target_prod_arr, real_prod_arr)]
         

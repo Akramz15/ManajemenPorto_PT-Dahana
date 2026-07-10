@@ -1,10 +1,12 @@
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { ComposedChart, Area, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { formatRupiah } from "@/lib/formatters";
 
 interface DataPoint {
   periode: string;
   penjualan: number;
   hpp: number;
+  rkap_penjualan: number;
+  rkap_hpp: number;
 }
 
 function RevenueTooltip({ active, payload, label }: {
@@ -15,6 +17,8 @@ function RevenueTooltip({ active, payload, label }: {
   if (!active || !payload?.length) return null;
   const penjualan = payload.find((p) => p.name === "penjualan");
   const hpp = payload.find((p) => p.name === "hpp");
+  const rkapPenjualan = payload.find((p) => p.name === "RKAP Penjualan");
+  const rkapHpp = payload.find((p) => p.name === "RKAP HPP");
   const rasio = penjualan && hpp && penjualan.value > 0
     ? ((hpp.value / penjualan.value) * 100).toFixed(1)
     : null;
@@ -24,12 +28,20 @@ function RevenueTooltip({ active, payload, label }: {
       <p className="apple-tooltip-title">{label}</p>
       <div className="space-y-2">
         <div className="flex justify-between items-center gap-6">
-          <span className="text-blue-400 font-medium">Penjualan</span>
+          <span className="text-blue-400 font-medium">Realisasi Penjualan</span>
           <span className="font-bold text-white">{formatRupiah(penjualan?.value ?? 0)}</span>
         </div>
-        <div className="flex justify-between items-center gap-6">
-          <span className="text-rose-400 font-medium">HPP</span>
+        <div className="flex justify-between items-center gap-6 text-xs border-b border-slate-700/30 pb-2 mb-2">
+          <span className="text-blue-400/70">RKAP Penjualan</span>
+          <span className="text-slate-300">{formatRupiah(rkapPenjualan?.value ?? 0)}</span>
+        </div>
+        <div className="flex justify-between items-center gap-6 mt-2">
+          <span className="text-rose-400 font-medium">Realisasi HPP</span>
           <span className="font-bold text-white">{formatRupiah(hpp?.value ?? 0)}</span>
+        </div>
+        <div className="flex justify-between items-center gap-6 text-xs">
+          <span className="text-rose-400/70">RKAP HPP</span>
+          <span className="text-slate-300">{formatRupiah(rkapHpp?.value ?? 0)}</span>
         </div>
         {rasio && (
           <div className="flex justify-between items-center gap-6 pt-2 mt-2 border-t border-slate-700/50">
@@ -50,7 +62,7 @@ export function RevenueHPPChart({ data }: { data: DataPoint[] }) {
       
       <div className="w-full h-70">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+          <ComposedChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <defs>
               <linearGradient id="gPenjualan" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.25} />
@@ -71,7 +83,9 @@ export function RevenueHPPChart({ data }: { data: DataPoint[] }) {
             <Area type="monotone" name="hpp" dataKey="hpp" stroke="#F43F5E" strokeWidth={3.5}
               fill="url(#gHPP)" dot={false} activeDot={{ r: 6, strokeWidth: 0, fill: '#F43F5E' }} 
               isAnimationActive={true} animationDuration={1500} animationEasing="ease-out" />
-          </AreaChart>
+            <Line type="monotone" name="RKAP Penjualan" dataKey="rkap_penjualan" stroke="#3B82F6" strokeWidth={2} strokeDasharray="5 5" dot={false} activeDot={false} isAnimationActive={true} animationDuration={1500} animationEasing="ease-out" />
+            <Line type="monotone" name="RKAP HPP" dataKey="rkap_hpp" stroke="#F43F5E" strokeWidth={2} strokeDasharray="5 5" dot={false} activeDot={false} isAnimationActive={true} animationDuration={1500} animationEasing="ease-out" />
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
     </div>
