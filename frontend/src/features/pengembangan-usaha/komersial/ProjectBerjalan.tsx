@@ -182,20 +182,7 @@ export default function ProjectBerjalan() {
             <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
               {selectedProject ? projectData?.nama_proyek : "Workspace: Project Berjalan"}
             </h1>
-            {selectedProject ? (
-              <div className="flex items-center flex-wrap gap-2 mt-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold border border-slate-200/60">
-                  <MapPin size={14} className="text-primary-600" />
-                  Area Komersial
-                </span>
-                {sCurveData && sCurveData.length > 0 && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-100">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                    Progres: {[...sCurveData].reverse().find(d => d.realisasi != null)?.realisasi || 0}%
-                  </span>
-                )}
-              </div>
-            ) : (
+            {(!selectedProject) && (
               <p className="text-slate-500 mt-1">Kelola dan pantau seluruh proyek berjalan divisi komersial secara kolaboratif.</p>
             )}
           </div>
