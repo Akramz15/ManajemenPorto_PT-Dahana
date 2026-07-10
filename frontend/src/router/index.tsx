@@ -8,6 +8,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import { Spinner } from "@/components/ui/Spinner";
 
 const PengembanganUsahaDashboard = lazy(() => import("@/features/pengembangan-usaha/PengembanganUsahaDashboard"));
+const TodoListPage = lazy(() => import("@/features/pengembangan-usaha/TodoListPage"));
 const ProjectBerjalanKomersial = lazy(() => import("@/features/pengembangan-usaha/komersial/ProjectBerjalan"));
 const ProjectKajianKomersial = lazy(() => import("@/features/pengembangan-usaha/komersial/ProjectKajian"));
 const ProjectBerjalanPertahanan = lazy(() => import("@/features/pengembangan-usaha/pertahanan/ProjectBerjalan"));
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
           {
             path: "dashboard",
             element: <Suspense fallback={<PageLoader />}><PengembanganUsahaDashboard /></Suspense>,
+          },
+          {
+            path: "todos",
+            element: <Suspense fallback={<PageLoader />}><TodoListPage /></Suspense>,
           },
           {
             path: "komersial/berjalan",

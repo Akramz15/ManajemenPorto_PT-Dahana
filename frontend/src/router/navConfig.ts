@@ -7,6 +7,7 @@ import {
   MoreHorizontal,
   ArrowLeftRight,
   TrendingUp,
+  CheckSquare,
   type LucideIcon,
 } from "lucide-react";
 
@@ -28,6 +29,7 @@ export const navConfig: Record<string, NavSection[]> = {
       label: "Dashboard",
       items: [
         { label: "Dashboard Utama", path: "/pu/dashboard", icon: TrendingUp },
+        { label: "Tugas Saya", path: "/pu/todos", icon: CheckSquare },
       ],
     },
     {
