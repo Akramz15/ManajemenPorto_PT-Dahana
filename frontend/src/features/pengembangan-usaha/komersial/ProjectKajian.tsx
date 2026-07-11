@@ -95,7 +95,7 @@ export default function ProjectKajian() {
     <div className="p-6 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
       {/* Breadcrumbs & Header */}
       {selectedProject && (
-        <button onClick={() => setSelectedProject("")} className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:text-amber-700 hover:border-amber-300 hover:bg-amber-50 shadow-sm rounded-xl transition-all w-fit -mt-2">
+        <button onClick={() => setSelectedProject("")} className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:text-primary-700 hover:border-primary-300 hover:bg-primary-50 shadow-sm rounded-xl transition-all w-fit -mt-2">
           Kembali ke Workspace
         </button>
       )}
@@ -105,7 +105,7 @@ export default function ProjectKajian() {
           <span className="mx-2">›</span>
           <span>Komersial</span>
           <span className="mx-2">›</span>
-          <span className="text-amber-600 font-bold">Project Kajian</span>
+          <span className="text-primary-600 font-bold">Project Kajian</span>
         </div>
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -116,7 +116,7 @@ export default function ProjectKajian() {
             {selectedProject ? (
               <div className="flex items-center gap-3 mt-2 text-sm text-slate-600 font-medium">
                 <div className="flex items-center gap-1.5">
-                  <MapPin size={16} className="text-amber-600" />
+                  <MapPin size={16} className="text-primary-600" />
                   <span>Area Komersial (Kajian)</span>
                 </div>
                 <span className="text-slate-300">|</span>
@@ -147,14 +147,14 @@ export default function ProjectKajian() {
                   <Trash2 size={18} />
                   Hapus
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-white font-bold text-sm hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5">
+                <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-500 text-white font-bold text-sm hover:bg-primary-600 transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 hover:-translate-y-0.5">
                   Transfer ke Berjalan
                 </button>
               </>
             ) : allProjects.length > 0 ? (
               <button 
                 onClick={() => setShowManager(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600 text-white font-bold text-sm hover:bg-amber-700 transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-600 text-white font-bold text-sm hover:bg-primary-700 transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 hover:-translate-y-0.5"
               >
                 <Plus size={18} />
                 Tambah Kajian Baru
@@ -187,7 +187,7 @@ export default function ProjectKajian() {
           <div className="space-y-6">
             {/* Info Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden">
-               <div className="absolute -right-10 -top-10 w-40 h-40 bg-amber-50/50 rounded-full blur-2xl"></div>
+               <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary-50/50 rounded-full blur-2xl"></div>
                <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
                  Informasi Proyek
                </h3>
@@ -232,8 +232,8 @@ export default function ProjectKajian() {
           {/* Header Workspace */}
           <div className="border-b border-slate-100 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <FolderOpen className="text-amber-500" /> Semua Proyek Kajian
-              <span className="bg-amber-100 text-amber-700 text-xs py-0.5 px-2.5 rounded-full">{filteredProjects.length}</span>
+              <FolderOpen className="text-primary-500" /> Semua Proyek Kajian
+              <span className="bg-primary-100 text-primary-700 text-xs py-0.5 px-2.5 rounded-full">{filteredProjects.length}</span>
             </h3>
             
             <div className="relative max-w-sm w-full">
@@ -243,7 +243,7 @@ export default function ProjectKajian() {
                 placeholder="Cari nama kajian..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
               />
             </div>
           </div>
@@ -256,7 +256,7 @@ export default function ProjectKajian() {
                 </div>
                 <h4 className="text-lg font-bold text-slate-700 mb-2">Workspace Kosong</h4>
                 <p className="text-sm font-medium text-center max-w-sm">Belum ada proyek kajian di divisi komersial. Semua anggota tim dapat menambahkan proyek baru ke dalam workspace ini.</p>
-                <button onClick={() => setShowManager(true)} className="mt-6 flex items-center gap-2 px-6 py-3 bg-amber-600 text-white shadow-lg shadow-amber-500/30 rounded-xl text-sm font-bold hover:bg-amber-700 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all"><Plus size={18} /> Buat Kajian Pertama</button>
+                <button onClick={() => setShowManager(true)} className="mt-6 flex items-center gap-2 px-6 py-3 bg-primary-600 text-white shadow-lg shadow-primary-500/30 rounded-xl text-sm font-bold hover:bg-primary-700 hover:shadow-primary-500/50 hover:-translate-y-0.5 transition-all"><Plus size={18} /> Buat Kajian Pertama</button>
               </div>
             ) : filteredProjects.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-slate-400 py-20">
@@ -268,12 +268,12 @@ export default function ProjectKajian() {
                   <div 
                     key={project.id}
                     onClick={() => setSelectedProject(project.id)}
-                    className="group relative flex flex-col p-6 bg-white border border-slate-200/80 rounded-2xl hover:border-amber-400 hover:shadow-xl hover:shadow-amber-500/5 transition-all cursor-pointer overflow-hidden"
+                    className="group relative flex flex-col p-6 bg-white border border-slate-200/80 rounded-2xl hover:border-primary-400 hover:shadow-xl hover:shadow-primary-500/5 transition-all cursor-pointer overflow-hidden"
                   >
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-amber-50 to-transparent rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-primary-50 to-transparent rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
                     
                     <div className="flex justify-between items-start mb-4">
-                      <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                      <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center group-hover:bg-primary-500 group-hover:text-white transition-colors">
                         <FolderOpen size={22} />
                       </div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
@@ -281,7 +281,7 @@ export default function ProjectKajian() {
                       </span>
                     </div>
 
-                    <h4 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 leading-tight group-hover:text-amber-700 transition-colors">{project.nama_proyek}</h4>
+                    <h4 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 leading-tight group-hover:text-primary-700 transition-colors">{project.nama_proyek}</h4>
                     
                     <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -294,7 +294,7 @@ export default function ProjectKajian() {
                           {project.user_profiles?.display_name || 'Tim Komersial'}
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-amber-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all">Masuk Timeline</span>
+                      <span className="text-xs font-bold text-primary-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all">Masuk Timeline</span>
                     </div>
                   </div>
                 ))}
