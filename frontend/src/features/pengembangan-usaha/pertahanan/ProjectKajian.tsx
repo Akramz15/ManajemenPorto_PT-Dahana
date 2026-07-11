@@ -91,6 +91,18 @@ export default function ProjectKajian() {
     }
   };
 
+  const handleTransferProject = async (projectId: string) => {
+    if (!window.confirm("Apakah Anda yakin ingin mentransfer proyek ini ke Berjalan? Proyek akan dipindahkan dari halaman Kajian ke halaman Project Berjalan.")) return;
+    try {
+      await supabase.from("projects").update({ kategori: "berjalan" }).eq("id", projectId);
+      setSelectedProject("");
+      window.location.reload();
+    } catch (e) {
+      console.error("Failed to transfer project", e);
+      alert("Gagal mentransfer proyek.");
+    }
+  };
+
   const filteredProjects = allProjects.filter(p => p.nama_proyek.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
@@ -149,7 +161,10 @@ export default function ProjectKajian() {
                   <Trash2 size={18} />
                   Hapus
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-500 text-white font-bold text-sm hover:bg-primary-600 transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 hover:-translate-y-0.5">
+                <button 
+                  onClick={() => handleTransferProject(selectedProject)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-500 text-white font-bold text-sm hover:bg-primary-600 transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 hover:-translate-y-0.5"
+                >
                   Transfer ke Berjalan
                 </button>
               </>
