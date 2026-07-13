@@ -162,7 +162,7 @@ export default function TodoListPage() {
           </button>
         </div>
 
-        <div className="flex items-center justify-center gap-1 sm:gap-2 flex-1 w-full overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+        <div className="flex items-center justify-center gap-1 sm:gap-2 flex-1 w-full overflow-x-auto py-3 px-1 scrollbar-hide">
           {weekDays.map((day, idx) => {
             const isSelected = isSameDay(day, selectedDate);
             const isTodayDate = isSameDay(day, new Date());
