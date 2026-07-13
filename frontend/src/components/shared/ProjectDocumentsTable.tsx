@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
-import { id } from "date-fns/locale";
+import { id as idLocale } from "date-fns/locale";
 import { Download, Upload, Trash2, FileText } from "lucide-react";
+import { useDialogStore } from "@/store/dialogStore";
 import { Spinner } from "@/components/ui";
 
 interface ProjectDocumentsTableProps {
@@ -12,6 +13,7 @@ interface ProjectDocumentsTableProps {
 
 export function ProjectDocumentsTable({ projectId }: ProjectDocumentsTableProps) {
   const { session } = useAuth();
+  const { confirm, alert } = useDialogStore();
   const currentUserId = session?.user?.id;
   const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,11 +85,11 @@ export function ProjectDocumentsTable({ projectId }: ProjectDocumentsTableProps)
 
       if (dbError) throw dbError;
 
-      alert("Dokumen berhasil diunggah!");
+      alert("Dokumen berhasil diunggah!", { severity: 'success' });
       await fetchDocuments();
     } catch (err: any) {
       console.error(err);
-      alert("Gagal mengunggah dokumen: " + err.message);
+      alert("Gagal mengunggah dokumen: " + err.message, { severity: 'danger' });
     } finally {
       setUploading(false);
       e.target.value = ''; // reset input
@@ -109,20 +111,21 @@ export function ProjectDocumentsTable({ projectId }: ProjectDocumentsTableProps)
       document.body.removeChild(a);
     } catch (err: any) {
       console.error(err);
-      alert("Gagal mengunduh dokumen: " + err.message);
+      alert("Gagal mengunduh dokumen: " + err.message, { severity: 'danger' });
     }
   };
 
   const handleDelete = async (docId: string, path: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus dokumen ini?")) return;
+    if (!(await confirm("Apakah Anda yakin ingin menghapus dokumen ini?", { severity: 'danger' }))) return;
     
     try {
       await supabase.storage.from("project-documents").remove([path]);
       await supabase.from("project_documents").delete().eq("id", docId);
       await fetchDocuments();
+      alert("Dokumen berhasil dihapus!", { severity: 'success' });
     } catch (err: any) {
       console.error(err);
-      alert("Gagal menghapus dokumen: " + err.message);
+      alert("Gagal menghapus dokumen: " + err.message, { severity: 'danger' });
     }
   };
 
@@ -205,8 +208,8 @@ export function ProjectDocumentsTable({ projectId }: ProjectDocumentsTableProps)
                       </div>
                     </td>
                     <td className="px-6 py-3.5">
-                      <p className="font-bold text-slate-700 text-xs">{format(new Date(doc.uploaded_at), "dd MMM yyyy", { locale: id })}</p>
-                      <p className="text-[10px] font-medium text-slate-400">{format(new Date(doc.uploaded_at), "HH:mm", { locale: id })} WIB</p>
+                      <p className="font-bold text-slate-700 text-xs">{format(new Date(doc.uploaded_at), "dd MMM yyyy", { locale: idLocale })}</p>
+                      <p className="text-[10px] font-medium text-slate-400">{format(new Date(doc.uploaded_at), "HH:mm", { locale: idLocale })} WIB</p>
                     </td>
                     <td className="px-6 py-3.5">
                       <div className="flex items-center justify-center gap-1.5">

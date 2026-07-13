@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import { ProjectManager, ProjectDocumentsTable, MonthlyProgressTracker } from "@/components/shared";
 import { SCurveProgressChart } from "@/components/charts";
 import { useAuth } from "@/hooks/useAuth";
+import { useDialogStore } from "@/store/dialogStore";
 import { supabase } from "@/lib/supabase";
 import { Plus, Settings, FolderOpen, Search, User, Clock , Trash2 } from "lucide-react";
 import type { Project } from "@/types";
 
 export default function ProjectBerjalan() {
   const { session: _session } = useAuth();
+  const { confirm, alert } = useDialogStore();
   // States
   const [selectedProject, setSelectedProject] = useState("");
   const [projectData, setProjectData] = useState<Project | null>(null);
@@ -147,14 +149,14 @@ export default function ProjectBerjalan() {
     fetchDynamicSCurve();
   }, [fetchDynamicSCurve]);
   const handleDeleteProject = async (projectId: string) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus proyek ini? Seluruh data dan task akan ikut terhapus secara permanen.")) return;
+    if (!(await confirm("Apakah Anda yakin ingin menghapus proyek ini? Seluruh data dan task akan ikut terhapus secara permanen.", { severity: 'danger' }))) return;
     try {
       await supabase.from("projects").delete().eq("id", projectId);
       setSelectedProject("");
       window.location.reload();
     } catch (e) {
       console.error("Failed to delete project", e);
-      alert("Gagal menghapus proyek.");
+      alert("Gagal menghapus proyek.", { severity: 'danger' });
     }
   };
 

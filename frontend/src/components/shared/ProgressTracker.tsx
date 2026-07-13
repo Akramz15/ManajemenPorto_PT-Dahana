@@ -2,6 +2,7 @@ import type { TaskStatus, ProgressTask } from "@/types";
 import { format } from "date-fns";
 import { Check, RefreshCw, Wrench, Circle, Plus, Trash2, X, Clock } from "lucide-react";
 import { useState } from "react";
+import { useDialogStore } from "@/store/dialogStore";
 
 const STATUS_CONFIG: Record<TaskStatus, { label: string; badgeColor: string; iconColor: string; iconBg: string; Icon: any; progress: number }> = {
   done: { 
@@ -46,6 +47,7 @@ interface ProgressTrackerProps {
 }
 
 export function ProgressTracker({ tasks, onStatusChange, onAddTask, onDeleteTask }: ProgressTrackerProps) {
+  const { confirm } = useDialogStore();
   const [isAdding, setIsAdding] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -201,7 +203,7 @@ export function ProgressTracker({ tasks, onStatusChange, onAddTask, onDeleteTask
                     <div className="shrink-0 flex items-center gap-2">
                       {onDeleteTask && (
                         <button 
-                          onClick={() => { if(confirm("Hapus task ini?")) onDeleteTask(task.id); }}
+                          onClick={async () => { if(await confirm("Hapus task ini?", { severity: 'danger' })) onDeleteTask(task.id); }}
                           className="p-1.5 text-slate-400 hover:text-negative-600 hover:bg-negative-50 rounded-md opacity-0 group-hover:opacity-100 transition-all"
                           title="Hapus Task"
                         >

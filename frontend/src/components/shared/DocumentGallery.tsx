@@ -6,12 +6,14 @@ import { formatFileSize } from "@/lib/formatters";
 import { useAuth } from "@/hooks/useAuth";
 import { useRef, useState } from "react";
 import type { Document } from "@/types";
+import { useDialogStore } from "@/store/dialogStore";
 
 interface DocumentGalleryProps {
   documents: Document[];
   onDelete?: (docId: string) => void;
   onUpload?: () => void;
   projectId?: string;
+  onRefresh?: () => void;
 }
 
 const getFileIcon = (fileName: string) => {
@@ -49,8 +51,9 @@ const getFileColor = (fileName: string) => {
   }
 };
 
-export function DocumentGallery({ documents, onDelete, onUpload, projectId }: DocumentGalleryProps) {
+export function DocumentGallery({ documents, onDelete, onUpload, projectId, onRefresh }: DocumentGalleryProps) {
   const { user } = useAuth();
+  const { alert, confirm } = useDialogStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -74,7 +77,7 @@ export function DocumentGallery({ documents, onDelete, onUpload, projectId }: Do
     // Validasi ukuran file maks 10MB
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
     if (file.size > MAX_FILE_SIZE) {
-      alert("Ukuran file terlalu besar! Maksimal 10 MB.");
+      alert("Ukuran file terlalu besar! Maksimal 10 MB.", { severity: 'danger' });
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
@@ -103,10 +106,11 @@ export function DocumentGallery({ documents, onDelete, onUpload, projectId }: Do
 
       if (dbError) throw dbError;
       
-      alert("Dokumen berhasil diunggah!");
+      alert("Dokumen berhasil diunggah!", { severity: 'success' });
+      if (onRefresh) onRefresh();
     } catch (error: any) {
       console.error("Upload error:", error);
-      alert("Gagal mengunggah dokumen: " + error.message);
+      alert("Gagal mengunggah dokumen: " + error.message, { severity: 'danger' });
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -122,7 +126,7 @@ export function DocumentGallery({ documents, onDelete, onUpload, projectId }: Do
   };
 
   const handleDeleteDocument = async (docId: string, storagePath: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus dokumen ini?")) return;
+    if (!(await confirm("Apakah Anda yakin ingin menghapus dokumen ini?", { severity: 'danger' }))) return;
     
     try {
       // Hapus dari Storage
@@ -131,9 +135,11 @@ export function DocumentGallery({ documents, onDelete, onUpload, projectId }: Do
       // Hapus dari database
       await supabase.from("documents").delete().eq("id", docId);
       
+      alert("Dokumen berhasil dihapus!", { severity: 'success' });
+      if (onRefresh) onRefresh();
     } catch (error: any) {
       console.error("Delete error:", error);
-      alert("Gagal menghapus dokumen: " + error.message);
+      alert("Gagal menghapus dokumen: " + error.message, { severity: 'danger' });
     }
   };
 

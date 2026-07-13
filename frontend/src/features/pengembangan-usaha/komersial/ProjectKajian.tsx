@@ -3,10 +3,12 @@ import { ProjectManager, ProjectDocumentsTable } from "@/components/shared";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { MapPin, Plus, Settings, FolderOpen, Search, User, Clock, Trash2 } from "lucide-react";
+import { useDialogStore } from "@/store/dialogStore";
 import type { Project } from "@/types";
 
 export default function ProjectKajian() {
   const { session: _session } = useAuth();
+  const { confirm, alert } = useDialogStore();
   // States
   const [selectedProject, setSelectedProject] = useState("");
   const [projectData, setProjectData] = useState<Project | null>(null);
@@ -78,26 +80,26 @@ export default function ProjectKajian() {
 
 
   const handleDeleteProject = async (projectId: string) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus proyek ini? Seluruh data dan task akan ikut terhapus secara permanen.")) return;
+    if (!(await confirm("Apakah Anda yakin ingin menghapus proyek ini? Seluruh data dan task akan ikut terhapus secara permanen.", { severity: 'danger' }))) return;
     try {
       await supabase.from("projects").delete().eq("id", projectId);
       setSelectedProject("");
       window.location.reload();
     } catch (e) {
       console.error("Failed to delete project", e);
-      alert("Gagal menghapus proyek.");
+      alert("Gagal menghapus proyek.", { severity: 'danger' });
     }
   };
 
   const handleTransferProject = async (projectId: string) => {
-    if (!window.confirm("Apakah Anda yakin ingin mentransfer proyek ini ke Berjalan? Proyek akan dipindahkan dari halaman Kajian ke halaman Project Berjalan.")) return;
+    if (!(await confirm("Apakah Anda yakin ingin mentransfer proyek ini ke Berjalan? Proyek akan dipindahkan dari halaman Kajian ke halaman Project Berjalan.", { severity: 'info' }))) return;
     try {
       await supabase.from("projects").update({ kategori: "berjalan" }).eq("id", projectId);
       setSelectedProject("");
       window.location.reload();
     } catch (e) {
       console.error("Failed to transfer project", e);
-      alert("Gagal mentransfer proyek.");
+      alert("Gagal mentransfer proyek.", { severity: 'danger' });
     }
   };
 

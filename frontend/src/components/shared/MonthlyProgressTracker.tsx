@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useDialogStore } from "@/store/dialogStore";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { Spinner } from "@/components/ui";
@@ -69,7 +70,7 @@ export function MonthlyProgressTracker({ project, onUpdate }: MonthlyProgressTra
       if (onUpdate) onUpdate();
     } catch (err) {
       console.error(err);
-      alert("Gagal memperbarui progres.");
+      useDialogStore.getState().alert("Gagal memperbarui progres.", { severity: 'danger' });
     }
     setUpdating(false);
   };

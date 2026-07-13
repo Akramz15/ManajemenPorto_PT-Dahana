@@ -4,6 +4,7 @@ import type { Project } from "@/types";
 import { Plus, Edit2, Trash2, FolderSync } from "lucide-react";
 import { Spinner } from "@/components/ui";
 import { useAuth } from "@/hooks/useAuth";
+import { useDialogStore } from "@/store/dialogStore";
 
 interface ProjectManagerProps {
   divisi: "komersial" | "pertahanan";
@@ -15,6 +16,7 @@ interface ProjectManagerProps {
 
 export function ProjectManager({ divisi, kategori, onProjectSelected, selectedProjectId, onRefresh }: ProjectManagerProps) {
   const { session } = useAuth();
+  const { confirm, alert } = useDialogStore();
   const currentUserId = session?.user?.id;
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +88,7 @@ export function ProjectManager({ divisi, kategori, onProjectSelected, selectedPr
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Hapus proyek ini beserta semua tugas dan dokumen di dalamnya?")) return;
+    if (!(await confirm("Hapus proyek ini beserta semua tugas dan dokumen di dalamnya?", { severity: 'danger' }))) return;
     setLoading(true);
     await supabase.from("projects").delete().eq("id", id);
     await fetchProjects();
@@ -94,6 +96,7 @@ export function ProjectManager({ divisi, kategori, onProjectSelected, selectedPr
     if (selectedProjectId === id && onProjectSelected) {
       onProjectSelected("");
     }
+    setLoading(false);
   };
 
   const handleEdit = (project: Project) => {
@@ -136,10 +139,10 @@ export function ProjectManager({ divisi, kategori, onProjectSelected, selectedPr
         await fetchProjects();
         if (onRefresh) onRefresh();
         if (selectedProjectId === id && onProjectSelected) onProjectSelected("");
-        alert("Proyek berhasil dipindahkan ke Project Berjalan!");
+        alert("Proyek berhasil dipindahkan ke Project Berjalan!", { severity: 'success' });
       } catch (err) {
         console.error(err);
-        alert("Gagal memindahkan proyek.");
+        alert("Gagal memindahkan proyek.", { severity: 'danger' });
       }
       setLoading(false);
     };

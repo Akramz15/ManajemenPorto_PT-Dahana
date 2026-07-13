@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
-import { Check, Clock, Plus, Trash2, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Clock, Trash2, Calendar as CalendarIcon, Check } from "lucide-react";
+import { useDialogStore } from "@/store/dialogStore";
 import { format, startOfWeek, addDays, isSameDay, subWeeks, addWeeks } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 import { Spinner } from '@/components/ui/Spinner';
@@ -18,6 +19,7 @@ interface Todo {
 
 export default function TodoListPage() {
   const { user } = useAuth();
+  const { alert, confirm } = useDialogStore();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [newTask, setNewTask] = useState("");
@@ -85,8 +87,8 @@ export default function TodoListPage() {
       setNewTask("");
       await fetchTodos();
     } catch (err) {
-      console.error("Error adding task:", err);
-      alert("Gagal menambahkan tugas. Pastikan Anda sudah menjalankan query SQL untuk kolom target_date!");
+      console.error(err);
+      alert("Gagal menambahkan tugas. Pastikan Anda sudah menjalankan query SQL untuk kolom target_date!", { severity: 'danger' });
     } finally {
       setIsSubmitting(false);
     }
@@ -115,7 +117,7 @@ export default function TodoListPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Hapus tugas ini?")) return;
+    if (!(await confirm("Hapus tugas ini?", { severity: 'danger' }))) return;
     try {
       setTodos(prev => prev.filter(t => t.id !== id));
       const { error } = await supabase.from('user_todos').delete().eq('id', id);
