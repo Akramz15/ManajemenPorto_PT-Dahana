@@ -171,7 +171,7 @@ export default function TodoListPage() {
               <button
                 key={idx}
                 onClick={() => setSelectedDate(day)}
-                className={`flex flex-col items-center justify-center w-12 h-16 sm:w-14 sm:h-18 rounded-2xl transition-all ${
+                className={`flex flex-col items-center justify-center w-14 py-3 sm:w-16 sm:py-3.5 rounded-2xl transition-all ${
                   isSelected 
                     ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20 scale-105' 
                     : isTodayDate
@@ -182,7 +182,7 @@ export default function TodoListPage() {
                 <span className={`text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-1 ${isSelected ? 'text-primary-100' : 'text-slate-400'}`}>
                   {format(day, 'EEE', { locale: idLocale })}
                 </span>
-                <span className={`text-base sm:text-lg font-bold ${isSelected ? 'text-white' : 'text-slate-800'}`}>
+                <span className={`text-base sm:text-lg font-bold leading-none ${isSelected ? 'text-white' : 'text-slate-800'}`}>
                   {format(day, 'd')}
                 </span>
               </button>
