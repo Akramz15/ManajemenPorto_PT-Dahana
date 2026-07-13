@@ -144,8 +144,8 @@ export default function TodoListPage() {
         </div>
 
         {/* Calendar Strip */}
-        <div className="flex flex-col md:flex-row items-center justify-center lg:justify-end gap-4 w-full lg:w-auto">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col md:flex-row items-center justify-center lg:justify-end gap-4 flex-1 min-w-0 w-full">
+          <div className="flex items-center gap-3 flex-shrink-0">
             <button 
             onClick={() => setCurrentWeekStart(subWeeks(currentWeekStart, 1))}
             className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
