@@ -149,7 +149,7 @@ export default function TodoListPage() {
           >
             <ChevronLeft size={20} />
           </button>
-          <div className="text-center min-w-[120px]">
+          <div className="text-center min-w-30">
             <span className="text-sm font-bold text-slate-800">
               {format(currentWeekStart, 'MMMM yyyy', { locale: idLocale })}
             </span>
@@ -277,7 +277,7 @@ export default function TodoListPage() {
           </div>
 
           <div className="bg-white/60 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-slate-100/60 shadow-[0_2px_15px_-8px_rgba(0,0,0,0.02)]">
-            <div className="space-y-3 min-h-[360px]">
+            <div className="space-y-3 min-h-90">
               {loading ? (
                 <div className="py-10 flex justify-center"><Spinner className="text-emerald-500" /></div>
               ) : completedTodos.length === 0 ? (
