@@ -36,6 +36,7 @@ export interface Project {
   end_date?: string;
   created_by: string;
   created_at: string;
+  user_profiles?: { display_name: string; [key: string]: any } | any;
 }
 
 export interface KajianTask {
