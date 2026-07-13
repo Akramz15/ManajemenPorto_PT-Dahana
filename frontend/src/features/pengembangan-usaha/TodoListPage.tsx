@@ -132,18 +132,21 @@ export default function TodoListPage() {
   );
 
   return (
-    <div className="max-w-5xl mx-auto pb-10">
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Tugas Saya</h1>
-        <p className="text-slate-500 font-medium text-sm md:text-base mt-1">
-          Kelola jadwal dan prioritas harian Anda dengan mudah.
-        </p>
-      </div>
+    <div className="p-6 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
+      {/* Header & Calendar Strip Container */}
+      <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 md:p-6 shadow-sm flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+        {/* Title */}
+        <div className="flex-shrink-0 text-center xl:text-left">
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Tugas Saya</h1>
+          <p className="text-slate-500 font-medium text-sm md:text-base mt-1">
+            Kelola jadwal dan prioritas harian Anda dengan mudah.
+          </p>
+        </div>
 
-      {/* Calendar Strip */}
-      <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-4 shadow-sm mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <button 
+        {/* Calendar Strip */}
+        <div className="flex flex-col md:flex-row items-center gap-4 w-full xl:w-auto">
+          <div className="flex items-center gap-3">
+            <button 
             onClick={() => setCurrentWeekStart(subWeeks(currentWeekStart, 1))}
             className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
           >
@@ -188,6 +191,7 @@ export default function TodoListPage() {
               </button>
             );
           })}
+        </div>
         </div>
       </div>
 
