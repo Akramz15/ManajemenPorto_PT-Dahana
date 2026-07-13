@@ -136,7 +136,7 @@ export default function TodoListPage() {
       {/* Header & Calendar Strip Container */}
       <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 lg:p-6 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         {/* Title */}
-        <div className="flex-shrink-0 text-center lg:text-left">
+        <div className="shrink-0 text-center lg:text-left">
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Tugas Saya</h1>
           <p className="text-slate-500 font-medium text-sm md:text-base mt-1">
             Kelola jadwal dan prioritas harian Anda dengan mudah.
@@ -145,7 +145,7 @@ export default function TodoListPage() {
 
         {/* Calendar Strip */}
         <div className="flex flex-col md:flex-row items-center justify-center lg:justify-end gap-4 flex-1 min-w-0 w-full">
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-3 shrink-0">
             <button 
             onClick={() => setCurrentWeekStart(subWeeks(currentWeekStart, 1))}
             className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
