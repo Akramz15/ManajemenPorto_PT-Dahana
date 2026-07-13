@@ -6,16 +6,30 @@ import { supabase } from "@/lib/supabase";
 import type { Project } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
-import { TrendingUp, Clock, AlertTriangle, CheckCircle2, FolderOpen, Activity, ArrowUpRight } from "lucide-react";
+import {
+  TrendingUp,
+  Clock,
+  AlertTriangle,
+  CheckCircle2,
+  FolderOpen,
+  Activity,
+  ArrowUpRight,
+} from "lucide-react";
 
 export default function PengembanganUsahaDashboard() {
   const [semuaProyek, setSemuaProyek] = useState<Project[]>([]);
   const [recentUpdates, setRecentUpdates] = useState<any[]>([]);
-  const [activePipelineTab, setActivePipelineTab] = useState<'kajian' | 'berjalan'>('kajian');
+  const [activePipelineTab, setActivePipelineTab] = useState<
+    "kajian" | "berjalan"
+  >("kajian");
   const [showUploadModal, setShowUploadModal] = useState(false);
 
   // Fetch Global PU Chart Data
-  const { data: chartDataPU, loading: chartLoadingPU, refetch: refetchPU } = useChartData<any>("progres-proyek", "pengembangan-usaha");
+  const {
+    data: chartDataPU,
+    loading: chartLoadingPU,
+    refetch: refetchPU,
+  } = useChartData<any>("progres-proyek", "pengembangan-usaha");
   const sCurveDataPU = chartDataPU?.data_points || [];
 
   // KPI States
@@ -29,7 +43,7 @@ export default function PengembanganUsahaDashboard() {
         .from("projects")
         .select("*")
         .order("created_at", { ascending: false });
-        
+
       if (projectsData) {
         setSemuaProyek(projectsData as Project[]);
       }
@@ -40,7 +54,7 @@ export default function PengembanganUsahaDashboard() {
         .from("progress_tasks")
         .select(`*, projects(nama_proyek), user_profiles(display_name)`)
         .order("updated_at", { ascending: false });
-        
+
       const { data: kajianData } = await supabase
         .from("kajian_tasks")
         .select(`*, projects(nama_proyek), user_profiles(display_name)`)
@@ -48,37 +62,41 @@ export default function PengembanganUsahaDashboard() {
 
       const combined = [
         ...(progressData || []).map((t: any) => ({ ...t, type: "progress" })),
-        ...(kajianData || []).map((t: any) => ({ ...t, type: "kajian" }))
+        ...(kajianData || []).map((t: any) => ({ ...t, type: "kajian" })),
       ];
 
       // KPI Calculations: Cari proyek yang punya task "blocked"
       const blockedProjectIds = new Set<string>();
-      combined.forEach(task => {
+      combined.forEach((task) => {
         if (task.project_id && task.status === "blocked") {
           blockedProjectIds.add(task.project_id);
         }
       });
-      
+
       const totalProjects = projectsData ? projectsData.length : 0;
       const delayCount = blockedProjectIds.size;
       const amanCount = totalProjects - delayCount;
-      const percent = totalProjects === 0 ? 0 : Math.round((amanCount / totalProjects) * 100);
-      
+      const percent =
+        totalProjects === 0 ? 0 : Math.round((amanCount / totalProjects) * 100);
+
       setTotalDelay(delayCount);
       setOnTrackPercent(percent);
-      
+
       // Sort combined by updated_at descending and take top 10 for feed
-      combined.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+      combined.sort(
+        (a, b) =>
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
+      );
       setRecentUpdates(combined.slice(0, 10));
     };
-    
+
     fetchDashboardData();
   }, []);
 
-  const proyekBerjalan = semuaProyek.filter(p => p.kategori === "berjalan");
-  const proyekKajian = semuaProyek.filter(p => p.kategori === "kajian");
-  
-  // We can say: 
+  const proyekBerjalan = semuaProyek.filter((p) => p.kategori === "berjalan");
+  const proyekKajian = semuaProyek.filter((p) => p.kategori === "kajian");
+
+  // We can say:
   const totalAktif = proyekBerjalan.length;
   const totalKajian = proyekKajian.length;
 
@@ -92,8 +110,12 @@ export default function PengembanganUsahaDashboard() {
           <span className="text-primary-600 font-bold">Dashboard Utama</span>
         </div>
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Executive Dashboard</h1>
-          <p className="text-slate-500 mt-1">Ringkasan performa dan portofolio seluruh divisi Pengembangan Usaha.</p>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+            Executive Dashboard
+          </h1>
+          <p className="text-slate-500 mt-1">
+            Ringkasan performa dan portofolio seluruh divisi Pengembangan Usaha.
+          </p>
         </div>
       </div>
 
@@ -104,8 +126,15 @@ export default function PengembanganUsahaDashboard() {
             <TrendingUp size={28} />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Proyek Berjalan</p>
-            <h3 className="text-3xl font-black text-slate-900">{totalAktif} <span className="text-sm text-slate-400 font-medium normal-case">Proyek Aktif</span></h3>
+            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">
+              Proyek Berjalan
+            </p>
+            <h3 className="text-3xl font-black text-slate-900">
+              {totalAktif}{" "}
+              <span className="text-sm text-slate-400 font-medium normal-case">
+                Proyek Aktif
+              </span>
+            </h3>
           </div>
         </div>
 
@@ -114,8 +143,15 @@ export default function PengembanganUsahaDashboard() {
             <FolderOpen size={28} />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Pipeline Kajian</p>
-            <h3 className="text-3xl font-black text-slate-900">{totalKajian} <span className="text-sm text-slate-400 font-medium normal-case">Proyek Proposal</span></h3>
+            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">
+              Pipeline Kajian
+            </p>
+            <h3 className="text-3xl font-black text-slate-900">
+              {totalKajian}{" "}
+              <span className="text-sm text-slate-400 font-medium normal-case">
+                Proyek Proposal
+              </span>
+            </h3>
           </div>
         </div>
 
@@ -124,8 +160,16 @@ export default function PengembanganUsahaDashboard() {
             <CheckCircle2 size={28} />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Status On-Track</p>
-            <h3 className="text-3xl font-black text-slate-900">{onTrackPercent}<span className="text-2xl">%</span> <span className="text-sm text-slate-400 font-medium normal-case">Proyek Aman</span></h3>
+            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">
+              Status On-Track
+            </p>
+            <h3 className="text-3xl font-black text-slate-900">
+              {onTrackPercent}
+              <span className="text-2xl">%</span>{" "}
+              <span className="text-sm text-slate-400 font-medium normal-case">
+                Proyek Aman
+              </span>
+            </h3>
           </div>
         </div>
 
@@ -134,8 +178,15 @@ export default function PengembanganUsahaDashboard() {
             <AlertTriangle size={28} />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Delay / Risk</p>
-            <h3 className="text-3xl font-black text-slate-900">{totalDelay} <span className="text-sm text-slate-400 font-medium normal-case">Perlu Perhatian</span></h3>
+            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">
+              Delay / Risk
+            </p>
+            <h3 className="text-3xl font-black text-slate-900">
+              {totalDelay}{" "}
+              <span className="text-sm text-slate-400 font-medium normal-case">
+                Perlu Perhatian
+              </span>
+            </h3>
           </div>
         </div>
       </div>
@@ -145,13 +196,13 @@ export default function PengembanganUsahaDashboard() {
         {/* Grafik Global Kurva S (Full Width) */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-125 w-full flex flex-col">
           <div className="absolute top-0 right-0 w-40 h-40 bg-primary-50 rounded-bl-[100px] -z-10 opacity-50"></div>
-          
+
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
               <div className="w-2 h-6 bg-primary-500 rounded-full"></div>
               Kurva S: Target vs Aktual Penyelesaian Proyek
             </h3>
-            <button 
+            <button
               onClick={() => setShowUploadModal(true)}
               className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 rounded-xl font-bold text-sm hover:bg-primary-100 hover:text-primary-700 transition-colors border border-primary-100"
             >
@@ -175,63 +226,91 @@ export default function PengembanganUsahaDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
         {/* Kolom Kiri: Tabel Kajian */}
         <div className="lg:col-span-2 space-y-6">
-
           {/* Tabel Proyek Pipeline */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 min-h-125 flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                <div className={`w-2 h-6 rounded-full transition-colors ${activePipelineTab === 'kajian' ? 'bg-amber-500' : 'bg-primary-500'}`}></div>
-                Pipeline Proyek {activePipelineTab === 'kajian' ? 'Kajian' : 'Berjalan'}
+                <div
+                  className={`w-2 h-6 rounded-full transition-colors ${activePipelineTab === "kajian" ? "bg-amber-500" : "bg-primary-500"}`}
+                ></div>
+                Pipeline Proyek{" "}
+                {activePipelineTab === "kajian" ? "Kajian" : "Berjalan"}
               </h3>
               <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
-                <button 
-                  onClick={() => setActivePipelineTab('kajian')}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${activePipelineTab === 'kajian' ? 'bg-white text-amber-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                <button
+                  onClick={() => setActivePipelineTab("kajian")}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${activePipelineTab === "kajian" ? "bg-white text-amber-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                 >
                   Kajian
                 </button>
-                <button 
-                  onClick={() => setActivePipelineTab('berjalan')}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${activePipelineTab === 'berjalan' ? 'bg-white text-primary-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                <button
+                  onClick={() => setActivePipelineTab("berjalan")}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${activePipelineTab === "berjalan" ? "bg-white text-primary-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                 >
                   Berjalan
                 </button>
               </div>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
-                    <th className="px-4 py-4 font-bold text-slate-400 uppercase tracking-wider text-xs">Divisi</th>
-                    <th className="px-4 py-4 font-bold text-slate-400 uppercase tracking-wider text-xs">Nama Proyek / Kajian</th>
+                    <th className="px-4 py-4 font-bold text-slate-400 uppercase tracking-wider text-xs">
+                      Divisi
+                    </th>
+                    <th className="px-4 py-4 font-bold text-slate-400 uppercase tracking-wider text-xs">
+                      Nama Proyek / Kajian
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="text-slate-700 divide-y divide-slate-100">
-                  {(activePipelineTab === 'kajian' ? proyekKajian : proyekBerjalan).slice(0, 10).map(p => (
-                    <tr key={p.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="py-4 px-4">
-                        <span className={`inline-block px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${p.divisi === 'komersial' ? 'bg-primary-50 text-primary-600' : 'bg-slate-100 text-slate-600'}`}>
-                          {p.divisi}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4 font-bold text-slate-800 max-w-xs truncate">{p.nama_proyek}</td>
-                    </tr>
-                  ))}
-                  {(activePipelineTab === 'kajian' ? proyekKajian : proyekBerjalan).length === 0 && (
+                  {(activePipelineTab === "kajian"
+                    ? proyekKajian
+                    : proyekBerjalan
+                  )
+                    .slice(0, 10)
+                    .map((p) => (
+                      <tr
+                        key={p.id}
+                        className="hover:bg-slate-50 transition-colors"
+                      >
+                        <td className="py-4 px-4">
+                          <span
+                            className={`inline-block px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${p.divisi === "komersial" ? "bg-primary-50 text-primary-600" : "bg-slate-100 text-slate-600"}`}
+                          >
+                            {p.divisi}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 font-bold text-slate-800 max-w-xs truncate">
+                          {p.nama_proyek}
+                        </td>
+                      </tr>
+                    ))}
+                  {(activePipelineTab === "kajian"
+                    ? proyekKajian
+                    : proyekBerjalan
+                  ).length === 0 && (
                     <tr>
-                      <td colSpan={2} className="py-12 text-center text-slate-400 font-medium">Belum ada proyek {activePipelineTab}.</td>
+                      <td
+                        colSpan={2}
+                        className="py-12 text-center text-slate-400 font-medium"
+                      >
+                        Belum ada proyek {activePipelineTab}.
+                      </td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
-            {(activePipelineTab === 'kajian' ? proyekKajian : proyekBerjalan).length > 10 && (
+            {(activePipelineTab === "kajian" ? proyekKajian : proyekBerjalan)
+              .length > 10 && (
               <div className="mt-4 text-center">
-                <span className="text-sm text-primary-600 font-bold hover:underline cursor-pointer">Lihat semua proyek {activePipelineTab}</span>
+                <span className="text-sm text-primary-600 font-bold hover:underline cursor-pointer">
+                  Lihat semua proyek {activePipelineTab}
+                </span>
               </div>
             )}
           </div>
@@ -241,7 +320,7 @@ export default function PengembanganUsahaDashboard() {
         <div className="space-y-6">
           <div className="card relative overflow-hidden h-[calc(100%-1.5rem)] flex flex-col border-t-4 border-t-primary-500">
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary-100/50 rounded-full blur-3xl"></div>
-            
+
             <h3 className="text-xl font-black text-slate-800 mb-8 flex items-center gap-2 relative z-10">
               <Activity className="text-primary-600" />
               Aktivitas Terbaru
@@ -249,37 +328,56 @@ export default function PengembanganUsahaDashboard() {
 
             <div className="flex-1 relative overflow-y-auto pr-2 custom-scrollbar z-10">
               <div className="absolute left-3.75 top-2 bottom-2 w-px bg-slate-200"></div>
-              
+
               <div className="space-y-6">
                 {recentUpdates.length === 0 ? (
-                  <p className="text-slate-400 text-sm font-medium pl-10">Belum ada aktivitas tercatat.</p>
+                  <p className="text-slate-400 text-sm font-medium pl-10">
+                    Belum ada aktivitas tercatat.
+                  </p>
                 ) : (
                   recentUpdates.map((update, idx) => {
                     const isProgress = update.type === "progress";
-                    const iconColor = isProgress ? "bg-primary-500" : "bg-amber-500";
-                    const userName = update.user_profiles?.display_name || "Anggota Tim";
-                    const projectName = update.projects?.nama_proyek || "Proyek Dihapus";
-                    const actionText = isProgress 
-                      ? `Memperbarui status task "${update.title}" menjadi ${update.status}` 
+                    const iconColor = isProgress
+                      ? "bg-primary-500"
+                      : "bg-amber-500";
+                    const userName =
+                      update.user_profiles?.display_name || "Anggota Tim";
+                    const projectName =
+                      update.projects?.nama_proyek || "Proyek Dihapus";
+                    const actionText = isProgress
+                      ? `Memperbarui status task "${update.title}" menjadi ${update.status}`
                       : `Memperbarui tahapan "${update.nama_kajian || update.tahapan}" menjadi ${update.status}`;
-                    
+
                     return (
-                      <div key={`${update.id}-${idx}`} className="relative pl-10">
-                        <div className={`absolute left-0 top-1 w-8 h-8 rounded-full ${iconColor} flex items-center justify-center ring-4 ring-white text-white text-[10px] font-bold`}>
+                      <div
+                        key={`${update.id}-${idx}`}
+                        className="relative pl-10"
+                      >
+                        <div
+                          className={`absolute left-0 top-1 w-8 h-8 rounded-full ${iconColor} flex items-center justify-center ring-4 ring-white text-white text-[10px] font-bold`}
+                        >
                           {userName.charAt(0).toUpperCase()}
                         </div>
-                        
+
                         <div className="bg-slate-50/50 backdrop-blur-sm border border-slate-200 rounded-2xl p-4 hover:bg-white transition-colors shadow-sm">
                           <p className="text-xs text-slate-400 mb-1 flex items-center gap-2 font-medium">
                             <Clock size={12} />
-                            {formatDistanceToNow(new Date(update.updated_at), { locale: id, addSuffix: true })}
+                            {formatDistanceToNow(new Date(update.updated_at), {
+                              locale: id,
+                              addSuffix: true,
+                            })}
                           </p>
                           <p className="text-sm text-slate-600 mb-2 leading-relaxed font-medium">
-                            <span className="font-bold text-slate-900">{userName}</span> {actionText}
+                            <span className="font-bold text-slate-900">
+                              {userName}
+                            </span>{" "}
+                            {actionText}
                           </p>
                           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-widest border border-slate-200 shadow-sm">
                             <FolderOpen size={10} />
-                            <span className="truncate max-w-37.5">{projectName}</span>
+                            <span className="truncate max-w-37.5">
+                              {projectName}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -290,26 +388,33 @@ export default function PengembanganUsahaDashboard() {
             </div>
           </div>
         </div>
-
       </div>
 
       {/* Upload Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowUploadModal(false)}></div>
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            onClick={() => setShowUploadModal(false)}
+          ></div>
           <div className="bg-white rounded-3xl shadow-xl w-full max-w-lg relative z-10 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-br from-primary-50 to-primary-100/50 -z-10"></div>
-            
+
             <div className="p-8">
               <div className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-primary-600 mb-6">
                 <TrendingUp size={24} />
               </div>
-              
-              <h3 className="text-xl font-bold text-slate-800 mb-2">Upload Data Kurva S</h3>
-              <p className="text-sm text-slate-500 mb-6">Unggah file Excel untuk memperbarui data Target vs Aktual Penyelesaian Proyek Divisi Pengembangan Usaha.</p>
-              
+
+              <h3 className="text-xl font-bold text-slate-800 mb-2">
+                Upload Data Kurva S
+              </h3>
+              <p className="text-sm text-slate-500 mb-6">
+                Unggah file Excel untuk memperbarui data Target vs Aktual
+                Penyelesaian Proyek Divisi Pengembangan Usaha.
+              </p>
+
               <div className="bg-white rounded-2xl border border-slate-200/60 p-4 shadow-sm">
-                <ExcelUploader 
+                <ExcelUploader
                   context="progres-proyek"
                   subContext="pengembangan-usaha"
                   onSuccess={() => {

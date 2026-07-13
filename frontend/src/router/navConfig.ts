@@ -35,15 +35,31 @@ export const navConfig: Record<string, NavSection[]> = {
     {
       label: "Komersial",
       items: [
-        { label: "Project Berjalan", path: "/pu/komersial/berjalan", icon: Briefcase },
-        { label: "Project Kajian", path: "/pu/komersial/kajian", icon: Briefcase },
+        {
+          label: "Project Berjalan",
+          path: "/pu/komersial/berjalan",
+          icon: Briefcase,
+        },
+        {
+          label: "Project Kajian",
+          path: "/pu/komersial/kajian",
+          icon: Briefcase,
+        },
       ],
     },
     {
       label: "Pertahanan",
       items: [
-        { label: "Project Berjalan", path: "/pu/pertahanan/berjalan", icon: Shield },
-        { label: "Project Kajian", path: "/pu/pertahanan/kajian", icon: Shield },
+        {
+          label: "Project Berjalan",
+          path: "/pu/pertahanan/berjalan",
+          icon: Shield,
+        },
+        {
+          label: "Project Kajian",
+          path: "/pu/pertahanan/kajian",
+          icon: Shield,
+        },
       ],
     },
     {
@@ -71,7 +87,11 @@ export const navConfig: Record<string, NavSection[]> = {
     {
       label: "Lainnya",
       items: [
-        { label: "Investasi & Afiliasi", path: "/porto/lainnya", icon: MoreHorizontal },
+        {
+          label: "Investasi & Afiliasi",
+          path: "/porto/lainnya",
+          icon: MoreHorizontal,
+        },
         { label: "Pindah Modul", path: "/select-module", icon: ArrowLeftRight },
       ],
     },

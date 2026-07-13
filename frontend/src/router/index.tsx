@@ -1,5 +1,9 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import { AuthGuard } from "@/features/auth/AuthGuard";
 import { AppShell } from "@/components/layout/AppShell";
 import LoginPage from "@/pages/LoginPage";
@@ -7,12 +11,24 @@ import ModulSelectPage from "@/pages/ModulSelectPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { Spinner } from "@/components/ui/Spinner";
 
-const PengembanganUsahaDashboard = lazy(() => import("@/features/pengembangan-usaha/PengembanganUsahaDashboard"));
-const TodoListPage = lazy(() => import("@/features/pengembangan-usaha/TodoListPage"));
-const ProjectBerjalanKomersial = lazy(() => import("@/features/pengembangan-usaha/komersial/ProjectBerjalan"));
-const ProjectKajianKomersial = lazy(() => import("@/features/pengembangan-usaha/komersial/ProjectKajian"));
-const ProjectBerjalanPertahanan = lazy(() => import("@/features/pengembangan-usaha/pertahanan/ProjectBerjalan"));
-const ProjectKajianPertahanan = lazy(() => import("@/features/pengembangan-usaha/pertahanan/ProjectKajian"));
+const PengembanganUsahaDashboard = lazy(
+  () => import("@/features/pengembangan-usaha/PengembanganUsahaDashboard"),
+);
+const TodoListPage = lazy(
+  () => import("@/features/pengembangan-usaha/TodoListPage"),
+);
+const ProjectBerjalanKomersial = lazy(
+  () => import("@/features/pengembangan-usaha/komersial/ProjectBerjalan"),
+);
+const ProjectKajianKomersial = lazy(
+  () => import("@/features/pengembangan-usaha/komersial/ProjectKajian"),
+);
+const ProjectBerjalanPertahanan = lazy(
+  () => import("@/features/pengembangan-usaha/pertahanan/ProjectBerjalan"),
+);
+const ProjectKajianPertahanan = lazy(
+  () => import("@/features/pengembangan-usaha/pertahanan/ProjectKajian"),
+);
 const DIC = lazy(() => import("@/features/portofolio/anak-cucu/DIC"));
 const KAN = lazy(() => import("@/features/portofolio/anak-cucu/KAN"));
 const JODD = lazy(() => import("@/features/portofolio/jo/JODD"));
@@ -51,27 +67,51 @@ const router = createBrowserRouter([
         children: [
           {
             path: "dashboard",
-            element: <Suspense fallback={<PageLoader />}><PengembanganUsahaDashboard /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <PengembanganUsahaDashboard />
+              </Suspense>
+            ),
           },
           {
             path: "todos",
-            element: <Suspense fallback={<PageLoader />}><TodoListPage /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <TodoListPage />
+              </Suspense>
+            ),
           },
           {
             path: "komersial/berjalan",
-            element: <Suspense fallback={<PageLoader />}><ProjectBerjalanKomersial /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <ProjectBerjalanKomersial />
+              </Suspense>
+            ),
           },
           {
             path: "komersial/kajian",
-            element: <Suspense fallback={<PageLoader />}><ProjectKajianKomersial /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <ProjectKajianKomersial />
+              </Suspense>
+            ),
           },
           {
             path: "pertahanan/berjalan",
-            element: <Suspense fallback={<PageLoader />}><ProjectBerjalanPertahanan /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <ProjectBerjalanPertahanan />
+              </Suspense>
+            ),
           },
           {
             path: "pertahanan/kajian",
-            element: <Suspense fallback={<PageLoader />}><ProjectKajianPertahanan /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <ProjectKajianPertahanan />
+              </Suspense>
+            ),
           },
         ],
       },
@@ -80,23 +120,43 @@ const router = createBrowserRouter([
         children: [
           {
             path: "anak-cucu/dic",
-            element: <Suspense fallback={<PageLoader />}><DIC /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <DIC />
+              </Suspense>
+            ),
           },
           {
             path: "anak-cucu/kan",
-            element: <Suspense fallback={<PageLoader />}><KAN /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <KAN />
+              </Suspense>
+            ),
           },
           {
             path: "jo/jodd",
-            element: <Suspense fallback={<PageLoader />}><JODD /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <JODD />
+              </Suspense>
+            ),
           },
           {
             path: "jo/jodb",
-            element: <Suspense fallback={<PageLoader />}><JODB /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <JODB />
+              </Suspense>
+            ),
           },
           {
             path: "lainnya",
-            element: <Suspense fallback={<PageLoader />}><Investasi /></Suspense>,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <Investasi />
+              </Suspense>
+            ),
           },
         ],
       },

@@ -2,13 +2,33 @@ import pandas as pd
 from app.parsers.base_parser import BaseExcelParser
 from app.parsers.normalizer import normalize_indonesian_number
 
+
 class LabaRugiParser(BaseExcelParser):
-    _SHEET_KW = ["laba rugi", "laba", "rugi", "p&l", "profit loss", "rkap", "realisasi", "l/r", "sheet1"]
-    
+    _SHEET_KW = [
+        "laba rugi",
+        "laba",
+        "rugi",
+        "p&l",
+        "profit loss",
+        "rkap",
+        "realisasi",
+        "l/r",
+        "sheet1",
+    ]
+
     _MONTHS_MAP = {
-        "JAN": "JANUARI", "FEB": "FEBRUARI", "MAR": "MARET", "APR": "APRIL",
-        "MEI": "MEI", "JUN": "JUNI", "JUL": "JULI", "AGU": "AGUSTUS",
-        "SEP": "SEPTEMBER", "OKT": "OKTOBER", "NOV": "NOVEMBER", "DES": "DESEMBER"
+        "JAN": "JANUARI",
+        "FEB": "FEBRUARI",
+        "MAR": "MARET",
+        "APR": "APRIL",
+        "MEI": "MEI",
+        "JUN": "JUNI",
+        "JUL": "JULI",
+        "AGU": "AGUSTUS",
+        "SEP": "SEPTEMBER",
+        "OKT": "OKTOBER",
+        "NOV": "NOVEMBER",
+        "DES": "DESEMBER",
     }
 
     def _find_all_sheets(self, keywords: list[str]) -> list[str]:
@@ -37,11 +57,15 @@ class LabaRugiParser(BaseExcelParser):
                     per = p["periode"]
                     if per not in aggregated:
                         aggregated[per] = {"periode": per, "rencana": None, "realisasi": None}
-                    
+
                     if p["rencana"] is not None:
-                        aggregated[per]["rencana"] = (aggregated[per]["rencana"] or 0) + p["rencana"]
+                        aggregated[per]["rencana"] = (aggregated[per]["rencana"] or 0) + p[
+                            "rencana"
+                        ]
                     if p["realisasi"] is not None:
-                        aggregated[per]["realisasi"] = (aggregated[per]["realisasi"] or 0) + p["realisasi"]
+                        aggregated[per]["realisasi"] = (aggregated[per]["realisasi"] or 0) + p[
+                            "realisasi"
+                        ]
             except Exception as e:
                 pass
 
@@ -49,7 +73,7 @@ class LabaRugiParser(BaseExcelParser):
             raise ValueError("Tidak dapat mengekstrak data dari sheet manapun.")
 
         final_points = list(aggregated.values())
-        
+
         # Round the values
         for p in final_points:
             if p["rencana"] is not None:
@@ -59,7 +83,9 @@ class LabaRugiParser(BaseExcelParser):
 
         # Sort by month
         month_order = list(self._MONTHS_MAP.values())
-        final_points.sort(key=lambda x: month_order.index(x["periode"]) if x["periode"] in month_order else 99)
+        final_points.sort(
+            key=lambda x: month_order.index(x["periode"]) if x["periode"] in month_order else 99
+        )
 
         return {
             "chart_type": "laba-rugi",
@@ -83,7 +109,7 @@ class LabaRugiParser(BaseExcelParser):
 
         month_row = df_raw.iloc[month_row_idx].values
         subheader_row = df_raw.iloc[month_row_idx + 1].values
-        
+
         # 2. Find the Laba Bersih / Setelah Pajak row
         laba_row_idx = -1
         for i in range(month_row_idx + 2, len(df_raw)):
@@ -91,7 +117,7 @@ class LabaRugiParser(BaseExcelParser):
             if "LABA SETELAH PAJAK" in val or "LABA BERSIH" in val:
                 laba_row_idx = i
                 break
-                
+
         if laba_row_idx == -1:
             for i in range(month_row_idx + 2, len(df_raw)):
                 val = str(df_raw.iloc[i, 0]).upper()
@@ -103,22 +129,22 @@ class LabaRugiParser(BaseExcelParser):
             raise ValueError("Tidak dapat menemukan baris Laba")
 
         laba_row = df_raw.iloc[laba_row_idx].values
-        
+
         data_points = []
         for col_idx in range(1, len(month_row)):
             cell_val = str(month_row[col_idx]).strip().upper()
-            
+
             # Match month
             matched_month = None
             for key, full_month in self._MONTHS_MAP.items():
                 if key in cell_val:
                     matched_month = full_month
                     break
-            
+
             if matched_month:
                 rkap_ytd = None
                 real_ytd = None
-                
+
                 for c in range(col_idx, min(col_idx + 5, len(subheader_row))):
                     sub = str(subheader_row[c]).upper()
                     if "YTD RKAP" in sub or ("RKAP" in sub and "YTD" in sub):
@@ -128,11 +154,13 @@ class LabaRugiParser(BaseExcelParser):
                         val = laba_row[c]
                         real_ytd = normalize_indonesian_number(val)
 
-                data_points.append({
-                    "periode": matched_month,
-                    "rencana": rkap_ytd,
-                    "realisasi": real_ytd,
-                })
+                data_points.append(
+                    {
+                        "periode": matched_month,
+                        "rencana": rkap_ytd,
+                        "realisasi": real_ytd,
+                    }
+                )
 
         unique_points = []
         seen = set()

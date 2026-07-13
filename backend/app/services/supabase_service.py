@@ -10,11 +10,7 @@ class SupabaseService:
         )
 
     def get_chart_data(self, context: str, sub_context: str | None) -> dict | None:
-        query = (
-            self._client.table("chart_data")
-            .select("*")
-            .eq("context", context)
-        )
+        query = self._client.table("chart_data").select("*").eq("context", context)
         if sub_context:
             query = query.eq("sub_context", sub_context)
         result = query.order("created_at", desc=True).limit(1).execute()

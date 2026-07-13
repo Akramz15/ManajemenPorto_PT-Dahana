@@ -1,4 +1,11 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import { formatRupiah } from "@/lib/formatters";
 
 interface DonutSlice {
@@ -14,7 +21,11 @@ interface DonutChartProps {
   formatValue?: (v: number) => string;
 }
 
-function DonutTooltip({ active, payload, formatValue }: {
+function DonutTooltip({
+  active,
+  payload,
+  formatValue,
+}: {
   active?: boolean;
   payload?: Array<{ name: string; value: number; payload: DonutSlice }>;
   formatValue?: (v: number) => string;
@@ -22,11 +33,14 @@ function DonutTooltip({ active, payload, formatValue }: {
   if (!active || !payload?.length) return null;
   const item = payload[0];
   const formatter = formatValue || formatRupiah;
-  
+
   return (
     <div className="apple-tooltip">
       <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-700/50">
-        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.payload.color }}></div>
+        <div
+          className="w-2.5 h-2.5 rounded-full"
+          style={{ backgroundColor: item.payload.color }}
+        ></div>
         <p className="apple-tooltip-title mb-0! pb-0! border-0!">{item.name}</p>
       </div>
       <p className="text-white font-bold">{formatter(item.value)}</p>
@@ -34,7 +48,12 @@ function DonutTooltip({ active, payload, formatValue }: {
   );
 }
 
-export function DonutChart({ data, title, centerLabel, formatValue }: DonutChartProps) {
+export function DonutChart({
+  data,
+  title,
+  centerLabel,
+  formatValue,
+}: DonutChartProps) {
   // Format centerLabel to Miliar if it is too long (assuming centerLabel is a string starting with Rp)
   const formatCenterLabel = (label: string | undefined) => {
     if (!label) return "";
@@ -46,16 +65,24 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
     return label;
   };
 
-  const formattedCenter = centerLabel ? formatCenterLabel(centerLabel) : undefined;
+  const formattedCenter = centerLabel
+    ? formatCenterLabel(centerLabel)
+    : undefined;
 
   return (
     <div className="card w-full flex flex-col h-full">
-      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-2">{title}</h3>
+      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-2">
+        {title}
+      </h3>
       <div className="w-full flex-1 min-h-80 relative">
         {formattedCenter && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-8">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
-            <p className="text-lg font-black text-slate-900">{formattedCenter}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+              Total
+            </p>
+            <p className="text-lg font-black text-slate-900">
+              {formattedCenter}
+            </p>
           </div>
         )}
         <ResponsiveContainer width="100%" height="100%">
@@ -76,11 +103,23 @@ export function DonutChart({ data, title, centerLabel, formatValue }: DonutChart
               animationEasing="ease-out"
             >
               {data.map((entry, index) => (
-                <Cell key={index} fill={entry.color} className="transition-all hover:opacity-80 hover:scale-[1.02] origin-center" />
+                <Cell
+                  key={index}
+                  fill={entry.color}
+                  className="transition-all hover:opacity-80 hover:scale-[1.02] origin-center"
+                />
               ))}
             </Pie>
             <Tooltip content={<DonutTooltip formatValue={formatValue} />} />
-            <Legend verticalAlign="bottom" wrapperStyle={{ fontSize: 12, paddingTop: "10px", fontWeight: 600 }} iconType="circle" />
+            <Legend
+              verticalAlign="bottom"
+              wrapperStyle={{
+                fontSize: 12,
+                paddingTop: "10px",
+                fontWeight: 600,
+              }}
+              iconType="circle"
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>

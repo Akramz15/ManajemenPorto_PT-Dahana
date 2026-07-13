@@ -2,6 +2,7 @@ import pandas as pd
 import random
 from app.parsers.base_parser import BaseExcelParser
 
+
 def _find_val(df: pd.DataFrame, keyword: str) -> float:
     # Cari baris yang mengandung keyword
     for _, row in df.iterrows():
@@ -13,10 +14,11 @@ def _find_val(df: pd.DataFrame, keyword: str) -> float:
                     return float(nums[-1])
     return 0.0
 
+
 def _generate_trend(total: float, months: int, variance: float = 0.1) -> list[float]:
     if total == 0:
         return [0] * months
-    
+
     # Gunakan seed deterministik berdasarkan total agar hasilnya selalu sama untuk input yang sama
     rng = random.Random(int(total * 100))
     base = total / months
@@ -27,13 +29,14 @@ def _generate_trend(total: float, months: int, variance: float = 0.1) -> list[fl
     trend.append(abs(total - sum(trend)))
     return trend
 
+
 class PortofolioParser(BaseExcelParser):
     def parse(self) -> dict:
         ctx = self.context.lower()
         result: dict = {"chart_type": ctx, "data": {}}
-        
+
         xl = self._open()
-        
+
         if ctx == "dic":
             result["data"] = self._parse_dic(xl)
         elif ctx == "kan":
@@ -44,13 +47,13 @@ class PortofolioParser(BaseExcelParser):
             result["data"] = self._parse_jodd(xl)
         else:
             raise ValueError(f"Context '{ctx}' tidak didukung oleh PortofolioParser")
-            
+
         return result
 
     def _extract_monthly_rkap(self, df: pd.DataFrame, keyword: str):
         for idx, row in df.iterrows():
             if idx < 20:
-                continue # Skip the first table (alternating format)
+                continue  # Skip the first table (alternating format)
             if len(row.values) > 1:
                 val = row.values[1]
                 if isinstance(val, str) and keyword.lower() in val.lower():
@@ -73,7 +76,7 @@ class PortofolioParser(BaseExcelParser):
                         else:
                             real.append(None)
                     return rkap, real
-        return [0.0]*12, [None]*12
+        return [0.0] * 12, [None] * 12
 
     def _calculate_ytd(self, arr):
         ytd, current = [], 0
@@ -86,10 +89,10 @@ class PortofolioParser(BaseExcelParser):
         return ytd
 
     def _extract_cf_by_section(self, df: pd.DataFrame, section_keyword: str):
-        terima = [None]*12
-        keluar = [None]*12
+        terima = [None] * 12
+        keluar = [None] * 12
         found_section = False
-        
+
         for idx, row in df.iterrows():
             if len(row.values) > 6:
                 val = row.values[6]
@@ -102,14 +105,22 @@ class PortofolioParser(BaseExcelParser):
                         if "penerimaan" in val_lower:
                             terima = []
                             for i in range(7, 19):
-                                if i < len(row.values) and pd.notna(row.values[i]) and str(row.values[i]).strip() != "":
+                                if (
+                                    i < len(row.values)
+                                    and pd.notna(row.values[i])
+                                    and str(row.values[i]).strip() != ""
+                                ):
                                     terima.append(abs(float(row.values[i])))
                                 else:
                                     terima.append(None)
                         elif "pengeluaran" in val_lower:
                             keluar = []
                             for i in range(7, 19):
-                                if i < len(row.values) and pd.notna(row.values[i]) and str(row.values[i]).strip() != "":
+                                if (
+                                    i < len(row.values)
+                                    and pd.notna(row.values[i])
+                                    and str(row.values[i]).strip() != ""
+                                ):
                                     keluar.append(abs(float(row.values[i])))
                                 else:
                                     keluar.append(None)
@@ -130,17 +141,30 @@ class PortofolioParser(BaseExcelParser):
         disagio_saham = self._extract_first_num(df, "disagio saham")
         tambahan_modal = self._extract_first_num(df, "tambahan modal disetor")
         saldo_laba = self._extract_first_num(df, "saldo laba")
-        
+
         return {
             "modal_saham": modal_saham * 1e6,
             "disagio_saham": disagio_saham * 1e6,
             "tambahan_modal": tambahan_modal * 1e6,
-            "saldo_laba": saldo_laba * 1e6
+            "saldo_laba": saldo_laba * 1e6,
         }
 
     def _parse_dic(self, xl: pd.ExcelFile) -> dict:
-        months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
-        
+        months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "Mei",
+            "Jun",
+            "Jul",
+            "Agu",
+            "Sep",
+            "Okt",
+            "Nov",
+            "Des",
+        ]
+
         # 1, 3, 4. Data dari RKAP-REAL DIC (Penjualan, HPP, Laba Rugi, RKAP)
         try:
             df_rkap = pd.read_excel(xl, sheet_name="RKAP-REAL DIC", header=None)
@@ -148,35 +172,46 @@ class PortofolioParser(BaseExcelParser):
             rkap_laba_arr, real_laba_arr = self._extract_monthly_rkap(df_rkap, "laba (rugi) usaha")
             rkap_hpp_arr, real_hpp_arr = self._extract_monthly_rkap(df_rkap, "hpp")
         except Exception:
-            rkap_pend_arr, real_pend_arr = [0.0]*12, [None]*12
-            rkap_laba_arr, real_laba_arr = [0.0]*12, [None]*12
-            rkap_hpp_arr, real_hpp_arr = [0.0]*12, [None]*12
-            
-        revenue = [{"periode": m, "penjualan": (p * 1e6) if p is not None else None, "hpp": (h * 1e6) if h is not None else None, "rkap_penjualan": (rp * 1e6) if rp is not None else None, "rkap_hpp": (rh * 1e6) if rh is not None else None} for m, rp, p, rh, h in zip(months, rkap_pend_arr, real_pend_arr, rkap_hpp_arr, real_hpp_arr)]
-        
+            rkap_pend_arr, real_pend_arr = [0.0] * 12, [None] * 12
+            rkap_laba_arr, real_laba_arr = [0.0] * 12, [None] * 12
+            rkap_hpp_arr, real_hpp_arr = [0.0] * 12, [None] * 12
+
+        revenue = [
+            {
+                "periode": m,
+                "penjualan": (p * 1e6) if p is not None else None,
+                "hpp": (h * 1e6) if h is not None else None,
+                "rkap_penjualan": (rp * 1e6) if rp is not None else None,
+                "rkap_hpp": (rh * 1e6) if rh is not None else None,
+            }
+            for m, rp, p, rh, h in zip(
+                months, rkap_pend_arr, real_pend_arr, rkap_hpp_arr, real_hpp_arr
+            )
+        ]
+
         # 2, 5. Komposisi Aset & Cash Flow dari Neraca&CF DIC
         try:
             df_neraca = pd.read_excel(xl, sheet_name="Neraca&CF DIC", header=None)
             aset_lancar = self._extract_first_num(df_neraca, "aset lancar")
             aset_tidak_lancar = self._extract_first_num(df_neraca, "aset tidak lancar")
-            
+
             al_val = aset_lancar * 1e6 if aset_lancar < 1e9 else aset_lancar
             atl_val = aset_tidak_lancar * 1e6 if aset_tidak_lancar < 1e9 else aset_tidak_lancar
-            
+
             cfo_terima, cfo_keluar = self._extract_cf_by_section(df_neraca, "aktivitas operasi")
             cfi_terima, cfi_keluar = self._extract_cf_by_section(df_neraca, "investasi")
             cff_terima, cff_keluar = self._extract_cf_by_section(df_neraca, "funding")
         except Exception:
             al_val, atl_val = 0.0, 0.0
-            cfo_terima, cfo_keluar = [None]*12, [None]*12
-            cfi_terima, cfi_keluar = [None]*12, [None]*12
-            cff_terima, cff_keluar = [None]*12, [None]*12
-            
+            cfo_terima, cfo_keluar = [None] * 12, [None] * 12
+            cfi_terima, cfi_keluar = [None] * 12, [None] * 12
+            cff_terima, cff_keluar = [None] * 12, [None] * 12
+
         komposisi_aset = [
             {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
         ]
-        
+
         try:
             df_dic_r1 = pd.read_excel(xl, sheet_name="Lap. DIC-R1", header=None)
             ekuitas_detail = self._extract_ekuitas_detail(df_dic_r1)
@@ -185,9 +220,9 @@ class PortofolioParser(BaseExcelParser):
                 "modal_saham": 0.0,
                 "disagio_saham": 0.0,
                 "tambahan_modal": 0.0,
-                "saldo_laba": 0.0
+                "saldo_laba": 0.0,
             }
-        
+
         cash_flow = [
             {
                 "periode": m,
@@ -196,22 +231,36 @@ class PortofolioParser(BaseExcelParser):
                 "cfi_terima": (it * 1e6) if it is not None else None,
                 "cfi_keluar": (ik * 1e6) if ik is not None else None,
                 "cff_terima": (ft * 1e6) if ft is not None else None,
-                "cff_keluar": (fk * 1e6) if fk is not None else None
+                "cff_keluar": (fk * 1e6) if fk is not None else None,
             }
-            for m, ot, ok, it, ik, ft, fk in zip(months, cfo_terima, cfo_keluar, cfi_terima, cfi_keluar, cff_terima, cff_keluar)
+            for m, ot, ok, it, ik, ft, fk in zip(
+                months, cfo_terima, cfo_keluar, cfi_terima, cfi_keluar, cff_terima, cff_keluar
+            )
         ]
-        
+
         rkap_pend_ytd = self._calculate_ytd(rkap_pend_arr)
         real_pend_ytd = self._calculate_ytd(real_pend_arr)
-        
+
         rkap_laba_ytd = self._calculate_ytd(rkap_laba_arr)
         real_laba_ytd = self._calculate_ytd(real_laba_arr)
-        
-        rkap_ytd_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_ytd, real_pend_ytd)]
-        rkap_ytd_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_ytd, real_laba_ytd)]
-        rkap_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_arr, real_laba_arr)]
-        rkap_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_arr, real_pend_arr)]
-        
+
+        rkap_ytd_pendapatan = [
+            {"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None}
+            for m, r, p in zip(months, rkap_pend_ytd, real_pend_ytd)
+        ]
+        rkap_ytd_laba_rugi = [
+            {"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None}
+            for m, r, p in zip(months, rkap_laba_ytd, real_laba_ytd)
+        ]
+        rkap_laba_rugi = [
+            {"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None}
+            for m, r, p in zip(months, rkap_laba_arr, real_laba_arr)
+        ]
+        rkap_pendapatan = [
+            {"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None}
+            for m, r, p in zip(months, rkap_pend_arr, real_pend_arr)
+        ]
+
         return {
             "revenue": revenue,
             "komposisi_aset": komposisi_aset,
@@ -221,12 +270,25 @@ class PortofolioParser(BaseExcelParser):
             "rkap_laba_rugi": rkap_laba_rugi,
             "rkap_pendapatan": rkap_pendapatan,
             "rkap_ytd_pendapatan": rkap_ytd_pendapatan,
-            "rkap_ytd_laba_rugi": rkap_ytd_laba_rugi
+            "rkap_ytd_laba_rugi": rkap_ytd_laba_rugi,
         }
 
     def _parse_kan(self, xl: pd.ExcelFile) -> dict:
-        months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
-        
+        months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "Mei",
+            "Jun",
+            "Jul",
+            "Agu",
+            "Sep",
+            "Okt",
+            "Nov",
+            "Des",
+        ]
+
         # 1. Revenue, Produksi, RKAP dari RKAP-REAL KAN
         try:
             df_rkap = pd.read_excel(xl, sheet_name="RKAP-REAL KAN", header=None)
@@ -235,26 +297,56 @@ class PortofolioParser(BaseExcelParser):
             target_prod_arr, real_prod_arr = self._extract_monthly_rkap(df_rkap, "produksi")
             rkap_laba_arr, real_laba_arr = self._extract_monthly_rkap(df_rkap, "laba (rugi) usaha")
         except Exception:
-            rkap_pend_arr, real_pend_arr = [0.0]*12, [None]*12
-            rkap_hpp_arr, real_hpp_arr = [0.0]*12, [None]*12
-            target_prod_arr, real_prod_arr = [0.0]*12, [None]*12
-            rkap_laba_arr, real_laba_arr = [0.0]*12, [None]*12
-            
-        revenue = [{"periode": m, "penjualan": (p * 1e6) if p is not None else None, "hpp": (h * 1e6) if h is not None else None, "rkap_penjualan": (rp * 1e6) if rp is not None else None, "rkap_hpp": (rh * 1e6) if rh is not None else None} for m, rp, p, rh, h in zip(months, rkap_pend_arr, real_pend_arr, rkap_hpp_arr, real_hpp_arr)]
-        
-        produksi = [{"periode": m, "target": int(t) if t is not None else None, "realisasi": int(r) if r is not None else None} for m, t, r in zip(months, target_prod_arr, real_prod_arr)]
-        
+            rkap_pend_arr, real_pend_arr = [0.0] * 12, [None] * 12
+            rkap_hpp_arr, real_hpp_arr = [0.0] * 12, [None] * 12
+            target_prod_arr, real_prod_arr = [0.0] * 12, [None] * 12
+            rkap_laba_arr, real_laba_arr = [0.0] * 12, [None] * 12
+
+        revenue = [
+            {
+                "periode": m,
+                "penjualan": (p * 1e6) if p is not None else None,
+                "hpp": (h * 1e6) if h is not None else None,
+                "rkap_penjualan": (rp * 1e6) if rp is not None else None,
+                "rkap_hpp": (rh * 1e6) if rh is not None else None,
+            }
+            for m, rp, p, rh, h in zip(
+                months, rkap_pend_arr, real_pend_arr, rkap_hpp_arr, real_hpp_arr
+            )
+        ]
+
+        produksi = [
+            {
+                "periode": m,
+                "target": int(t) if t is not None else None,
+                "realisasi": int(r) if r is not None else None,
+            }
+            for m, t, r in zip(months, target_prod_arr, real_prod_arr)
+        ]
+
         rkap_pend_ytd = self._calculate_ytd(rkap_pend_arr)
         real_pend_ytd = self._calculate_ytd(real_pend_arr)
-        
+
         rkap_laba_ytd = self._calculate_ytd(rkap_laba_arr)
         real_laba_ytd = self._calculate_ytd(real_laba_arr)
-        
-        rkap_ytd_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_ytd, real_pend_ytd)]
-        rkap_ytd_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_ytd, real_laba_ytd)]
-        rkap_laba_rugi = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_laba_arr, real_laba_arr)]
-        rkap_pendapatan = [{"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None} for m, r, p in zip(months, rkap_pend_arr, real_pend_arr)]
-        
+
+        rkap_ytd_pendapatan = [
+            {"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None}
+            for m, r, p in zip(months, rkap_pend_ytd, real_pend_ytd)
+        ]
+        rkap_ytd_laba_rugi = [
+            {"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None}
+            for m, r, p in zip(months, rkap_laba_ytd, real_laba_ytd)
+        ]
+        rkap_laba_rugi = [
+            {"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None}
+            for m, r, p in zip(months, rkap_laba_arr, real_laba_arr)
+        ]
+        rkap_pendapatan = [
+            {"periode": m, "rkap": r * 1e6, "realisasi": p * 1e6 if p is not None else None}
+            for m, r, p in zip(months, rkap_pend_arr, real_pend_arr)
+        ]
+
         # 2. Komposisi Aset & Cash Flow
         try:
             df_neraca = pd.read_excel(xl, sheet_name="Neraca KAN", header=None)
@@ -262,20 +354,20 @@ class PortofolioParser(BaseExcelParser):
             cfi_terima, cfi_keluar = self._extract_cf_by_section(df_neraca, "investasi")
             cff_terima, cff_keluar = self._extract_cf_by_section(df_neraca, "funding")
         except Exception:
-            cfo_terima, cfo_keluar = [None]*12, [None]*12
-            cfi_terima, cfi_keluar = [None]*12, [None]*12
-            cff_terima, cff_keluar = [None]*12, [None]*12
+            cfo_terima, cfo_keluar = [None] * 12, [None] * 12
+            cfi_terima, cfi_keluar = [None] * 12, [None] * 12
+            cff_terima, cff_keluar = [None] * 12, [None] * 12
 
         try:
             df_kan_r1 = pd.read_excel(xl, sheet_name="Lap. KAN-R1", header=None)
             aset_tidak_lancar = self._extract_first_num(df_kan_r1, "jumlah aset tidak lancar")
             ekuitas = self._extract_first_num(df_kan_r1, "jumlah ekuitas")
-            
-            # The values in Lap. KAN-R1 are in thousands or millions? 
+
+            # The values in Lap. KAN-R1 are in thousands or millions?
             # 1209712 * 1e6 = 1.2 Trillion. Yes, usually in Jutaan (Millions).
             atl_val = aset_tidak_lancar * 1e6
             eq_val = ekuitas * 1e6
-            
+
             ekuitas_detail = self._extract_ekuitas_detail(df_kan_r1)
         except Exception:
             atl_val, eq_val = 0.0, 0.0
@@ -283,14 +375,14 @@ class PortofolioParser(BaseExcelParser):
                 "modal_saham": 0.0,
                 "disagio_saham": 0.0,
                 "tambahan_modal": 0.0,
-                "saldo_laba": 0.0
+                "saldo_laba": 0.0,
             }
-            
+
         komposisi_aset = [
             {"name": "Aset Tidak Lancar", "value": atl_val, "color": "#10B981"},
             {"name": "Ekuitas", "value": eq_val, "color": "#F59E0B"},
         ]
-        
+
         cash_flow = [
             {
                 "periode": m,
@@ -299,11 +391,13 @@ class PortofolioParser(BaseExcelParser):
                 "cfi_terima": (it * 1e6) if it is not None else None,
                 "cfi_keluar": (ik * 1e6) if ik is not None else None,
                 "cff_terima": (ft * 1e6) if ft is not None else None,
-                "cff_keluar": (fk * 1e6) if fk is not None else None
+                "cff_keluar": (fk * 1e6) if fk is not None else None,
             }
-            for m, ot, ok, it, ik, ft, fk in zip(months, cfo_terima, cfo_keluar, cfi_terima, cfi_keluar, cff_terima, cff_keluar)
+            for m, ot, ok, it, ik, ft, fk in zip(
+                months, cfo_terima, cfo_keluar, cfi_terima, cfi_keluar, cff_terima, cff_keluar
+            )
         ]
-        
+
         return {
             "revenue": revenue,
             "produksi": produksi,
@@ -314,12 +408,25 @@ class PortofolioParser(BaseExcelParser):
             "rkap_ytd_laba_rugi": rkap_ytd_laba_rugi,
             "komposisi_aset": komposisi_aset,
             "ekuitas_detail": ekuitas_detail,
-            "cash_flow": cash_flow
+            "cash_flow": cash_flow,
         }
-        
+
     def _extract_jod_inventory(self, df: pd.DataFrame, keyword: str) -> list:
         inventory = []
-        months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
+        months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "Mei",
+            "Jun",
+            "Jul",
+            "Agu",
+            "Sep",
+            "Okt",
+            "Nov",
+            "Des",
+        ]
         month_idx = 0
         for idx, row in df.iterrows():
             if len(row.values) > 6:
@@ -329,6 +436,7 @@ class PortofolioParser(BaseExcelParser):
                     prod = row.values[4]
                     keluar = row.values[5]
                     akhir = row.values[6]
+
                     def safe_float(v):
                         if pd.notna(v) and str(v).strip() != "":
                             try:
@@ -336,40 +444,51 @@ class PortofolioParser(BaseExcelParser):
                             except ValueError:
                                 return None
                         return None
-                        
+
                     awal_val = safe_float(awal)
                     prod_val = safe_float(prod)
                     keluar_val = safe_float(keluar)
                     akhir_val = safe_float(akhir)
-                    
+
                     # If all inputs are empty but akhir is 0 (due to excel formula), treat as None
-                    if awal_val is None and prod_val is None and keluar_val is None and akhir_val == 0.0:
+                    if (
+                        awal_val is None
+                        and prod_val is None
+                        and keluar_val is None
+                        and akhir_val == 0.0
+                    ):
                         akhir_val = None
                     elif akhir_val is not None:
                         # If the month is valid, empty production or pengeluaran means 0
-                        if prod_val is None: prod_val = 0.0
-                        if keluar_val is None: keluar_val = 0.0
-                        
-                    inventory.append({
-                        "periode": months[month_idx] if month_idx < 12 else "Unknown",
-                        "stok_awal": awal_val,
-                        "produksi": prod_val,
-                        "pengeluaran": keluar_val,
-                        "stok_akhir": akhir_val
-                    })
+                        if prod_val is None:
+                            prod_val = 0.0
+                        if keluar_val is None:
+                            keluar_val = 0.0
+
+                    inventory.append(
+                        {
+                            "periode": months[month_idx] if month_idx < 12 else "Unknown",
+                            "stok_awal": awal_val,
+                            "produksi": prod_val,
+                            "pengeluaran": keluar_val,
+                            "stok_akhir": akhir_val,
+                        }
+                    )
                     month_idx += 1
                     if month_idx >= 12:
                         break
-        
+
         while len(inventory) < 12:
-            inventory.append({
-                "periode": months[len(inventory)],
-                "stok_awal": None,
-                "produksi": None,
-                "pengeluaran": None,
-                "stok_akhir": None
-            })
-            
+            inventory.append(
+                {
+                    "periode": months[len(inventory)],
+                    "stok_awal": None,
+                    "produksi": None,
+                    "pengeluaran": None,
+                    "stok_akhir": None,
+                }
+            )
+
         return inventory
 
     def _parse_jodb(self, xl: pd.ExcelFile) -> dict:
@@ -380,11 +499,8 @@ class PortofolioParser(BaseExcelParser):
         except Exception:
             ansol = []
             granular = []
-            
-        return {
-            "inventori_ansol": ansol,
-            "inventori_granular": granular
-        }
+
+        return {"inventori_ansol": ansol, "inventori_granular": granular}
 
     def _parse_jodd(self, xl: pd.ExcelFile) -> dict:
         try:
@@ -394,8 +510,5 @@ class PortofolioParser(BaseExcelParser):
         except Exception:
             inv200 = []
             inv400 = []
-            
-        return {
-            "inventori_200gr": inv200,
-            "inventori_400gr": inv400
-        }
+
+        return {"inventori_200gr": inv200, "inventori_400gr": inv400}

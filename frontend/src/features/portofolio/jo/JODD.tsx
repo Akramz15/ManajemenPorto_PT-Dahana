@@ -12,12 +12,20 @@ export default function JODD() {
     <div className="p-8 max-w-7xl mx-auto space-y-8 min-h-screen">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 card p-6! border-0! bg-white/80! shadow-sm!">
         <div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Joint Operation Dahana - Dayaprime (JODD)</h2>
-          <p className="text-sm font-medium text-slate-500 mt-2">Dashboard mutasi inventori Dayaprime 200gr dan 400gr</p>
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+            Joint Operation Dahana - Dayaprime (JODD)
+          </h2>
+          <p className="text-sm font-medium text-slate-500 mt-2">
+            Dashboard mutasi inventori Dayaprime 200gr dan 400gr
+          </p>
         </div>
-        
+
         <div className="w-full md:w-64">
-          <ExcelUploader context="jodd" compact={true} onSuccess={() => refetch()} />
+          <ExcelUploader
+            context="jodd"
+            compact={true}
+            onSuccess={() => refetch()}
+          />
         </div>
       </div>
 
@@ -27,8 +35,16 @@ export default function JODD() {
         </div>
       ) : (
         <div className="space-y-8">
-          <InventoriChart title="Inventori Dayaprime 200gr" subtitle="Mutasi stok gudang per bulan" data={inv200} />
-          <InventoriChart title="Inventori Dayaprime 400gr" subtitle="Mutasi stok gudang per bulan" data={inv400} />
+          <InventoriChart
+            title="Inventori Dayaprime 200gr"
+            subtitle="Mutasi stok gudang per bulan"
+            data={inv200}
+          />
+          <InventoriChart
+            title="Inventori Dayaprime 400gr"
+            subtitle="Mutasi stok gudang per bulan"
+            data={inv400}
+          />
         </div>
       )}
     </div>

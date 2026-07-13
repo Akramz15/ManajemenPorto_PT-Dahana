@@ -1,10 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
-import { ProjectManager, ProjectDocumentsTable, MonthlyProgressTracker } from "@/components/shared";
+import {
+  ProjectManager,
+  ProjectDocumentsTable,
+  MonthlyProgressTracker,
+} from "@/components/shared";
 import { SCurveProgressChart } from "@/components/charts";
 import { useDialogStore } from "@/store/dialogStore";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { Plus, Settings, Search, User, Clock, ShieldAlert , Trash2 } from "lucide-react";
+import {
+  Plus,
+  Settings,
+  Search,
+  User,
+  Clock,
+  ShieldAlert,
+  Trash2,
+} from "lucide-react";
 import type { Project } from "@/types";
 
 export default function ProjectBerjalan() {
@@ -16,7 +28,7 @@ export default function ProjectBerjalan() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [showManager, setShowManager] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   useEffect(() => {
     // Fetch all berjalan projects for pertahanan
     const fetchAllProjects = async () => {
@@ -27,7 +39,7 @@ export default function ProjectBerjalan() {
         .eq("divisi", "pertahanan")
         .eq("kategori", "berjalan")
         .order("created_at", { ascending: false });
-        
+
       if (data && !error) {
         setAllProjects(data as any[]);
       } else {
@@ -39,24 +51,28 @@ export default function ProjectBerjalan() {
           .eq("kategori", "berjalan")
           .order("created_at", { ascending: false });
         const projectsData = fallback.data || [];
-        const userIds = [...new Set(projectsData.map(p => p.created_by).filter(Boolean))];
-        
+        const userIds = [
+          ...new Set(projectsData.map((p) => p.created_by).filter(Boolean)),
+        ];
+
         if (userIds.length > 0) {
           const { data: profiles } = await supabase
             .from("user_profiles")
             .select("id, display_name")
             .in("id", userIds);
-            
+
           if (profiles && profiles.length > 0) {
-            const profileMap = Object.fromEntries(profiles.map(p => [p.id, p]));
-            projectsData.forEach(p => {
+            const profileMap = Object.fromEntries(
+              profiles.map((p) => [p.id, p]),
+            );
+            projectsData.forEach((p) => {
               if (p.created_by && profileMap[p.created_by]) {
                 (p as any).user_profiles = profileMap[p.created_by];
               }
             });
           }
         }
-        
+
         setAllProjects(projectsData as Project[]);
       }
     };
@@ -65,13 +81,18 @@ export default function ProjectBerjalan() {
 
   useEffect(() => {
     if (selectedProject) {
-      const found = allProjects.find(p => p.id === selectedProject);
+      const found = allProjects.find((p) => p.id === selectedProject);
       if (found) {
         setProjectData(found);
       } else {
-        supabase.from("projects").select("*").eq("id", selectedProject).single().then(({ data }) => {
-          setProjectData(data as Project);
-        });
+        supabase
+          .from("projects")
+          .select("*")
+          .eq("id", selectedProject)
+          .single()
+          .then(({ data }) => {
+            setProjectData(data as Project);
+          });
       }
     } else {
       setProjectData(null);
@@ -83,7 +104,7 @@ export default function ProjectBerjalan() {
 
   const fetchDynamicSCurve = useCallback(async () => {
     if (!selectedProject || !projectData) return;
-    
+
     const { data: progressData } = await supabase
       .from("project_monthly_progress")
       .select("*")
@@ -91,57 +112,85 @@ export default function ProjectBerjalan() {
       .order("year", { ascending: true })
       .order("month", { ascending: true });
 
-    const start = projectData.start_date ? new Date(projectData.start_date) : new Date(new Date().getFullYear(), 0, 1);
-    const end = projectData.end_date ? new Date(projectData.end_date) : new Date(new Date().getFullYear(), 11, 31);
-    
-    const totalMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()) + 1;
+    const start = projectData.start_date
+      ? new Date(projectData.start_date)
+      : new Date(new Date().getFullYear(), 0, 1);
+    const end = projectData.end_date
+      ? new Date(projectData.end_date)
+      : new Date(new Date().getFullYear(), 11, 31);
+
+    const totalMonths =
+      (end.getFullYear() - start.getFullYear()) * 12 +
+      (end.getMonth() - start.getMonth()) +
+      1;
     if (totalMonths <= 0) {
       setSCurveData([]);
       return;
     }
-    
+
     const step = 100 / totalMonths;
     const curve: any[] = [];
-    const MONTHS = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
-    
+    const MONTHS = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Mei",
+      "Jun",
+      "Jul",
+      "Ags",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Des",
+    ];
+
     let currentRealisasi: number | null = null;
     let expectedAccum = 0;
-    
+
     // To only show realisasi up to current month if not filled
     const today = new Date();
-    
+
     for (let i = 0; i < totalMonths; i++) {
       const currentMonthIndex = start.getMonth() + i;
       const m = (currentMonthIndex % 12) + 1;
       const y = start.getFullYear() + Math.floor(currentMonthIndex / 12);
-      
+
       expectedAccum += step;
       if (expectedAccum > 100) expectedAccum = 100;
 
-      const pData = progressData?.find(p => p.month === m && p.year === y);
-      
+      const pData = progressData?.find((p) => p.month === m && p.year === y);
+
       if (pData) {
-        if (pData.status === 'Close') {
-           currentRealisasi = 100;
-        } else if (pData.status === 'On-track') {
-           currentRealisasi = expectedAccum;
-        } else if (pData.status === 'Delay') {
-           currentRealisasi = currentRealisasi != null ? currentRealisasi + (step * 0.3) : step * 0.3;
+        if (pData.status === "Close") {
+          currentRealisasi = 100;
+        } else if (pData.status === "On-track") {
+          currentRealisasi = expectedAccum;
+        } else if (pData.status === "Delay") {
+          currentRealisasi =
+            currentRealisasi != null
+              ? currentRealisasi + step * 0.3
+              : step * 0.3;
         }
       } else {
-        const isPastOrCurrent = (y < today.getFullYear()) || (y === today.getFullYear() && m <= today.getMonth() + 1);
+        const isPastOrCurrent =
+          y < today.getFullYear() ||
+          (y === today.getFullYear() && m <= today.getMonth() + 1);
         if (!isPastOrCurrent) {
           // Future month without data -> leave realisasi as null so it doesn't plot
         }
       }
-      
+
       curve.push({
-        periode: `${MONTHS[m-1]} ${y}`,
+        periode: `${MONTHS[m - 1]} ${y}`,
         rencana: parseFloat(expectedAccum.toFixed(1)),
-        realisasi: currentRealisasi != null ? parseFloat(currentRealisasi.toFixed(1)) : null
+        realisasi:
+          currentRealisasi != null
+            ? parseFloat(currentRealisasi.toFixed(1))
+            : null,
       });
     }
-    
+
     setSCurveData(curve);
   }, [selectedProject, projectData]);
 
@@ -149,24 +198,35 @@ export default function ProjectBerjalan() {
     fetchDynamicSCurve();
   }, [fetchDynamicSCurve]);
   const handleDeleteProject = async (projectId: string) => {
-    if (!(await confirm("Apakah Anda yakin ingin menghapus proyek ini? Seluruh data dan task akan ikut terhapus secara permanen.", { severity: 'danger' }))) return;
+    if (
+      !(await confirm(
+        "Apakah Anda yakin ingin menghapus proyek ini? Seluruh data dan task akan ikut terhapus secara permanen.",
+        { severity: "danger" },
+      ))
+    )
+      return;
     try {
       await supabase.from("projects").delete().eq("id", projectId);
       setSelectedProject("");
       window.location.reload();
     } catch (e) {
       console.error("Failed to delete project", e);
-      alert("Gagal menghapus proyek.", { severity: 'danger' });
+      alert("Gagal menghapus proyek.", { severity: "danger" });
     }
   };
 
-  const filteredProjects = allProjects.filter(p => p.nama_proyek.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredProjects = allProjects.filter((p) =>
+    p.nama_proyek.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
       {/* Breadcrumbs & Header */}
       {selectedProject && (
-        <button onClick={() => setSelectedProject("")} className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:text-primary-700 hover:border-primary-300 hover:bg-primary-50 shadow-sm rounded-xl transition-all w-fit -mt-2">
+        <button
+          onClick={() => setSelectedProject("")}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:text-primary-700 hover:border-primary-300 hover:bg-primary-50 shadow-sm rounded-xl transition-all w-fit -mt-2"
+        >
           Kembali ke Workspace
         </button>
       )}
@@ -182,24 +242,29 @@ export default function ProjectBerjalan() {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-              {selectedProject ? projectData?.nama_proyek : "Workspace: Project Berjalan"}
+              {selectedProject
+                ? projectData?.nama_proyek
+                : "Workspace: Project Berjalan"}
             </h1>
-            {(!selectedProject) && (
-              <p className="text-slate-500 mt-1">Kelola dan pantau seluruh proyek berjalan divisi pertahanan secara kolaboratif.</p>
+            {!selectedProject && (
+              <p className="text-slate-500 mt-1">
+                Kelola dan pantau seluruh proyek berjalan divisi pertahanan
+                secara kolaboratif.
+              </p>
             )}
           </div>
 
           <div className="flex items-center gap-3">
             {selectedProject ? (
               <>
-                <button 
+                <button
                   onClick={() => setShowManager(true)}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/40 hover:-translate-y-0.5"
                 >
                   <Settings size={18} />
                   Edit Project
                 </button>
-                <button 
+                <button
                   onClick={() => handleDeleteProject(selectedProject)}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 text-red-600 font-bold text-sm hover:bg-red-100 hover:text-red-700 transition-all shadow-sm border border-red-100"
                 >
@@ -208,7 +273,7 @@ export default function ProjectBerjalan() {
                 </button>
               </>
             ) : allProjects.length > 0 ? (
-              <button 
+              <button
                 onClick={() => setShowManager(true)}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-600 text-white font-bold text-sm hover:bg-primary-700 transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 hover:-translate-y-0.5"
               >
@@ -223,15 +288,20 @@ export default function ProjectBerjalan() {
       {showManager && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 relative">
-            <button onClick={() => setShowManager(false)} className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors">✕</button>
-            <ProjectManager 
-              divisi="pertahanan" 
-              kategori="berjalan" 
-              selectedProjectId={selectedProject} 
+            <button
+              onClick={() => setShowManager(false)}
+              className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+            >
+              ✕
+            </button>
+            <ProjectManager
+              divisi="pertahanan"
+              kategori="berjalan"
+              selectedProjectId={selectedProject}
               onProjectSelected={(id) => {
                 setSelectedProject(id);
                 setShowManager(false);
-              }} 
+              }}
             />
           </div>
         </div>
@@ -240,32 +310,56 @@ export default function ProjectBerjalan() {
       {/* Main Content */}
       {selectedProject ? (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          
           {/* Top Info Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
-              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><User size={12}/> Ditambahkan Oleh</p>
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <User size={12} /> Ditambahkan Oleh
+              </p>
               <p className="text-sm font-bold text-slate-800 truncate">
                 {/* @ts-ignore */}
-                {projectData?.user_profiles?.display_name || 'Tim Pengembangan Usaha'}
+                {projectData?.user_profiles?.display_name ||
+                  "Tim Pengembangan Usaha"}
               </p>
             </div>
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
-              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><Clock size={12}/> Dibuat Pada</p>
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <Clock size={12} /> Dibuat Pada
+              </p>
               <p className="text-sm font-bold text-slate-800">
-                {projectData?.created_at ? new Date(projectData.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
+                {projectData?.created_at
+                  ? new Date(projectData.created_at).toLocaleDateString(
+                      "id-ID",
+                      { day: "numeric", month: "long", year: "numeric" },
+                    )
+                  : "-"}
               </p>
             </div>
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
-              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">Start Date</p>
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                Start Date
+              </p>
               <p className="text-sm font-bold text-slate-800">
-                {projectData?.start_date ? new Date(projectData.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Tidak diatur'}
+                {projectData?.start_date
+                  ? new Date(projectData.start_date).toLocaleDateString(
+                      "id-ID",
+                      { day: "numeric", month: "long", year: "numeric" },
+                    )
+                  : "Tidak diatur"}
               </p>
             </div>
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
-              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">End Date</p>
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                End Date
+              </p>
               <p className="text-sm font-bold text-slate-800">
-                {projectData?.end_date ? new Date(projectData.end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Tidak diatur'}
+                {projectData?.end_date
+                  ? new Date(projectData.end_date).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "Tidak diatur"}
               </p>
             </div>
           </div>
@@ -280,16 +374,15 @@ export default function ProjectBerjalan() {
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             {/* Monthly Progress Tracker */}
             {projectData && (
-              <MonthlyProgressTracker 
-                project={projectData} 
-                onUpdate={fetchDynamicSCurve} 
+              <MonthlyProgressTracker
+                project={projectData}
+                onUpdate={fetchDynamicSCurve}
               />
             )}
-            
+
             {/* Project Documents */}
             <ProjectDocumentsTable projectId={selectedProject} />
           </div>
-
         </div>
       ) : (
         <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 min-h-[70vh] flex flex-col overflow-hidden">
@@ -297,30 +390,45 @@ export default function ProjectBerjalan() {
           <div className="border-b border-slate-100 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <ShieldAlert className="text-primary-500" /> Semua Proyek Berjalan
-              <span className="bg-primary-100 text-primary-700 text-xs py-0.5 px-2.5 rounded-full">{filteredProjects.length}</span>
+              <span className="bg-primary-100 text-primary-700 text-xs py-0.5 px-2.5 rounded-full">
+                {filteredProjects.length}
+              </span>
             </h3>
-            
+
             <div className="relative max-w-sm w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input 
-                type="text" 
-                placeholder="Cari nama proyek..." 
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                size={18}
+              />
+              <input
+                type="text"
+                placeholder="Cari nama proyek..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-500 transition-all"
               />
             </div>
           </div>
-          
+
           <div className="p-6 flex-1 bg-slate-50/30">
             {allProjects.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-slate-400 py-20">
                 <div className="w-20 h-20 bg-white shadow-sm border border-slate-100 rounded-full flex items-center justify-center mb-6">
                   <ShieldAlert className="w-10 h-10 text-slate-300" />
                 </div>
-                <h4 className="text-lg font-bold text-slate-700 mb-2">Workspace Kosong</h4>
-                <p className="text-sm font-medium text-center max-w-sm">Belum ada proyek berjalan di divisi pertahanan. Semua anggota tim dapat menambahkan proyek baru ke dalam workspace ini.</p>
-                <button onClick={() => setShowManager(true)} className="mt-6 flex items-center gap-2 px-6 py-3 bg-primary-600 text-white shadow-lg shadow-primary-500/30 rounded-xl text-sm font-bold hover:bg-primary-700 hover:shadow-primary-500/50 hover:-translate-y-0.5 transition-all"><Plus size={18} /> Buat Proyek Pertama</button>
+                <h4 className="text-lg font-bold text-slate-700 mb-2">
+                  Workspace Kosong
+                </h4>
+                <p className="text-sm font-medium text-center max-w-sm">
+                  Belum ada proyek berjalan di divisi pertahanan. Semua anggota
+                  tim dapat menambahkan proyek baru ke dalam workspace ini.
+                </p>
+                <button
+                  onClick={() => setShowManager(true)}
+                  className="mt-6 flex items-center gap-2 px-6 py-3 bg-primary-600 text-white shadow-lg shadow-primary-500/30 rounded-xl text-sm font-bold hover:bg-primary-700 hover:shadow-primary-500/50 hover:-translate-y-0.5 transition-all"
+                >
+                  <Plus size={18} /> Buat Proyek Pertama
+                </button>
               </div>
             ) : filteredProjects.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-slate-400 py-20">
@@ -329,36 +437,45 @@ export default function ProjectBerjalan() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProjects.map((project) => (
-                  <div 
+                  <div
                     key={project.id}
                     onClick={() => setSelectedProject(project.id)}
                     className="group relative flex flex-col p-6 bg-white border border-slate-200/80 rounded-2xl hover:border-primary-400 hover:shadow-xl hover:shadow-primary-500/5 transition-all cursor-pointer overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-primary-50 to-transparent rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
-                    
+
                     <div className="flex items-start justify-between mb-4">
                       <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center group-hover:bg-primary-600 group-hover:text-white transition-colors">
                         <ShieldAlert size={22} />
                       </div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
-                        ID-{project.id.split('-')[0]}
+                        ID-{project.id.split("-")[0]}
                       </span>
                     </div>
 
-                    <h4 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 leading-tight group-hover:text-slate-900 transition-colors">{project.nama_proyek}</h4>
-                    
+                    <h4 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 leading-tight group-hover:text-slate-900 transition-colors">
+                      {project.nama_proyek}
+                    </h4>
+
                     <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600">
                           {/* @ts-ignore */}
-                          {project.user_profiles?.display_name ? project.user_profiles.display_name.charAt(0).toUpperCase() : 'T'}
+                          {project.user_profiles?.display_name
+                            ? project.user_profiles.display_name
+                                .charAt(0)
+                                .toUpperCase()
+                            : "T"}
                         </div>
                         <span className="text-xs font-medium text-slate-500 truncate max-w-30">
                           {/* @ts-ignore */}
-                          {project.user_profiles?.display_name || 'Tim Pertahanan'}
+                          {project.user_profiles?.display_name ||
+                            "Tim Pertahanan"}
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-primary-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all">Masuk Board</span>
+                      <span className="text-xs font-bold text-primary-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all">
+                        Masuk Board
+                      </span>
                     </div>
                   </div>
                 ))}

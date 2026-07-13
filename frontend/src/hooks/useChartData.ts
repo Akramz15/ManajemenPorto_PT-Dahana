@@ -8,7 +8,10 @@ interface UseChartDataResult<T> {
   refetch: () => void;
 }
 
-export function useChartData<T>(context: string, subContext?: string): UseChartDataResult<T> {
+export function useChartData<T>(
+  context: string,
+  subContext?: string,
+): UseChartDataResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +24,9 @@ export function useChartData<T>(context: string, subContext?: string): UseChartD
       const res = await apiClient.get(`/api/v1/charts/${context}`, { params });
       setData((res.data?.data_json as T) ?? null);
     } catch {
-      setError("Gagal memuat data grafik. Silakan upload file Excel terlebih dahulu.");
+      setError(
+        "Gagal memuat data grafik. Silakan upload file Excel terlebih dahulu.",
+      );
     } finally {
       setLoading(false);
     }

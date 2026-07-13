@@ -22,8 +22,7 @@ class BaseExcelParser(ABC):
                     return sheet
         available = ", ".join(xl.sheet_names)
         raise ValueError(
-            f"Sheet dengan kata kunci {keywords} tidak ditemukan. "
-            f"Sheet tersedia: {available}"
+            f"Sheet dengan kata kunci {keywords} tidak ditemukan. Sheet tersedia: {available}"
         )
 
     def _read_sheet(self, sheet_name: str, header_row: int = 0, **kwargs) -> pd.DataFrame:
@@ -33,5 +32,4 @@ class BaseExcelParser(ABC):
         return df
 
     @abstractmethod
-    def parse(self) -> dict:
-        ...
+    def parse(self) -> dict: ...

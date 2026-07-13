@@ -1,4 +1,7 @@
-export const formatRupiah = (value: number | null | undefined, abbreviated = false): string => {
+export const formatRupiah = (
+  value: number | null | undefined,
+  abbreviated = false,
+): string => {
   if (value === null || value === undefined) return "N/A";
 
   if (abbreviated) {
@@ -16,7 +19,10 @@ export const formatRupiah = (value: number | null | undefined, abbreviated = fal
   }).format(value);
 };
 
-export const formatPersen = (value: number | null | undefined, decimals = 1): string => {
+export const formatPersen = (
+  value: number | null | undefined,
+  decimals = 1,
+): string => {
   if (value === null || value === undefined) return "N/A";
   return `${value.toFixed(decimals)}%`;
 };

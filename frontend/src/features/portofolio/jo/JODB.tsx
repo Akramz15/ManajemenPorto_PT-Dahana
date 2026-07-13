@@ -12,12 +12,20 @@ export default function JODB() {
     <div className="p-8 max-w-7xl mx-auto space-y-8 min-h-screen">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 card p-6! border-0! bg-white/80! shadow-sm!">
         <div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Joint Operation Dahana - BB (JODB)</h2>
-          <p className="text-sm font-medium text-slate-500 mt-2">Dashboard mutasi inventori ANSOL dan Granular</p>
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+            Joint Operation Dahana - BB (JODB)
+          </h2>
+          <p className="text-sm font-medium text-slate-500 mt-2">
+            Dashboard mutasi inventori ANSOL dan Granular
+          </p>
         </div>
-        
+
         <div className="w-full md:w-64">
-          <ExcelUploader context="jodb" compact={true} onSuccess={() => refetch()} />
+          <ExcelUploader
+            context="jodb"
+            compact={true}
+            onSuccess={() => refetch()}
+          />
         </div>
       </div>
 
@@ -27,8 +35,16 @@ export default function JODB() {
         </div>
       ) : (
         <div className="space-y-8">
-          <InventoriChart title="Mutasi Inventori ANSOL" subtitle="Mutasi stok gudang per bulan" data={invAnsol} />
-          <InventoriChart title="Mutasi Inventori Granular" subtitle="Mutasi stok gudang per bulan" data={invGranular} />
+          <InventoriChart
+            title="Mutasi Inventori ANSOL"
+            subtitle="Mutasi stok gudang per bulan"
+            data={invAnsol}
+          />
+          <InventoriChart
+            title="Mutasi Inventori Granular"
+            subtitle="Mutasi stok gudang per bulan"
+            data={invGranular}
+          />
         </div>
       )}
     </div>

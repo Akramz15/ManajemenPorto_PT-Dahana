@@ -39,7 +39,7 @@ async def extract_excel(
         raise HTTPException(status_code=422, detail=str(e))
 
     svc = SupabaseService()
-    
+
     if context in ["dic", "kan", "jodb", "jodd"]:
         contexts_to_parse = ["dic", "kan", "jodb", "jodd"]
         primary_result = None
@@ -60,10 +60,10 @@ async def extract_excel(
             except Exception as e:
                 # Lanjutkan ke context lain jika salah satu gagal
                 continue
-                
+
         if not primary_result:
             raise HTTPException(status_code=422, detail="Gagal memproses data untuk context ini.")
-            
+
         return ChartResponse(context=context, data=primary_result, uploaded_by=user["user_id"])
     else:
         # Untuk kurva-s dan laba-rugi

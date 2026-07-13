@@ -5,10 +5,8 @@ from app.core.config import settings
 
 _bearer = HTTPBearer()
 
-supabase_client: Client = create_client(
-    settings.supabase_url,
-    settings.supabase_service_role_key
-)
+supabase_client: Client = create_client(settings.supabase_url, settings.supabase_service_role_key)
+
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(_bearer),

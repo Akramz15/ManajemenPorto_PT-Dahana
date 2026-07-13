@@ -10,9 +10,7 @@ def validate_excel_file(file_bytes: io.BytesIO, filename: str) -> None:
     file_bytes.seek(0)
 
     if size > MAX_FILE_SIZE_BYTES:
-        raise ValueError(
-            f"Ukuran file ({size // 1024 // 1024} MB) melebihi batas 20 MB"
-        )
+        raise ValueError(f"Ukuran file ({size // 1024 // 1024} MB) melebihi batas 20 MB")
 
     if not filename.lower().endswith((".xlsx", ".xls")):
         raise ValueError("Format file harus .xlsx atau .xls")

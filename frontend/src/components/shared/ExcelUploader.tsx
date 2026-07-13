@@ -11,13 +11,20 @@ interface ExcelUploaderProps {
   onSuccess: (data: unknown) => void;
 }
 
-export function ExcelUploader({ context, subContext, compact = false, onSuccess }: ExcelUploaderProps) {
+export function ExcelUploader({
+  context,
+  subContext,
+  compact = false,
+  onSuccess,
+}: ExcelUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+        ".xlsx",
+      ],
       "application/vnd.ms-excel": [".xls"],
     },
     maxFiles: 1,
@@ -51,20 +58,36 @@ export function ExcelUploader({ context, subContext, compact = false, onSuccess 
           ${isDragActive ? "border-primary-500 bg-primary-50 scale-[0.98]" : "border-slate-300 hover:border-primary-400 hover:bg-slate-50 hover:shadow-sm"}`}
       >
         <input {...getInputProps()} />
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors shrink-0
-          ${isDragActive ? "bg-primary-200 text-primary-700" : "bg-slate-100 text-slate-500"}`}>
-          {uploading ? <Spinner size="sm" className="text-primary-500" /> : (isDragActive ? <UploadCloud size={20} /> : <FileSpreadsheet size={20} />)}
+        <div
+          className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors shrink-0
+          ${isDragActive ? "bg-primary-200 text-primary-700" : "bg-slate-100 text-slate-500"}`}
+        >
+          {uploading ? (
+            <Spinner size="sm" className="text-primary-500" />
+          ) : isDragActive ? (
+            <UploadCloud size={20} />
+          ) : (
+            <FileSpreadsheet size={20} />
+          )}
         </div>
         <div className="text-left flex-1">
           {uploading ? (
-             <p className="text-sm font-bold text-slate-700">Memproses...</p>
+            <p className="text-sm font-bold text-slate-700">Memproses...</p>
           ) : (
             <>
-              <p className="text-sm font-bold text-slate-700 leading-tight">Update Data</p>
-              <p className="text-xs text-slate-400 font-medium mt-0.5 whitespace-nowrap">Drop Excel di sini</p>
+              <p className="text-sm font-bold text-slate-700 leading-tight">
+                Update Data
+              </p>
+              <p className="text-xs text-slate-400 font-medium mt-0.5 whitespace-nowrap">
+                Drop Excel di sini
+              </p>
             </>
           )}
-          {error && <p className="text-[10px] text-negative-600 font-bold mt-1 leading-tight">{error}</p>}
+          {error && (
+            <p className="text-[10px] text-negative-600 font-bold mt-1 leading-tight">
+              {error}
+            </p>
+          )}
         </div>
       </div>
     );
@@ -80,19 +103,29 @@ export function ExcelUploader({ context, subContext, compact = false, onSuccess 
       {uploading ? (
         <>
           <Spinner size="md" className="text-primary-500" />
-          <p className="text-sm font-medium text-slate-600 mt-2">Memproses File Excel...</p>
+          <p className="text-sm font-medium text-slate-600 mt-2">
+            Memproses File Excel...
+          </p>
         </>
       ) : (
         <>
-          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors
-            ${isDragActive ? "bg-primary-200 text-primary-700" : "bg-slate-100 text-slate-400"}`}>
-            {isDragActive ? <UploadCloud size={24} /> : <FileSpreadsheet size={24} />}
+          <div
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors
+            ${isDragActive ? "bg-primary-200 text-primary-700" : "bg-slate-100 text-slate-400"}`}
+          >
+            {isDragActive ? (
+              <UploadCloud size={24} />
+            ) : (
+              <FileSpreadsheet size={24} />
+            )}
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-700">
               Drag & drop file Excel ke sini
             </p>
-            <p className="text-xs text-slate-400 mt-1">atau klik untuk memilih file</p>
+            <p className="text-xs text-slate-400 mt-1">
+              atau klik untuk memilih file
+            </p>
           </div>
         </>
       )}

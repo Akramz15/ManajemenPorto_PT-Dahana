@@ -14,6 +14,6 @@ export const useAppStore = create<AppState>()(
       activeModule: "pengembangan-usaha",
       setActiveModule: (module) => set({ activeModule: module }),
     }),
-    { name: "dahana-bizport-state" }
-  )
+    { name: "dahana-bizport-state" },
+  ),
 );
