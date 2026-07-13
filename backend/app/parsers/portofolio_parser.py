@@ -1,5 +1,7 @@
-import pandas as pd
 import random
+
+import pandas as pd
+
 from app.parsers.base_parser import BaseExcelParser
 
 

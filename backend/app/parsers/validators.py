@@ -1,4 +1,5 @@
 import io
+
 import openpyxl
 
 MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024

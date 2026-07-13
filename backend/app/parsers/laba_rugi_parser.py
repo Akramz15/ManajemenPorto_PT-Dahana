@@ -1,4 +1,5 @@
 import pandas as pd
+
 from app.parsers.base_parser import BaseExcelParser
 from app.parsers.normalizer import normalize_indonesian_number
 
@@ -66,7 +67,7 @@ class LabaRugiParser(BaseExcelParser):
                         aggregated[per]["realisasi"] = (aggregated[per]["realisasi"] or 0) + p[
                             "realisasi"
                         ]
-            except Exception as e:
+            except Exception:
                 pass
 
         if not aggregated:

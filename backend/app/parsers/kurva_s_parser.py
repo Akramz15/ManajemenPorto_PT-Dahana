@@ -1,4 +1,5 @@
 import pandas as pd
+
 from app.parsers.base_parser import BaseExcelParser
 from app.parsers.normalizer import normalize_indonesian_number
 

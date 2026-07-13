@@ -1,12 +1,14 @@
 import io
-from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, Query
+
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
+
 from app.api.deps import get_current_user
+from app.models.chart import ChartResponse
 from app.parsers.kurva_s_parser import KurvaSParser
-from app.parsers.portofolio_parser import PortofolioParser
 from app.parsers.laba_rugi_parser import LabaRugiParser
+from app.parsers.portofolio_parser import PortofolioParser
 from app.parsers.validators import validate_excel_file
 from app.services.supabase_service import SupabaseService
-from app.models.chart import ChartResponse
 
 router = APIRouter()
 
@@ -57,7 +59,7 @@ async def extract_excel(
                     source_file=file.filename or "upload.xlsx",
                     uploaded_by=user["user_id"],
                 )
-            except Exception as e:
+            except Exception:
                 # Lanjutkan ke context lain jika salah satu gagal
                 continue
 

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import settings
-from app.api.v1.routes import extract, upload, charts, progress
+
+from app.api.v1.routes import charts, extract, progress, upload
 
 app = FastAPI(
     title="Dahana BizPort API",

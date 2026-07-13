@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, Body, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
+
 from app.api.deps import get_current_user
 from app.services.supabase_service import SupabaseService
 

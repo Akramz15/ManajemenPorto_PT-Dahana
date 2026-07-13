@@ -1,4 +1,5 @@
 import pytest
+
 from app.parsers.normalizer import normalize_indonesian_number
 
 
@@ -15,7 +16,8 @@ from app.parsers.normalizer import normalize_indonesian_number
         (
             " (1.000) ",
             -1000.0,
-        ),  # Testing negative format with parentheses if needed, wait, normalizer doesn't do negative parens yet, let's stick to standard docs
+        ),  # Testing negative format with parentheses if needed.
+        # wait, normalizer doesn't do negative parens yet, let's stick to standard docs
         ("-1.000", -1000.0),
         (1000, 1000.0),
         (1000.5, 1000.5),

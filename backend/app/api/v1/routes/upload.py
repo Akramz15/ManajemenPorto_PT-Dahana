@@ -1,9 +1,11 @@
 import uuid
-from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, Form
+
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+
 from app.api.deps import get_current_user
-from app.services.supabase_service import SupabaseService
-from app.services.storage_service import StorageService
 from app.models.upload import UploadResponse
+from app.services.storage_service import StorageService
+from app.services.supabase_service import SupabaseService
 
 router = APIRouter()
 

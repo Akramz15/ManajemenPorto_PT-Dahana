@@ -1,6 +1,7 @@
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from supabase import create_client, Client
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from supabase import Client, create_client
+
 from app.core.config import settings
 
 _bearer = HTTPBearer()
@@ -17,7 +18,7 @@ async def get_current_user(
         if not user:
             raise Exception("No user found")
         return {"user_id": user.id, "email": user.email}
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token tidak valid atau sudah expired",

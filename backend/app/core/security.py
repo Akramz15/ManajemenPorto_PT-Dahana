@@ -1,5 +1,5 @@
-from jose import jwt, JWTError
 from fastapi import HTTPException, status
+from jose import JWTError, jwt
 
 _ALGORITHM = "HS256"
 
