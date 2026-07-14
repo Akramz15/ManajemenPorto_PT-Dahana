@@ -90,6 +90,27 @@ class PortofolioParser(BaseExcelParser):
                 ytd.append(None)
         return ytd
 
+    def _extract_kas_akhir(
+        self, df: pd.DataFrame, keyword: str = "kas akhir"
+    ) -> list[float | None]:
+        kas = [None] * 12
+        for idx, row in df.iterrows():
+            if len(row.values) > 6:
+                val = row.values[6]
+                if isinstance(val, str) and keyword.lower() in val.lower():
+                    kas = []
+                    for i in range(7, 19):
+                        if (
+                            i < len(row.values)
+                            and pd.notna(row.values[i])
+                            and str(row.values[i]).strip() != ""
+                        ):
+                            kas.append(float(row.values[i]))
+                        else:
+                            kas.append(None)
+                    break
+        return kas
+
     def _extract_cf_by_section(self, df: pd.DataFrame, section_keyword: str):
         terima = [None] * 12
         keluar = [None] * 12
@@ -203,11 +224,13 @@ class PortofolioParser(BaseExcelParser):
             cfo_terima, cfo_keluar = self._extract_cf_by_section(df_neraca, "aktivitas operasi")
             cfi_terima, cfi_keluar = self._extract_cf_by_section(df_neraca, "investasi")
             cff_terima, cff_keluar = self._extract_cf_by_section(df_neraca, "funding")
+            kas_akhir = self._extract_kas_akhir(df_neraca)
         except Exception:
             al_val, atl_val = 0.0, 0.0
             cfo_terima, cfo_keluar = [None] * 12, [None] * 12
             cfi_terima, cfi_keluar = [None] * 12, [None] * 12
             cff_terima, cff_keluar = [None] * 12, [None] * 12
+            kas_akhir = [None] * 12
 
         komposisi_aset = [
             {"name": "Aset Lancar", "value": al_val, "color": "#3B82F6"},
@@ -234,9 +257,17 @@ class PortofolioParser(BaseExcelParser):
                 "cfi_keluar": (ik * 1e6) if ik is not None else None,
                 "cff_terima": (ft * 1e6) if ft is not None else None,
                 "cff_keluar": (fk * 1e6) if fk is not None else None,
+                "saldo": (kas * 1e6) if kas is not None else None,
             }
-            for m, ot, ok, it, ik, ft, fk in zip(
-                months, cfo_terima, cfo_keluar, cfi_terima, cfi_keluar, cff_terima, cff_keluar
+            for m, ot, ok, it, ik, ft, fk, kas in zip(
+                months,
+                cfo_terima,
+                cfo_keluar,
+                cfi_terima,
+                cfi_keluar,
+                cff_terima,
+                cff_keluar,
+                kas_akhir,
             )
         ]
 
@@ -355,10 +386,12 @@ class PortofolioParser(BaseExcelParser):
             cfo_terima, cfo_keluar = self._extract_cf_by_section(df_neraca, "aktivitas operasi")
             cfi_terima, cfi_keluar = self._extract_cf_by_section(df_neraca, "investasi")
             cff_terima, cff_keluar = self._extract_cf_by_section(df_neraca, "funding")
+            kas_akhir = self._extract_kas_akhir(df_neraca)
         except Exception:
             cfo_terima, cfo_keluar = [None] * 12, [None] * 12
             cfi_terima, cfi_keluar = [None] * 12, [None] * 12
             cff_terima, cff_keluar = [None] * 12, [None] * 12
+            kas_akhir = [None] * 12
 
         try:
             df_kan_r1 = pd.read_excel(xl, sheet_name="Lap. KAN-R1", header=None)
@@ -394,9 +427,17 @@ class PortofolioParser(BaseExcelParser):
                 "cfi_keluar": (ik * 1e6) if ik is not None else None,
                 "cff_terima": (ft * 1e6) if ft is not None else None,
                 "cff_keluar": (fk * 1e6) if fk is not None else None,
+                "saldo": (kas * 1e6) if kas is not None else None,
             }
-            for m, ot, ok, it, ik, ft, fk in zip(
-                months, cfo_terima, cfo_keluar, cfi_terima, cfi_keluar, cff_terima, cff_keluar
+            for m, ot, ok, it, ik, ft, fk, kas in zip(
+                months,
+                cfo_terima,
+                cfo_keluar,
+                cfi_terima,
+                cfi_keluar,
+                cff_terima,
+                cff_keluar,
+                kas_akhir,
             )
         ]
 

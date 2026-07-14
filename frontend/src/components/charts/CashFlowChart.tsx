@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
-  BarChart,
+  ComposedChart,
+  Line,
   Bar,
   XAxis,
   YAxis,
@@ -19,6 +20,7 @@ interface CashFlowPoint {
   cfi_keluar: number;
   cff_terima: number;
   cff_keluar: number;
+  saldo?: number | null;
 }
 
 function CashFlowTooltip({
@@ -38,6 +40,7 @@ function CashFlowTooltip({
   if (!active || !payload?.length) return null;
   const penerimaan = payload.find((p) => p.dataKey === "penerimaan");
   const pengeluaran = payload.find((p) => p.dataKey === "pengeluaran");
+  const saldo = payload.find((p) => p.dataKey === "saldo");
 
   return (
     <div className="apple-tooltip">
@@ -55,6 +58,14 @@ function CashFlowTooltip({
             {formatRupiah(pengeluaran?.value ?? 0)}
           </span>
         </div>
+        {saldo && (
+          <div className="flex justify-between items-center gap-6 pt-2 border-t border-slate-700/50">
+            <span className="text-blue-400 font-medium">Saldo Kas</span>
+            <span className="font-bold text-white">
+              {formatRupiah(saldo.value ?? 0)}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -67,6 +78,7 @@ export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
     periode: d.periode,
     penerimaan: d[`${kategori}_terima`],
     pengeluaran: d[`${kategori}_keluar`] ? -d[`${kategori}_keluar`] : null,
+    saldo: d.saldo,
   }));
 
   const yAxisFormatter = (v: number) => {
@@ -104,7 +116,7 @@ export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
 
       <div className="w-full h-70">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
+          <ComposedChart
             data={chartData}
             barGap={4}
             margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
@@ -117,8 +129,18 @@ export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
               tickMargin={12}
             />
             <YAxis
+              yAxisId="left"
               tickFormatter={yAxisFormatter}
               tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }}
+              axisLine={false}
+              tickLine={false}
+              tickMargin={12}
+            />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              tickFormatter={yAxisFormatter}
+              tick={{ fontSize: 11, fill: "#3B82F6", fontWeight: 600 }}
               axisLine={false}
               tickLine={false}
               tickMargin={12}
@@ -138,6 +160,7 @@ export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
             <ReferenceLine y={0} stroke="#cbd5e1" />
 
             <Bar
+              yAxisId="left"
               name="Penerimaan"
               dataKey="penerimaan"
               fill="#10B981"
@@ -148,6 +171,7 @@ export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
               animationEasing="ease-out"
             />
             <Bar
+              yAxisId="left"
               name="Pengeluaran"
               dataKey="pengeluaran"
               fill="#F43F5E"
@@ -157,7 +181,20 @@ export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
               animationDuration={1500}
               animationEasing="ease-out"
             />
-          </BarChart>
+            <Line
+              yAxisId="right"
+              type="monotone"
+              name="Saldo Kas"
+              dataKey="saldo"
+              stroke="#3B82F6"
+              strokeWidth={3}
+              dot={{ r: 4, fill: "#3B82F6", strokeWidth: 2, stroke: "#fff" }}
+              activeDot={{ r: 6, fill: "#3B82F6", stroke: "#fff", strokeWidth: 2 }}
+              isAnimationActive={true}
+              animationDuration={1500}
+              animationEasing="ease-out"
+            />
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
     </div>

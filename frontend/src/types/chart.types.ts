@@ -14,8 +14,13 @@ export interface FinancialPoint {
 
 export interface CashFlowPoint {
   periode: string;
-  penerimaan: number;
-  pengeluaran: number;
+  cfo_terima: number;
+  cfo_keluar: number;
+  cfi_terima: number;
+  cfi_keluar: number;
+  cff_terima: number;
+  cff_keluar: number;
+  saldo?: number | null;
 }
 
 export interface RKAPPoint {
