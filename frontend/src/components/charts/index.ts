@@ -1,5 +1,6 @@
 export * from "./KurvaSChart";
 export * from "./SCurveProgressChart";
+export * from "./KurvaSManager";
 export * from "./RevenueHPPChart";
 export * from "./DonutChart";
 export * from "./CashFlowChart";

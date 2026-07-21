@@ -8,15 +8,36 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
+      if (session?.user) {
+        // Ensure user profile exists
+        await supabase.from("user_profiles").upsert(
+          {
+            id: session.user.id,
+            display_name: session.user.email?.split('@')[0] || 'User',
+            role: 'member',
+          },
+          { onConflict: 'id', ignoreDuplicates: true }
+        );
+      }
       setLoading(false);
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
+      if (session?.user) {
+        await supabase.from("user_profiles").upsert(
+          {
+            id: session.user.id,
+            display_name: session.user.email?.split('@')[0] || 'User',
+            role: 'member',
+          },
+          { onConflict: 'id', ignoreDuplicates: true }
+        );
+      }
       setLoading(false);
     });
 

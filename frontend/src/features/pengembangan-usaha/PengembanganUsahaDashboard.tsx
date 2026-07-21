@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { SCurveProgressChart } from "@/components/charts";
-import { ExcelUploader } from "@/components/shared";
-import { useChartData } from "@/hooks/useChartData";
+import { KurvaSManager } from "@/components/charts";
 import { supabase } from "@/lib/supabase";
 import type { Project } from "@/types";
 import { formatDistanceToNow } from "date-fns";
@@ -13,7 +11,7 @@ import {
   CheckCircle2,
   FolderOpen,
   Activity,
-  ArrowUpRight,
+  X,
 } from "lucide-react";
 
 export default function PengembanganUsahaDashboard() {
@@ -22,23 +20,14 @@ export default function PengembanganUsahaDashboard() {
   const [activePipelineTab, setActivePipelineTab] = useState<
     "kajian" | "berjalan"
   >("kajian");
-  const [showUploadModal, setShowUploadModal] = useState(false);
 
-  // Fetch Global PU Chart Data
-  const {
-    data: chartDataPU,
-    loading: chartLoadingPU,
-    refetch: refetchPU,
-  } = useChartData<any>("progres-proyek", "pengembangan-usaha");
-  const sCurveDataPU = chartDataPU?.data_points || [];
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  // KPI States
   const [onTrackPercent, setOnTrackPercent] = useState(0);
   const [totalDelay, setTotalDelay] = useState(0);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      // 1. Fetch All Projects
       const { data: projectsData } = await supabase
         .from("projects")
         .select("*")
@@ -48,24 +37,65 @@ export default function PengembanganUsahaDashboard() {
         setSemuaProyek(projectsData as Project[]);
       }
 
-      // 2. Fetch Recent Updates (gabungan progress & kajian)
-      // Kita fetch semua untuk mengkalkulasi KPI proyek blocked
-      const { data: progressData } = await supabase
+      const { data: progressData, error: err1 } = await supabase
         .from("progress_tasks")
-        .select(`*, projects(nama_proyek), user_profiles(display_name)`)
-        .order("updated_at", { ascending: false });
+        .select(`*, projects(nama_proyek)`)
+        .order("updated_at", { ascending: false })
+        .limit(10);
 
-      const { data: kajianData } = await supabase
+      const { data: kajianData, error: err2 } = await supabase
         .from("kajian_tasks")
-        .select(`*, projects(nama_proyek), user_profiles(display_name)`)
-        .order("updated_at", { ascending: false });
+        .select(`*, projects(nama_proyek)`)
+        .order("updated_at", { ascending: false })
+        .limit(10);
+
+      const { data: projMonthlyData, error: err3 } = await supabase
+        .from("project_monthly_progress")
+        .select(`*, projects(nama_proyek)`)
+        .order("updated_at", { ascending: false })
+        .limit(10);
+
+      const { data: projectsData2, error: err4 } = await supabase
+        .from("projects")
+        .select(`id, nama_proyek, created_by, created_at, updated_at`)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      if (err1) console.error("progress error", err1);
+      if (err2) console.error("kajian error", err2);
+      if (err3) console.error("monthly error", err3);
+      if (err4) console.error("projects error", err4);
 
       const combined = [
         ...(progressData || []).map((t: any) => ({ ...t, type: "progress" })),
         ...(kajianData || []).map((t: any) => ({ ...t, type: "kajian" })),
+        ...(projMonthlyData || []).map((t: any) => ({ ...t, type: "monthly" })),
+        ...(projectsData2 || []).map((t: any) => ({ 
+          ...t, 
+          type: "project", 
+          assigned_to: t.created_by,
+          updated_at: t.created_at // Use created_at for new projects
+        })),
       ];
 
-      // KPI Calculations: Cari proyek yang punya task "blocked"
+      // Ambil user profiles secara manual karena relasi auth.users gagal di-query
+      const userIds = [...new Set(combined.map(t => t.assigned_to).filter(Boolean))];
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("user_profiles")
+          .select("id, display_name")
+          .in("id", userIds);
+          
+        if (profiles) {
+          const profileMap = Object.fromEntries(profiles.map(p => [p.id, p]));
+          combined.forEach(t => {
+            if (t.assigned_to && profileMap[t.assigned_to]) {
+              t.user_profiles = profileMap[t.assigned_to];
+            }
+          });
+        }
+      }
+
       const blockedProjectIds = new Set<string>();
       combined.forEach((task) => {
         if (task.project_id && task.status === "blocked") {
@@ -82,12 +112,11 @@ export default function PengembanganUsahaDashboard() {
       setTotalDelay(delayCount);
       setOnTrackPercent(percent);
 
-      // Sort combined by updated_at descending and take top 10 for feed
       combined.sort(
         (a, b) =>
           new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
       );
-      setRecentUpdates(combined.slice(0, 10));
+      setRecentUpdates(combined.slice(0, 15));
     };
 
     fetchDashboardData();
@@ -96,13 +125,11 @@ export default function PengembanganUsahaDashboard() {
   const proyekBerjalan = semuaProyek.filter((p) => p.kategori === "berjalan");
   const proyekKajian = semuaProyek.filter((p) => p.kategori === "kajian");
 
-  // We can say:
   const totalAktif = proyekBerjalan.length;
   const totalKajian = proyekKajian.length;
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
-      {/* Header Utama */}
       <div className="page-header mb-4">
         <div className="flex items-center text-sm font-medium text-slate-500">
           <span>Pengembangan Usaha</span>
@@ -119,7 +146,6 @@ export default function PengembanganUsahaDashboard() {
         </div>
       </div>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex items-center gap-4 group hover:border-primary-200 transition-colors">
           <div className="w-14 h-14 bg-primary-50 rounded-xl flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors">
@@ -191,46 +217,10 @@ export default function PengembanganUsahaDashboard() {
         </div>
       </div>
 
-      {/* Main Layout Grid */}
-      <div className="mb-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        {/* Grafik Global Kurva S (Full Width) */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-125 w-full flex flex-col">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-primary-50 rounded-bl-[100px] -z-10 opacity-50"></div>
-
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <div className="w-2 h-6 bg-primary-500 rounded-full"></div>
-              Kurva S: Target vs Aktual Penyelesaian Proyek
-            </h3>
-            <button
-              onClick={() => setShowUploadModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 rounded-xl font-bold text-sm hover:bg-primary-100 hover:text-primary-700 transition-colors border border-primary-100"
-            >
-              <ArrowUpRight size={16} />
-              Update Data
-            </button>
-          </div>
-
-          <div className="relative overflow-visible flex-1 flex flex-col min-h-0">
-            {chartLoadingPU ? (
-              <div className="flex-1 flex items-center justify-center rounded-2xl">
-                <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
-              </div>
-            ) : (
-              <div className="flex-1 relative flex flex-col min-h-0">
-                <SCurveProgressChart data={sCurveDataPU} />
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Kolom Kiri: Tabel Kajian */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="lg:col-span-2 space-y-6">
-          {/* Tabel Proyek Pipeline */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 min-h-125 flex flex-col">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 h-125 flex flex-col">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
               <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                 <div
                   className={`w-2 h-6 rounded-full transition-colors ${activePipelineTab === "kajian" ? "bg-amber-500" : "bg-primary-500"}`}
@@ -254,7 +244,7 @@ export default function PengembanganUsahaDashboard() {
               </div>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-y-auto overflow-x-auto flex-1 custom-scrollbar">
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
@@ -271,20 +261,20 @@ export default function PengembanganUsahaDashboard() {
                     ? proyekKajian
                     : proyekBerjalan
                   )
-                    .slice(0, 10)
                     .map((p) => (
                       <tr
                         key={p.id}
-                        className="hover:bg-slate-50 transition-colors"
+                        onClick={() => setSelectedProject(p)}
+                        className="hover:bg-slate-50 transition-colors cursor-pointer"
                       >
-                        <td className="py-4 px-4">
+                        <td className="py-4 px-4 w-32">
                           <span
                             className={`inline-block px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${p.divisi === "komersial" ? "bg-primary-50 text-primary-600" : "bg-slate-100 text-slate-600"}`}
                           >
                             {p.divisi}
                           </span>
                         </td>
-                        <td className="py-4 px-4 font-bold text-slate-800 max-w-xs truncate">
+                        <td className="py-4 px-4 font-bold text-slate-800">
                           {p.nama_proyek}
                         </td>
                       </tr>
@@ -305,23 +295,14 @@ export default function PengembanganUsahaDashboard() {
                 </tbody>
               </table>
             </div>
-            {(activePipelineTab === "kajian" ? proyekKajian : proyekBerjalan)
-              .length > 10 && (
-              <div className="mt-4 text-center">
-                <span className="text-sm text-primary-600 font-bold hover:underline cursor-pointer">
-                  Lihat semua proyek {activePipelineTab}
-                </span>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Kolom Kanan: Aktivitas Terbaru */}
         <div className="space-y-6">
-          <div className="card relative overflow-hidden h-[calc(100%-1.5rem)] flex flex-col border-t-4 border-t-primary-500">
+          <div className="card relative overflow-hidden flex flex-col border-t-4 border-t-primary-500 bg-white rounded-2xl shadow-sm border-slate-200/60 p-6 h-125">
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary-100/50 rounded-full blur-3xl"></div>
 
-            <h3 className="text-xl font-black text-slate-800 mb-8 flex items-center gap-2 relative z-10">
+            <h3 className="text-xl font-black text-slate-800 mb-8 flex items-center gap-2 relative z-10 shrink-0">
               <Activity className="text-primary-600" />
               Aktivitas Terbaru
             </h3>
@@ -337,16 +318,31 @@ export default function PengembanganUsahaDashboard() {
                 ) : (
                   recentUpdates.map((update, idx) => {
                     const isProgress = update.type === "progress";
-                    const iconColor = isProgress
-                      ? "bg-primary-500"
-                      : "bg-amber-500";
+                    const isKajian = update.type === "kajian";
+                    const isMonthly = update.type === "monthly";
+                    const isProject = update.type === "project";
+
+                    let iconColor = "bg-slate-500";
+                    if (isProgress) iconColor = "bg-primary-500";
+                    if (isKajian) iconColor = "bg-amber-500";
+                    if (isMonthly) iconColor = "bg-purple-500";
+                    if (isProject) iconColor = "bg-emerald-500";
+
                     const userName =
                       update.user_profiles?.display_name || "Anggota Tim";
                     const projectName =
-                      update.projects?.nama_proyek || "Proyek Dihapus";
-                    const actionText = isProgress
-                      ? `Memperbarui status task "${update.title}" menjadi ${update.status}`
-                      : `Memperbarui tahapan "${update.nama_kajian || update.tahapan}" menjadi ${update.status}`;
+                      update.projects?.nama_proyek || update.nama_proyek || "Proyek Dihapus";
+                    
+                    let actionText = "";
+                    if (isProgress) {
+                      actionText = `Memperbarui status task "${update.title}" menjadi ${update.status}`;
+                    } else if (isKajian) {
+                      actionText = `Memperbarui tahapan "${update.nama_kajian || update.tahapan}" menjadi ${update.status}`;
+                    } else if (isMonthly) {
+                      actionText = `Memperbarui laporan progress bulanan (${update.progress}%)`;
+                    } else if (isProject) {
+                      actionText = `Menambahkan proyek baru: ${projectName}`;
+                    }
 
                     return (
                       <div
@@ -390,48 +386,34 @@ export default function PengembanganUsahaDashboard() {
         </div>
       </div>
 
-      {/* Upload Modal */}
-      {showUploadModal && (
+      {selectedProject && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-            onClick={() => setShowUploadModal(false)}
+            onClick={() => setSelectedProject(null)}
           ></div>
-          <div className="bg-white rounded-3xl shadow-xl w-full max-w-lg relative z-10 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-br from-primary-50 to-primary-100/50 -z-10"></div>
+          <div className="bg-white rounded-3xl shadow-xl w-full max-w-4xl relative z-10 animate-in fade-in zoom-in-95 duration-200 overflow-hidden flex flex-col h-[80vh]">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary-50 rounded-bl-[150px] -z-10 opacity-50"></div>
 
-            <div className="p-8">
-              <div className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-primary-600 mb-6">
-                <TrendingUp size={24} />
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <div>
+                <h3 className="text-2xl font-black text-slate-900">
+                  {selectedProject.nama_proyek}
+                </h3>
+                <p className="text-sm text-slate-500 mt-1 font-medium">
+                  Kurva S Progress Aktual vs Rencana
+                </p>
               </div>
+              <button
+                onClick={() => setSelectedProject(null)}
+                className="w-10 h-10 bg-slate-100 text-slate-500 hover:bg-negative-100 hover:text-negative-600 rounded-full flex items-center justify-center transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
 
-              <h3 className="text-xl font-bold text-slate-800 mb-2">
-                Upload Data Kurva S
-              </h3>
-              <p className="text-sm text-slate-500 mb-6">
-                Unggah file Excel untuk memperbarui data Target vs Aktual
-                Penyelesaian Proyek Divisi Pengembangan Usaha.
-              </p>
-
-              <div className="bg-white rounded-2xl border border-slate-200/60 p-4 shadow-sm">
-                <ExcelUploader
-                  context="progres-proyek"
-                  subContext="pengembangan-usaha"
-                  onSuccess={() => {
-                    refetchPU();
-                    setShowUploadModal(false);
-                  }}
-                />
-              </div>
-
-              <div className="mt-6 flex justify-end">
-                <button
-                  onClick={() => setShowUploadModal(false)}
-                  className="px-6 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors"
-                >
-                  Tutup
-                </button>
-              </div>
+            <div className="p-6 flex-1 flex flex-col min-h-0 relative overflow-y-auto">
+              <KurvaSManager projectId={selectedProject.id} />
             </div>
           </div>
         </div>

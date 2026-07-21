@@ -263,7 +263,7 @@ export default function ProjectKajian() {
                   <p className="text-sm font-semibold text-slate-700">
                     {/* @ts-ignore */}
                     {projectData?.user_profiles?.display_name ||
-                      "Tim Pengembangan Usaha"}
+                      "Pengguna (Tidak Diketahui)"}
                   </p>
                 </div>
                 <div>

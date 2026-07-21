@@ -54,9 +54,9 @@ export interface KajianTask {
 export interface Document {
   id: string;
   project_id: string;
-  storage_path: string;
+  document_url: string;
   file_name: string;
-  file_size: number | null;
+  document_type: string;
   uploaded_by: string;
   uploaded_at: string;
 }

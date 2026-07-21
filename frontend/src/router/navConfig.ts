@@ -88,7 +88,7 @@ export const navConfig: Record<string, NavSection[]> = {
       label: "Lainnya",
       items: [
         {
-          label: "Investasi & Afiliasi",
+          label: "Portofolio Lainnya",
           path: "/porto/lainnya",
           icon: MoreHorizontal,
         },

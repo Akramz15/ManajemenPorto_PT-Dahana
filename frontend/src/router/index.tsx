@@ -33,7 +33,7 @@ const DIC = lazy(() => import("@/features/portofolio/anak-cucu/DIC"));
 const KAN = lazy(() => import("@/features/portofolio/anak-cucu/KAN"));
 const JODD = lazy(() => import("@/features/portofolio/jo/JODD"));
 const JODB = lazy(() => import("@/features/portofolio/jo/JODB"));
-const Investasi = lazy(() => import("@/features/portofolio/lainnya/Investasi"));
+const PortofolioLainnya = lazy(() => import("@/features/portofolio/lainnya/PortofolioLainnya"));
 
 function PageLoader() {
   return (
@@ -154,7 +154,7 @@ const router = createBrowserRouter([
             path: "lainnya",
             element: (
               <Suspense fallback={<PageLoader />}>
-                <Investasi />
+                <PortofolioLainnya />
               </Suspense>
             ),
           },
