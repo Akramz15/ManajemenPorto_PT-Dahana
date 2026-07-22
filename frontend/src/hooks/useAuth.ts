@@ -8,40 +8,56 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      if (session?.user) {
-        // Ensure user profile exists
-        await supabase.from("user_profiles").upsert(
-          {
-            id: session.user.id,
-            display_name: session.user.email?.split('@')[0] || 'User',
-            role: 'member',
-          },
-          { onConflict: 'id', ignoreDuplicates: true }
-        );
+    let mounted = true;
+
+    const upsertProfile = async (user: any) => {
+      await supabase.from("user_profiles").upsert(
+        {
+          id: user.id,
+          display_name: user.email?.split('@')[0] || 'User',
+          role: 'member',
+        },
+        { onConflict: 'id', ignoreDuplicates: true }
+      );
+    };
+
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (mounted) {
+          setSession(session);
+          if (session?.user) {
+            await upsertProfile(session.user);
+          }
+        }
+      } catch (error) {
+        console.error("Error getting session:", error);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
-    });
+    };
+
+    initializeAuth();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      if (session?.user) {
-        await supabase.from("user_profiles").upsert(
-          {
-            id: session.user.id,
-            display_name: session.user.email?.split('@')[0] || 'User',
-            role: 'member',
-          },
-          { onConflict: 'id', ignoreDuplicates: true }
-        );
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'INITIAL_SESSION') return;
+      if (mounted) {
+        setSession(session);
+        if (session?.user) {
+          await upsertProfile(session.user);
+        }
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   return { session, user: session?.user ?? null, loading };

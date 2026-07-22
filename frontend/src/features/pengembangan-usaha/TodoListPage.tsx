@@ -242,8 +242,8 @@ export default function TodoListPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Kolom Kiri: Tugas Aktif */}
-        <div className="flex flex-col gap-5">
-          <div className="flex items-center justify-between px-2">
+        <div className="bg-white rounded-3xl p-5 md:p-6 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col h-[600px]">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 shrink-0">
             <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
                 <CalendarIcon size={16} />
@@ -255,8 +255,7 @@ export default function TodoListPage() {
             </span>
           </div>
 
-          <div className="bg-white rounded-3xl p-5 md:p-6 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col h-150">
-            <form onSubmit={handleAddTask} className="relative mb-6 shrink-0">
+          <form onSubmit={handleAddTask} className="relative mb-5 shrink-0">
               <input
                 type="text"
                 placeholder="Tambahkan tugas baru..."
@@ -319,11 +318,10 @@ export default function TodoListPage() {
               )}
             </div>
           </div>
-        </div>
 
         {/* Kolom Kanan: Riwayat Selesai */}
-        <div className="flex flex-col gap-5">
-          <div className="flex items-center justify-between px-2">
+        <div className="bg-white/60 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-slate-100/60 shadow-[0_2px_15px_-8px_rgba(0,0,0,0.02)] flex flex-col h-[600px]">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 shrink-0">
             <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
                 <Clock size={16} />
@@ -334,8 +332,6 @@ export default function TodoListPage() {
               {completedTodos.length} Selesai
             </span>
           </div>
-
-          <div className="bg-white/60 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-slate-100/60 shadow-[0_2px_15px_-8px_rgba(0,0,0,0.02)] flex flex-col h-150">
             <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-2">
               {loading ? (
                 <div className="py-10 flex justify-center">
@@ -387,7 +383,6 @@ export default function TodoListPage() {
                   </div>
                 ))
               )}
-            </div>
           </div>
         </div>
       </div>

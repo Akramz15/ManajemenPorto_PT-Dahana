@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   ProjectManager,
   ProjectDocumentsTable,
@@ -23,7 +24,16 @@ export default function ProjectBerjalan() {
   const { session: _session } = useAuth();
   const { confirm, alert } = useDialogStore();
   // States
-  const [selectedProject, setSelectedProject] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedProject = searchParams.get("project") || "";
+
+  const setSelectedProject = useCallback((id: string) => {
+    if (id) {
+      setSearchParams({ project: id });
+    } else {
+      setSearchParams({});
+    }
+  }, [setSearchParams]);
   const [projectData, setProjectData] = useState<Project | null>(null);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [showManager, setShowManager] = useState(false);
@@ -429,26 +439,26 @@ export default function ProjectBerjalan() {
                   <div
                     key={project.id}
                     onClick={() => setSelectedProject(project.id)}
-                    className="group relative flex flex-col p-6 bg-white border border-slate-200/80 rounded-2xl hover:border-primary-400 hover:shadow-xl hover:shadow-primary-500/5 transition-all cursor-pointer overflow-hidden"
+                    className="group relative flex flex-col p-6 bg-white rounded-3xl hover:bg-slate-50/50 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100 hover:border-slate-200 hover:-translate-y-1 hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer overflow-hidden"
                   >
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-primary-50 to-transparent rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-primary-50/50 to-transparent rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-700"></div>
 
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center group-hover:bg-primary-600 group-hover:text-white transition-colors">
-                        <ShieldAlert size={22} />
+                    <div className="flex justify-between items-start mb-5">
+                      <div className="w-12 h-12 bg-primary-50/80 text-primary-600 rounded-2xl flex items-center justify-center group-hover:bg-primary-600 group-hover:text-white transition-colors duration-300">
+                        <ShieldAlert size={22} strokeWidth={2.5} />
                       </div>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50/80 px-3 py-1.5 rounded-full border border-slate-100/80">
                         ID-{project.id.split("-")[0]}
                       </span>
                     </div>
 
-                    <h4 className="text-lg font-bold text-slate-800 mb-2 line-clamp-2 leading-tight group-hover:text-slate-900 transition-colors">
+                    <h4 className="text-xl font-bold tracking-tight text-slate-800 mb-1 line-clamp-2 leading-tight group-hover:text-primary-700 transition-colors">
                       {project.nama_proyek}
                     </h4>
 
-                    <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600">
+                    <div className="mt-6 flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-[11px] font-bold text-slate-600 border border-slate-200/50">
                           {/* @ts-ignore */}
                           {project.user_profiles?.display_name
                             ? project.user_profiles.display_name
@@ -456,14 +466,14 @@ export default function ProjectBerjalan() {
                                 .toUpperCase()
                             : "T"}
                         </div>
-                        <span className="text-xs font-medium text-slate-500 truncate max-w-30">
+                        <span className="text-sm font-medium text-slate-500 truncate max-w-30">
                           {/* @ts-ignore */}
                           {project.user_profiles?.display_name ||
                             "Tim Pertahanan"}
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-primary-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all">
-                        Masuk Board
+                      <span className="text-xs font-bold text-primary-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all duration-300">
+                        Masuk Board &rarr;
                       </span>
                     </div>
                   </div>
