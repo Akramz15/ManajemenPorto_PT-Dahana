@@ -99,14 +99,14 @@ export default function ProjectBerjalan() {
     }
   }, [selectedProject, allProjects]);
 
-  // Dynamic S-Curve based on project_monthly_progress
+  // Dynamic S-Curve based on project_progress_activities
   const [sCurveData, setSCurveData] = useState<any[]>([]);
 
   const fetchDynamicSCurve = useCallback(async () => {
     if (!selectedProject || !projectData) return;
 
     const { data: progressData } = await supabase
-      .from("project_monthly_progress")
+      .from("project_progress_activities")
       .select("*")
       .eq("project_id", selectedProject)
       .order("year", { ascending: true })
@@ -145,10 +145,9 @@ export default function ProjectBerjalan() {
       "Des",
     ];
 
-    let currentRealisasi: number | null = null;
+    let currentRealisasi = 0;
     let expectedAccum = 0;
 
-    // To only show realisasi up to current month if not filled
     const today = new Date();
 
     for (let i = 0; i < totalMonths; i++) {
@@ -159,35 +158,25 @@ export default function ProjectBerjalan() {
       expectedAccum += step;
       if (expectedAccum > 100) expectedAccum = 100;
 
-      const pData = progressData?.find((p) => p.month === m && p.year === y);
+      // Filter activities for this exact month
+      const monthActivities = progressData?.filter((p) => p.month === m && p.year === y) || [];
+      const monthWeight = monthActivities.reduce((acc, curr) => acc + Number(curr.weight_percentage), 0);
+      
+      currentRealisasi += monthWeight;
+      if (currentRealisasi > 100) currentRealisasi = 100;
 
-      if (pData) {
-        if (pData.status === "Close") {
-          currentRealisasi = 100;
-        } else if (pData.status === "On-track") {
-          currentRealisasi = expectedAccum;
-        } else if (pData.status === "Delay") {
-          currentRealisasi =
-            currentRealisasi != null
-              ? currentRealisasi + step * 0.3
-              : step * 0.3;
-        }
-      } else {
-        const isPastOrCurrent =
-          y < today.getFullYear() ||
-          (y === today.getFullYear() && m <= today.getMonth() + 1);
-        if (!isPastOrCurrent) {
-          // Future month without data -> leave realisasi as null so it doesn't plot
-        }
-      }
+      const isPastOrCurrent =
+        y < today.getFullYear() ||
+        (y === today.getFullYear() && m <= today.getMonth() + 1);
+
+      // Only plot realisasi if it's past/current OR if it has activities (they added something in future)
+      const plotRealisasi = isPastOrCurrent || monthActivities.length > 0;
 
       curve.push({
         periode: `${MONTHS[m - 1]} ${y}`,
         rencana: parseFloat(expectedAccum.toFixed(1)),
-        realisasi:
-          currentRealisasi != null
-            ? parseFloat(currentRealisasi.toFixed(1))
-            : null,
+        realisasi: plotRealisasi ? parseFloat(currentRealisasi.toFixed(1)) : null,
+        activities: monthActivities, // Pass activities to tooltip
       });
     }
 
@@ -365,7 +354,7 @@ export default function ProjectBerjalan() {
           </div>
 
           {/* S-Curve Chart (Full Width) */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden h-72 lg:h-96 2xl:h-112.5 flex flex-col">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative h-125 flex flex-col">
             <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary-100 rounded-full -z-10 blur-3xl opacity-50"></div>
             <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-indigo-100 rounded-full -z-10 blur-3xl opacity-50"></div>
             <SCurveProgressChart data={sCurveData} />

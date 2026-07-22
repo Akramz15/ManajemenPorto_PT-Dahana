@@ -3,8 +3,8 @@ import { useDialogStore } from "@/store/dialogStore";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { Spinner } from "@/components/ui";
-import { CheckCircle2, AlertCircle, PlayCircle, Lock } from "lucide-react";
-import type { Project } from "@/types";
+import { PlayCircle, Lock, ListChecks, Plus, Trash2, X } from "lucide-react";
+import type { Project, ProjectProgressActivity } from "@/types/api.types";
 
 interface MonthlyProgressTrackerProps {
   project: Project;
@@ -32,71 +32,85 @@ export function MonthlyProgressTracker({
 }: MonthlyProgressTrackerProps) {
   const { session } = useAuth();
   const currentUserId = session?.user?.id;
-  const [progressData, setProgressData] = useState<any[]>([]);
+  const [activities, setActivities] = useState<ProjectProgressActivity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
   const [selectedYear, setSelectedYear] = useState<number>(
     new Date().getFullYear(),
   );
 
-  const fetchProgress = useCallback(async () => {
+  // Modal states
+  const [editingMonth, setEditingMonth] = useState<number | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [newActivityName, setNewActivityName] = useState("");
+  const [newActivityWeight, setNewActivityWeight] = useState("");
+
+  const fetchActivities = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase
-      .from("project_monthly_progress")
+      .from("project_progress_activities")
       .select("*")
       .eq("project_id", project.id)
-      .eq("year", selectedYear);
+      .eq("year", selectedYear)
+      .order("created_at", { ascending: true });
 
     if (data) {
-      setProgressData(data);
+      setActivities(data);
     }
     setLoading(false);
   }, [project.id, selectedYear]);
 
   useEffect(() => {
-    fetchProgress();
-  }, [fetchProgress]);
+    fetchActivities();
+  }, [fetchActivities]);
 
-  const handleUpdateStatus = async (month: number, status: string) => {
-    if (!currentUserId) return;
-    setUpdating(true);
-
+  const handleAddActivity = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUserId || !editingMonth || !newActivityName || !newActivityWeight) return;
+    
+    setIsSaving(true);
     try {
-      const existing = progressData.find((p) => p.month === month);
+      const { error } = await supabase.from("project_progress_activities").insert([
+        {
+          project_id: project.id,
+          month: editingMonth,
+          year: selectedYear,
+          activity_name: newActivityName,
+          weight_percentage: parseFloat(newActivityWeight),
+          created_by: currentUserId,
+        },
+      ]);
 
-      if (existing) {
-        await supabase
-          .from("project_monthly_progress")
-          .update({
-            status,
-            updated_by: currentUserId,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", existing.id);
-      } else {
-        await supabase.from("project_monthly_progress").insert([
-          {
-            project_id: project.id,
-            month,
-            year: selectedYear,
-            status,
-            updated_by: currentUserId,
-          },
-        ]);
-      }
-
-      await fetchProgress();
+      if (error) throw error;
+      
+      setNewActivityName("");
+      setNewActivityWeight("");
+      await fetchActivities();
       if (onUpdate) onUpdate();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      useDialogStore
-        .getState()
-        .alert("Gagal memperbarui progres.", { severity: "danger" });
+      useDialogStore.getState().alert("Gagal menambah pekerjaan: " + err.message, { severity: "danger" });
+    } finally {
+      setIsSaving(false);
     }
-    setUpdating(false);
   };
 
-  if (loading) {
+  const handleDeleteActivity = async (id: string) => {
+    if (!currentUserId) return;
+    setIsSaving(true);
+    try {
+      const { error } = await supabase.from("project_progress_activities").delete().eq("id", id);
+      if (error) throw error;
+      await fetchActivities();
+      if (onUpdate) onUpdate();
+    } catch (err: any) {
+      console.error(err);
+      useDialogStore.getState().alert("Gagal menghapus pekerjaan.", { severity: "danger" });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (loading && activities.length === 0) {
     return (
       <div className="p-8 flex justify-center">
         <Spinner className="text-primary-500" />
@@ -128,7 +142,7 @@ export function MonthlyProgressTracker({
   if (years.length === 0) years.push(selectedYear);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden relative">
       <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
@@ -136,7 +150,7 @@ export function MonthlyProgressTracker({
             Update Progres Bulanan
           </h3>
           <p className="text-xs text-slate-500 mt-1">
-            Perbarui status proyek setiap bulan untuk generate Kurva S.
+            Tambahkan rincian pekerjaan untuk generate Kurva S otomatis.
           </p>
         </div>
 
@@ -160,7 +174,10 @@ export function MonthlyProgressTracker({
             const isOutOfRange =
               (selectedYear === startY && monthNum < startM) ||
               (selectedYear === endY && monthNum > endM);
-            const progress = progressData.find((p) => p.month === monthNum);
+            
+            const monthActivities = activities.filter((a) => a.month === monthNum);
+            const totalWeight = monthActivities.reduce((acc, curr) => acc + Number(curr.weight_percentage), 0);
+            const hasData = monthActivities.length > 0;
 
             if (isOutOfRange) {
               return (
@@ -184,26 +201,19 @@ export function MonthlyProgressTracker({
             return (
               <div
                 key={monthNum}
-                className={`w-52 shrink-0 border rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${progress?.status === "On-track" ? "border-emerald-200 bg-emerald-50/50 shadow-emerald-500/5" : progress?.status === "Delay" ? "border-rose-200 bg-rose-50/50 shadow-rose-500/5" : progress?.status === "Close" ? "border-indigo-200 bg-indigo-50/50 shadow-indigo-500/5" : "border-slate-200 bg-white hover:border-primary-300 shadow-sm"}`}
+                className={`w-52 shrink-0 border rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${hasData ? "border-primary-200 bg-primary-50/30 shadow-primary-500/5" : "border-slate-200 bg-white hover:border-primary-300 shadow-sm"}`}
               >
                 <div className="flex items-center gap-3 mb-5">
                   <div
                     className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-inner ${
-                      progress?.status === "On-track"
-                        ? "bg-emerald-100 text-emerald-600"
-                        : progress?.status === "Delay"
-                          ? "bg-rose-100 text-rose-600"
-                          : progress?.status === "Close"
-                            ? "bg-indigo-100 text-indigo-600"
-                            : "bg-slate-100 text-slate-400"
+                      hasData
+                        ? "bg-primary-100 text-primary-600"
+                        : "bg-slate-100 text-slate-400"
                     }`}
                   >
-                    {progress?.status === "On-track" && (
-                      <CheckCircle2 size={22} />
-                    )}
-                    {progress?.status === "Delay" && <AlertCircle size={22} />}
-                    {progress?.status === "Close" && <CheckCircle2 size={22} />}
-                    {!progress?.status && (
+                    {hasData ? (
+                      <ListChecks size={22} />
+                    ) : (
                       <span className="text-sm font-black">{monthNum}</span>
                     )}
                   </div>
@@ -217,36 +227,106 @@ export function MonthlyProgressTracker({
                   </div>
                 </div>
 
-                <div className="relative">
-                  <select
-                    value={progress?.status || ""}
-                    onChange={(e) =>
-                      handleUpdateStatus(monthNum, e.target.value)
-                    }
-                    disabled={updating}
-                    className={`w-full text-xs font-bold px-3 py-3 rounded-xl border outline-none transition-all cursor-pointer appearance-none text-center shadow-sm ${
-                      progress?.status === "On-track"
-                        ? "bg-emerald-500 text-white border-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20"
-                        : progress?.status === "Delay"
-                          ? "bg-rose-500 text-white border-rose-500 hover:bg-rose-600 shadow-rose-500/20"
-                          : progress?.status === "Close"
-                            ? "bg-indigo-500 text-white border-indigo-500 hover:bg-indigo-600 shadow-indigo-500/20"
-                            : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-800 focus:ring-2 focus:ring-primary-500/20"
-                    }`}
+                <div className="relative space-y-2">
+                  <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col items-center justify-center">
+                    <span className="text-xs text-slate-500 font-medium mb-1">Total Bobot</span>
+                    <span className={`text-lg font-black ${hasData ? "text-primary-600" : "text-slate-400"}`}>{totalWeight.toFixed(1)}%</span>
+                  </div>
+                  <button
+                    onClick={() => setEditingMonth(monthNum)}
+                    className="w-full text-xs font-bold px-3 py-2.5 rounded-xl border border-primary-200 bg-primary-50 text-primary-600 hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
                   >
-                    <option value="" disabled>
-                      Atur Status...
-                    </option>
-                    <option value="On-track">🟢 On-track</option>
-                    <option value="Delay">🔴 Delay</option>
-                    <option value="Close">🟣 Close</option>
-                  </select>
+                    {hasData ? "Lihat/Ubah Rincian" : "Tambah Pekerjaan"}
+                  </button>
                 </div>
               </div>
             );
           })}
         </div>
       </div>
+
+      {/* Activities Modal Overlay */}
+      {editingMonth && (
+        <div className="absolute inset-0 z-10 bg-slate-900/20 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg max-h-full flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                <ListChecks className="text-primary-500" size={18} />
+                Rincian Pekerjaan - {MONTHS[editingMonth - 1]} {selectedYear}
+              </h3>
+              <button 
+                onClick={() => setEditingMonth(null)}
+                className="p-2 hover:bg-slate-200 text-slate-500 rounded-full transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div className="p-5 overflow-y-auto flex-1 custom-scrollbar space-y-4">
+              {activities.filter(a => a.month === editingMonth).length === 0 ? (
+                <div className="text-center py-6 text-slate-400 text-sm font-medium">
+                  Belum ada pekerjaan di bulan ini.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {activities.filter(a => a.month === editingMonth).map(act => (
+                    <div key={act.id} className="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-3">
+                      <div>
+                        <p className="font-bold text-sm text-slate-800">{act.activity_name}</p>
+                        <p className="text-[10px] font-semibold text-slate-400 mt-0.5">DITAMBAHKAN PADA {new Date(act.created_at).toLocaleDateString("id-ID")}</p>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="font-black text-primary-600 text-sm bg-primary-100 px-2 py-1 rounded-lg">{Number(act.weight_percentage).toFixed(1)}%</span>
+                        <button 
+                          onClick={() => handleDeleteActivity(act.id)}
+                          disabled={isSaving}
+                          className="text-rose-400 hover:text-rose-600 transition-colors disabled:opacity-50"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="p-5 border-t border-slate-100 bg-slate-50">
+              <form onSubmit={handleAddActivity} className="flex gap-3">
+                <input 
+                  type="text" 
+                  placeholder="Nama Pekerjaan..." 
+                  required
+                  value={newActivityName}
+                  onChange={(e) => setNewActivityName(e.target.value)}
+                  className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 shadow-sm"
+                />
+                <div className="relative w-28 shrink-0">
+                  <input 
+                    type="number" 
+                    placeholder="Bobot"
+                    step="0.1" 
+                    min="0"
+                    max="100"
+                    required
+                    value={newActivityWeight}
+                    onChange={(e) => setNewActivityWeight(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-xl pl-4 pr-8 py-2.5 text-sm outline-none focus:border-primary-500 shadow-sm"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">%</span>
+                </div>
+                <button 
+                  type="submit"
+                  disabled={isSaving || !newActivityName || !newActivityWeight}
+                  className="bg-primary-600 text-white p-2.5 rounded-xl hover:bg-primary-700 disabled:opacity-50 transition-colors shadow-sm shrink-0"
+                >
+                  {isSaving ? <Spinner className="w-5 h-5" /> : <Plus size={20} />}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

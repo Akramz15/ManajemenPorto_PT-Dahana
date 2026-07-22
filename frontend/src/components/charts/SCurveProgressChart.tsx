@@ -29,7 +29,7 @@ function CustomTooltip({
   label,
 }: {
   active?: boolean;
-  payload?: Array<{ name: string; value: number; color: string }>;
+  payload?: Array<{ name: string; value: number; color: string; payload: any }>;
   label?: string;
 }) {
   if (!active || !payload?.length) return null;
@@ -40,6 +40,8 @@ function CustomTooltip({
     realisasi?.value != null && rencana?.value != null
       ? (realisasi.value - rencana.value).toFixed(2)
       : null;
+      
+  const activities = payload[0]?.payload?.activities || [];
 
   return (
     <div className="bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-5 text-sm min-w-56 z-50">
@@ -77,6 +79,24 @@ function CustomTooltip({
             </span>
           </div>
         )}
+        
+        <div className="pt-3 mt-3 border-t border-slate-100/80">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+            Rincian Pekerjaan ({label})
+          </p>
+          {(!activities || activities.length === 0) ? (
+            <p className="text-xs text-slate-400 italic">Tidak ada pekerjaan di bulan ini.</p>
+          ) : (
+            <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+              {activities.map((act: any) => (
+                <div key={act.id} className="flex justify-between items-start gap-4">
+                  <span className="text-xs text-slate-600 leading-tight flex-1">{act.activity_name}</span>
+                  <span className="text-xs font-bold text-primary-600 shrink-0">{Number(act.weight_percentage).toFixed(1)}%</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -128,7 +148,7 @@ export function SCurveProgressChart({ data }: SCurveProgressChartProps) {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
-            margin={{ top: 50, right: 10, left: 10, bottom: 0 }}
+            margin={{ top: 50, right: 10, left: 10, bottom: 20 }}
           >
             <defs>
               <linearGradient id="colorRealisasi" x1="0" y1="0" x2="0" y2="1">

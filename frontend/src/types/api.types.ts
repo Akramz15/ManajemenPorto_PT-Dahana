@@ -60,3 +60,15 @@ export interface Document {
   uploaded_by: string;
   uploaded_at: string;
 }
+
+export interface ProjectProgressActivity {
+  id: string;
+  project_id: string;
+  month: number;
+  year: number;
+  activity_name: string;
+  weight_percentage: number;
+  created_by?: string;
+  created_at: string;
+  updated_at: string;
+}

@@ -378,7 +378,7 @@ export function ProjectDocumentsTable({
         <div>
           <button
             onClick={() => setIsAdding(!isAdding)}
-            className="cursor-pointer px-4 py-2.5 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-500/20 hover:shadow-primary-500/40 flex items-center gap-2"
+            className="cursor-pointer px-4 py-2.5 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-500/20 hover:shadow-primary-500/40 flex items-center gap-2 whitespace-nowrap shrink-0"
           >
             <Plus size={16} />
             Tambah Dokumen
@@ -420,10 +420,10 @@ export function ProjectDocumentsTable({
                     <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
                       <FileText size={24} className="text-slate-300" />
                     </div>
-                    <p className="font-bold text-slate-600">
+                    <p className="font-bold text-slate-600 text-center">
                       Belum ada dokumen
                     </p>
-                    <p className="text-xs font-medium text-slate-400 mt-1 max-w-xs">
+                    <p className="text-xs font-medium text-slate-400 mt-1 max-w-md text-center text-balance mx-auto">
                       Silakan tambahkan dokumen atau tautan eksternal terkait proyek Anda di sini.
                     </p>
                   </div>
