@@ -43,12 +43,12 @@ export default function ModulSelectPage() {
   return (
     <div className="min-h-screen mesh-bg flex flex-col font-sans">
       {/* Floating Navbar Logo */}
-      <div className="w-full flex justify-center pt-10">
-        <div className="bg-white/70 backdrop-blur-xl border border-white/60 shadow-floating px-8 py-5 rounded-4xl flex items-center justify-center">
+      <div className="w-full flex justify-center pt-16 md:pt-24">
+        <div className="bg-white/70 backdrop-blur-xl border border-white/60 shadow-floating px-10 py-6 md:px-14 md:py-8 rounded-[2.5rem] flex items-center justify-center">
           <img
             src={logoDahana}
             alt="PT Dahana BizPort"
-            className="h-14 w-auto object-contain drop-shadow-sm"
+            className="h-20 md:h-28 w-auto object-contain drop-shadow-sm"
           />
         </div>
       </div>
