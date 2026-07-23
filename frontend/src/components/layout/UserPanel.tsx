@@ -39,6 +39,17 @@ export function UserPanel() {
     }
   };
 
+  const handleSignOut = async () => {
+    if (
+      await confirm("Apakah Anda yakin ingin keluar?", {
+        severity: "danger",
+        confirmText: "Keluar",
+      })
+    ) {
+      signOut();
+    }
+  };
+
   return (
     <div className="flex flex-col gap-3">
         <div className="pb-3 border-b border-slate-200 flex items-center justify-between">
@@ -71,7 +82,7 @@ export function UserPanel() {
               <KeyRound size={14} />
             </button>
             <button
-              onClick={signOut}
+              onClick={handleSignOut}
               title="Sign out"
               className="p-1.5 rounded-md text-slate-400 hover:text-negative-600 hover:bg-slate-200/60 transition-colors"
             >
