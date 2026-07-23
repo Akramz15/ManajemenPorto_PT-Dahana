@@ -294,75 +294,77 @@ export function ProjectManager({
           <h3 className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">
             Daftar Proyek
           </h3>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-y-auto custom-scrollbar max-h-[300px]">
-            <table className="w-full text-left text-sm relative">
-              <thead className="bg-slate-50/90 border-b border-slate-200 sticky top-0 z-10 backdrop-blur-sm">
-                <tr>
-                  <th className="px-5 py-4 font-bold text-slate-600">
-                    Nama Proyek
-                  </th>
-                  <th className="px-5 py-4 font-bold text-slate-600 w-32 text-center">
-                    Aksi
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {projects.map((p) => (
-                  <tr
-                    key={p.id}
-                    className="hover:bg-slate-50 transition-colors group"
-                  >
-                    <td className="px-5 py-4">
-                      <p className="font-bold text-slate-800">
-                        {p.nama_proyek}
-                      </p>
-                      {p.mitra && (
-                        <p className="text-[11px] font-medium text-slate-500 mt-1 uppercase tracking-wider">
-                          Mitra: {p.mitra}
-                        </p>
-                      )}
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-center justify-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                        {kategori === "kajian" && (
-                          <button
-                            onClick={() => handleMoveToBerjalan(p.id)}
-                            title="Pindahkan ke Berjalan (Upload Dokumen)"
-                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-colors"
-                          >
-                            <FolderSync size={16} />
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleEdit(p)}
-                          title="Edit Proyek"
-                          className="w-9 h-9 flex items-center justify-center rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-colors"
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(p.id)}
-                          title="Hapus Proyek"
-                          className="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {projects.length === 0 && (
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="overflow-y-auto custom-scrollbar max-h-[300px]">
+              <table className="w-full text-left text-sm relative">
+                <thead className="bg-slate-50/90 border-b border-slate-200 sticky top-0 z-10 backdrop-blur-sm">
                   <tr>
-                    <td
-                      colSpan={2}
-                      className="px-5 py-12 text-center text-slate-400 font-medium"
-                    >
-                      Belum ada proyek.
-                    </td>
+                    <th className="px-5 py-4 font-bold text-slate-600">
+                      Nama Proyek
+                    </th>
+                    <th className="px-5 py-4 font-bold text-slate-600 w-32 text-center">
+                      Aksi
+                    </th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {projects.map((p) => (
+                    <tr
+                      key={p.id}
+                      className="hover:bg-slate-50 transition-colors group"
+                    >
+                      <td className="px-5 py-4">
+                        <p className="font-bold text-slate-800">
+                          {p.nama_proyek}
+                        </p>
+                        {p.mitra && (
+                          <p className="text-[11px] font-medium text-slate-500 mt-1 uppercase tracking-wider">
+                            Mitra: {p.mitra}
+                          </p>
+                        )}
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="flex items-center justify-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                          {kategori === "kajian" && (
+                            <button
+                              onClick={() => handleMoveToBerjalan(p.id)}
+                              title="Pindahkan ke Berjalan (Upload Dokumen)"
+                              className="w-9 h-9 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-colors"
+                            >
+                              <FolderSync size={16} />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleEdit(p)}
+                            title="Edit Proyek"
+                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-colors"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(p.id)}
+                            title="Hapus Proyek"
+                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {projects.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={2}
+                        className="px-5 py-12 text-center text-slate-400 font-medium"
+                      >
+                        Belum ada proyek.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
