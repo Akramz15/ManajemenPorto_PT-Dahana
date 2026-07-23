@@ -95,6 +95,14 @@
   background-attachment: fixed;
 }
 
+@utility hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @utility card {
   background-color: rgba(255, 255, 255, 1);
   border-radius: 1.5rem; /* 24px */
