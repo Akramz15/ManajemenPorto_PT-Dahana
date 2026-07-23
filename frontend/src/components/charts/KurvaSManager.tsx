@@ -7,6 +7,7 @@ import { Spinner } from "@/components/ui";
 
 interface KurvaSManagerProps {
   projectId: string;
+  rightContent?: React.ReactNode;
 }
 
 const BULAN_NAMES = [
@@ -24,7 +25,7 @@ const BULAN_NAMES = [
   "Desember",
 ];
 
-export function KurvaSManager({ projectId }: KurvaSManagerProps) {
+export function KurvaSManager({ projectId, rightContent }: KurvaSManagerProps) {
   const { alert } = useDialogStore();
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -135,19 +136,20 @@ export function KurvaSManager({ projectId }: KurvaSManagerProps) {
   }
 
   return (
-    <div className="space-y-8 flex flex-col h-full">
+    <div className="flex flex-col gap-6 w-full">
       {/* Chart Section */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col min-h-100">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-slate-800">Visualisasi Kurva S</h3>
-        </div>
-        <div className="flex-1 min-h-75 relative">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative h-125 flex flex-col">
+        <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary-100 rounded-full -z-10 blur-3xl opacity-50"></div>
+        <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-indigo-100 rounded-full -z-10 blur-3xl opacity-50"></div>
+        <div className="flex-1 min-h-0 relative z-10">
           <SCurveProgressChart data={chartData} />
         </div>
       </div>
 
+      <div className={rightContent ? "grid grid-cols-1 xl:grid-cols-2 gap-6" : "flex flex-col flex-1"}>
+
       {/* Table Section */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col flex-1">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col min-h-125">
         <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50">
           <h3 className="font-bold text-slate-800">
             Data Bulanan (Target & Realisasi)
@@ -270,6 +272,9 @@ export function KurvaSManager({ projectId }: KurvaSManagerProps) {
             </tbody>
           </table>
         </div>
+      </div>
+      
+      {rightContent && rightContent}
       </div>
     </div>
   );

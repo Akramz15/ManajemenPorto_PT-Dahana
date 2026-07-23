@@ -53,29 +53,18 @@ export default function PortofolioLainnya() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        {/* Left Column: S-Curve */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 min-h-125 flex flex-col">
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2 mb-6">
-              <div className="w-2 h-6 bg-primary-500 rounded-full"></div>
-              Kurva S & Input Progress
-            </h3>
-            <div className="flex-1 relative flex flex-col min-h-0">
-              <KurvaSManager projectId={`porto-lainnya-${activeTab}`} />
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <KurvaSManager 
+          projectId={`porto-lainnya-${activeTab}`}
+          rightContent={
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 flex flex-col h-full min-h-125">
+              <DocumentGallery
+                documents={[]}
+                projectId={`porto-lainnya-${activeTab}`}
+              />
             </div>
-          </div>
-        </div>
-
-        {/* Right Column: Documents */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 min-h-125 flex flex-col">
-            <DocumentGallery
-              documents={[]}
-              projectId={`porto-lainnya-${activeTab}`}
-            />
-          </div>
-        </div>
+          }
+        />
       </div>
     </div>
   );
