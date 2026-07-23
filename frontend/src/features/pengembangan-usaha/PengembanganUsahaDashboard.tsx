@@ -51,6 +51,7 @@ export default function PengembanganUsahaDashboard() {
 
   const [onTrackPercent, setOnTrackPercent] = useState(0);
   const [totalDelay, setTotalDelay] = useState(0);
+  const [projectProgressMap, setProjectProgressMap] = useState<Record<string, string | number>>({});
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -143,6 +144,30 @@ export default function PengembanganUsahaDashboard() {
           new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
       );
       setRecentUpdates(combined.slice(0, 15));
+
+      const { data: kurvaSData } = await supabase
+        .from("kurva_s_manual")
+        .select("project_id, bobot_realisasi_persen")
+        .not("bobot_realisasi_persen", "is", null);
+
+      const progressMap: Record<string, string | number> = {};
+      kurvaSData?.forEach((row) => {
+        const existing = (progressMap[row.project_id] as number) || 0;
+        if (row.bobot_realisasi_persen > existing) {
+          progressMap[row.project_id] = row.bobot_realisasi_persen;
+        }
+      });
+      
+      const { data: kajianTahapan } = await supabase
+        .from("kajian_tasks")
+        .select("project_id, tahapan")
+        .order("updated_at", { ascending: true });
+        
+      kajianTahapan?.forEach((row) => {
+        if (row.tahapan) progressMap[row.project_id] = row.tahapan;
+      });
+      
+      setProjectProgressMap(progressMap);
     };
 
     fetchDashboardData();
@@ -286,9 +311,22 @@ export default function PengembanganUsahaDashboard() {
                         <h4 className="font-bold text-slate-800 text-base mb-0.5 group-hover:text-primary-600 transition-colors">
                           {p.nama_proyek}
                         </h4>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
-                          Divisi {p.divisi}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                            Divisi {p.divisi}
+                          </span>
+                          {projectProgressMap[p.id] !== undefined && (
+                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${
+                              activePipelineTab === "kajian" 
+                                ? "text-amber-600 bg-amber-50" 
+                                : "text-primary-600 bg-primary-50"
+                            }`}>
+                              {activePipelineTab === "kajian" 
+                                ? projectProgressMap[p.id] 
+                                : `Progress: ${projectProgressMap[p.id]}%`}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                     <div className="w-8 h-8 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 shadow-sm group-hover:scale-110 group-hover:text-primary-600 group-hover:border-primary-100 transition-all">
