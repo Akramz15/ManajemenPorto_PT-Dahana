@@ -57,6 +57,8 @@ export default function PortofolioLainnya() {
     let currentRealisasi = 0;
     let expectedAccum = 0;
     const today = new Date();
+    
+    const hasAnyActivity = progressData && progressData.length > 0;
 
     for (let i = 0; i < totalMonths; i++) {
       const currentMonthIndex = start.getMonth() + i;
@@ -80,7 +82,7 @@ export default function PortofolioLainnya() {
         y < today.getFullYear() ||
         (y === today.getFullYear() && m <= today.getMonth() + 1);
 
-      const plotRealisasi = isPastOrCurrent || monthActivities.length > 0;
+      const plotRealisasi = hasAnyActivity && (isPastOrCurrent || monthActivities.length > 0);
 
       curve.push({
         periode: `${MONTHS[m - 1]} ${y}`,

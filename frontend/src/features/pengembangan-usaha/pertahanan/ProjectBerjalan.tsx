@@ -160,6 +160,7 @@ export default function ProjectBerjalan() {
     let expectedAccum = 0;
 
     const today = new Date();
+    const hasAnyActivity = progressData && progressData.length > 0;
 
     for (let i = 0; i < totalMonths; i++) {
       const currentMonthIndex = start.getMonth() + i;
@@ -180,8 +181,8 @@ export default function ProjectBerjalan() {
         y < today.getFullYear() ||
         (y === today.getFullYear() && m <= today.getMonth() + 1);
 
-      // Only plot realisasi if it's past/current OR if it has activities (they added something in future)
-      const plotRealisasi = isPastOrCurrent || monthActivities.length > 0;
+      // Only plot realisasi if there is at least one activity in the project and it's past/current
+      const plotRealisasi = hasAnyActivity && (isPastOrCurrent || monthActivities.length > 0);
 
       curve.push({
         periode: `${MONTHS[m - 1]} ${y}`,
