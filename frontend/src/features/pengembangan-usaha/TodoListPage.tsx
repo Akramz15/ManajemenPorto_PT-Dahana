@@ -171,7 +171,7 @@ export default function TodoListPage() {
     );
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
+    <div className="p-6 pt-0 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
       {/* Header & Calendar Strip Container */}
       <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 lg:p-6 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         {/* Title */}

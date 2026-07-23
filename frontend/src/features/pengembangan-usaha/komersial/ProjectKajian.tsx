@@ -149,7 +149,7 @@ export default function ProjectKajian() {
   );
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
+    <div className="p-6 pt-0 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
       {/* Breadcrumbs & Header */}
       {selectedProject && (
         <button
