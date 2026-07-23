@@ -285,23 +285,25 @@ export default function ProjectBerjalan() {
       </div>
 
       {showManager && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 relative">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 sm:p-6">
+          <div className="bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] max-w-4xl w-full max-h-[90vh] flex flex-col relative overflow-hidden">
             <button
               onClick={() => setShowManager(false)}
-              className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+              className="absolute top-6 right-6 z-10 w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-800 bg-slate-100/80 hover:bg-slate-200 rounded-full transition-colors"
             >
               ✕
             </button>
-            <ProjectManager
-              divisi="pertahanan"
-              kategori="berjalan"
-              selectedProjectId={selectedProject}
-              onProjectSelected={(id) => {
-                setSelectedProject(id);
-                setShowManager(false);
-              }}
-            />
+            <div className="overflow-y-auto custom-scrollbar p-6 sm:p-8">
+              <ProjectManager
+                divisi="pertahanan"
+                kategori="berjalan"
+                selectedProjectId={selectedProject}
+                onProjectSelected={(id) => {
+                  setSelectedProject(id);
+                  setShowManager(false);
+                }}
+              />
+            </div>
           </div>
         </div>
       )}
