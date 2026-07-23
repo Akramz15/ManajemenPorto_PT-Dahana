@@ -314,17 +314,15 @@ export default function PengembanganUsahaDashboard() {
                           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
                             Divisi {p.divisi}
                           </span>
-                          {projectProgressMap[p.id] !== undefined && (
-                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${
-                              activePipelineTab === "kajian" 
-                                ? "text-amber-600 bg-amber-50" 
-                                : "text-primary-600 bg-primary-50"
-                            }`}>
-                              {activePipelineTab === "kajian" 
-                                ? projectProgressMap[p.id] 
-                                : `Progress: ${projectProgressMap[p.id]}%`}
-                            </span>
-                          )}
+                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${
+                            activePipelineTab === "kajian" 
+                              ? "text-amber-600 bg-amber-50" 
+                              : "text-primary-600 bg-primary-50"
+                          }`}>
+                            {activePipelineTab === "kajian" 
+                              ? (projectProgressMap[p.id] || "BELUM DIMULAI") 
+                              : `PROGRESS: ${projectProgressMap[p.id] || 0}%`}
+                          </span>
                         </div>
                       </div>
                     </div>
