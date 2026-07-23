@@ -5,10 +5,14 @@ export function OnlineIndicator() {
   const onlineUsers = usePresence();
   const { session } = useAuth();
 
+  const MAX_AVATARS = 4;
+  const displayUsers = onlineUsers.slice(0, MAX_AVATARS);
+  const remainingCount = onlineUsers.length - MAX_AVATARS;
+
   return (
     <div className="flex items-center gap-1.5">
       <div className="flex -space-x-2 mr-2">
-        {onlineUsers.map((user) => (
+        {displayUsers.map((user) => (
           <div
             key={user.user_id}
             title={`${user.display_name} ${user.user_id === session?.user?.id ? "(kamu)" : "— online"}`}
@@ -26,6 +30,20 @@ export function OnlineIndicator() {
             />
           </div>
         ))}
+        
+        {remainingCount > 0 && (
+          <div
+            title={`${remainingCount} pengguna lainnya online`}
+            className="relative z-10 hover:z-20 transition-all"
+          >
+            <div
+              className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center
+                            text-[10px] font-bold text-slate-500 border-2 border-white shadow-sm"
+            >
+              +{remainingCount}
+            </div>
+          </div>
+        )}
       </div>
       <span className="text-xs font-semibold text-slate-500">
         {onlineUsers.length} online
