@@ -155,7 +155,7 @@ export default function ProjectKajian() {
       {selectedProject && (
         <button
           onClick={() => setSelectedProject("")}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:text-primary-700 hover:border-primary-300 hover:bg-primary-50 shadow-sm rounded-xl transition-all w-fit -mt-2"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:text-primary-700 hover:border-primary-300 hover:bg-primary-50 shadow-sm rounded-xl transition-all w-fit"
         >
           Kembali ke Workspace
         </button>
