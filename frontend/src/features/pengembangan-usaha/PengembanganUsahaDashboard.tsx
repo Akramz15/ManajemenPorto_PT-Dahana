@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   FolderOpen,
   Activity,
-  X,
   ChevronRight,
 } from "lucide-react";
 
