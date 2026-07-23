@@ -294,9 +294,9 @@ export function ProjectManager({
           <h3 className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">
             Daftar Proyek
           </h3>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50/80 border-b border-slate-200">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-y-auto custom-scrollbar max-h-[300px]">
+            <table className="w-full text-left text-sm relative">
+              <thead className="bg-slate-50/90 border-b border-slate-200 sticky top-0 z-10 backdrop-blur-sm">
                 <tr>
                   <th className="px-5 py-4 font-bold text-slate-600">
                     Nama Proyek
