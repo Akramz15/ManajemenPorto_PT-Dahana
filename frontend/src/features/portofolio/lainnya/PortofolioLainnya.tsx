@@ -9,8 +9,8 @@ export default function PortofolioLainnya() {
   );
 
   return (
-    <div className="p-6 pt-0 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
-      <div className="page-header mb-4">
+    <div className="px-6 pt-0 pb-6 max-w-[1600px] mx-auto flex flex-col gap-6 min-h-screen">
+      <div className="page-header">
         <div className="flex items-center text-sm font-medium text-slate-500">
           <span>Portofolio</span>
           <span className="mx-2">›</span>
