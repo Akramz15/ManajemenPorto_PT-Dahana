@@ -230,7 +230,7 @@ export default function ProjectBerjalan() {
           Kembali ke Workspace
         </button>
       )}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 mb-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6">
         <div className="flex items-center text-sm font-medium text-slate-500 mb-4">
           <span>Pengembangan Usaha</span>
           <span className="mx-2">›</span>

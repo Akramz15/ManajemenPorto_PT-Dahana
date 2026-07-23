@@ -179,7 +179,7 @@ export default function PengembanganUsahaDashboard() {
 
   return (
     <div className="px-6 pt-0 pb-0 max-w-[1600px] mx-auto flex flex-col gap-6 h-[calc(100vh-2rem)]">
-      <div className="page-header mb-4">
+      <div className="page-header">
         <div className="flex items-center text-sm font-medium text-slate-500">
           <span>Pengembangan Usaha</span>
           <span className="mx-2">›</span>
