@@ -51,10 +51,7 @@ export function UserPanel() {
 
   return (
     <div className="flex flex-col gap-3">
-        <div className="pb-3 border-b border-slate-200 flex items-center justify-between">
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-            Tim Kolaborasi
-          </span>
+        <div className="pb-3 border-b border-slate-200 flex items-center justify-end">
           <OnlineIndicator />
         </div>
         <div className="flex items-center justify-between gap-2">

@@ -22,7 +22,14 @@ export function usePresence(roomId = "global") {
     channel
       .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState<OnlineUser>();
-        setOnlineUsers(Object.values(state).flat());
+        const allPresences = Object.values(state).flat();
+        
+        // Deduplicate by user_id so multiple tabs count as 1 user
+        const uniqueUsers = Array.from(
+          new Map(allPresences.map((u) => [u.user_id, u])).values()
+        );
+        
+        setOnlineUsers(uniqueUsers);
       })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
