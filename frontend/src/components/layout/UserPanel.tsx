@@ -42,7 +42,9 @@ export function UserPanel() {
   const handleSignOut = async () => {
     if (
       await confirm("Apakah Anda yakin ingin keluar?", {
+        title: "Konfirmasi Logout",
         severity: "danger",
+        confirmText: "Ya, Keluar",
       })
     ) {
       signOut();

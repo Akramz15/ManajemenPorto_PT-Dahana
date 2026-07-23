@@ -63,7 +63,7 @@ export function DialogProvider() {
                     onClick={() => resolveConfirm(false)}
                     className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
                   >
-                    Batal
+                    {confirmState.cancelText || "Batal"}
                   </button>
                   <button
                     onClick={() => resolveConfirm(true)}
@@ -73,9 +73,10 @@ export function DialogProvider() {
                         : "bg-primary-600 hover:bg-primary-700 shadow-primary-500/20"
                     }`}
                   >
-                    {confirmState.severity === "danger"
-                      ? "Ya, Hapus"
-                      : "Ya, Lanjutkan"}
+                    {confirmState.confirmText || 
+                      (confirmState.severity === "danger"
+                        ? "Ya, Hapus"
+                        : "Ya, Lanjutkan")}
                   </button>
                 </div>
               </div>
