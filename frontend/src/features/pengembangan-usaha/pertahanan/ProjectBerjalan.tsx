@@ -439,26 +439,20 @@ export default function ProjectBerjalan() {
                   <div
                     key={project.id}
                     onClick={() => setSelectedProject(project.id)}
-                    className="group relative flex flex-col p-6 bg-white rounded-3xl hover:bg-slate-50/50 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100 hover:border-slate-200 hover:-translate-y-1 hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer overflow-hidden"
+                    className="group relative flex flex-col p-5 bg-white rounded-2xl border border-slate-200/60 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-8px_rgba(0,0,0,0.08)] hover:border-slate-300 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer overflow-hidden"
                   >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-primary-50/50 to-transparent rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform duration-700"></div>
-
-                    <div className="flex justify-between items-start mb-5">
-                      <div className="w-12 h-12 bg-primary-50/80 text-primary-600 rounded-2xl flex items-center justify-center group-hover:bg-primary-600 group-hover:text-white transition-colors duration-300">
-                        <ShieldAlert size={22} strokeWidth={2.5} />
+                    <div className="flex items-start gap-4 mb-5">
+                      <div className="w-10 h-10 bg-slate-50 text-slate-600 rounded-xl flex items-center justify-center group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors duration-300 shrink-0 border border-slate-100/80">
+                        <ShieldAlert size={18} strokeWidth={2.5} />
                       </div>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50/80 px-3 py-1.5 rounded-full border border-slate-100/80">
-                        ID-{project.id.split("-")[0]}
-                      </span>
+                      <h4 className="text-[15px] font-semibold tracking-tight text-slate-900 line-clamp-2 leading-snug group-hover:text-primary-600 transition-colors pt-1">
+                        {project.nama_proyek}
+                      </h4>
                     </div>
 
-                    <h4 className="text-xl font-bold tracking-tight text-slate-800 mb-1 line-clamp-2 leading-tight group-hover:text-primary-700 transition-colors">
-                      {project.nama_proyek}
-                    </h4>
-
-                    <div className="mt-6 flex items-center justify-between">
+                    <div className="mt-auto flex items-center justify-between border-t border-slate-100/60 pt-4">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-[11px] font-bold text-slate-600 border border-slate-200/50">
+                        <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[9px] font-bold text-slate-600 border border-slate-200/80 shadow-sm">
                           {/* @ts-ignore */}
                           {project.user_profiles?.display_name
                             ? project.user_profiles.display_name
@@ -466,13 +460,13 @@ export default function ProjectBerjalan() {
                                 .toUpperCase()
                             : "T"}
                         </div>
-                        <span className="text-sm font-medium text-slate-500 truncate max-w-30">
+                        <span className="text-xs font-medium text-slate-500 truncate max-w-24">
                           {/* @ts-ignore */}
                           {project.user_profiles?.display_name ||
                             "Tim Pertahanan"}
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-primary-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all duration-300">
+                      <span className="text-[11px] font-bold text-primary-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all duration-300 flex items-center gap-1">
                         Masuk Board &rarr;
                       </span>
                     </div>
