@@ -220,7 +220,7 @@ export default function ProjectBerjalan() {
   );
 
   return (
-    <div className="p-6 pt-0 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
+    <div className="px-6 pt-0 pb-0 max-w-[1600px] mx-auto flex flex-col gap-6 bg-slate-50/50 h-[calc(100vh-2rem)] overflow-y-auto custom-scrollbar">
       {/* Breadcrumbs & Header */}
       {selectedProject && (
         <button
@@ -388,7 +388,7 @@ export default function ProjectBerjalan() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 h-[calc(100vh-140px)] min-h-125 flex flex-col overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 flex-1 min-h-0 flex flex-col overflow-hidden">
           {/* Header Workspace */}
           <div className="border-b border-slate-100 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
