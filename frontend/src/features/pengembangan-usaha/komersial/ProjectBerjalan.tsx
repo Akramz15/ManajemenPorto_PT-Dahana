@@ -384,7 +384,7 @@ export default function ProjectBerjalan() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 min-h-[70vh] flex flex-col overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 h-[calc(100vh-140px)] min-h-[500px] flex flex-col overflow-hidden">
           {/* Header Workspace */}
           <div className="border-b border-slate-100 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
@@ -409,7 +409,7 @@ export default function ProjectBerjalan() {
             </div>
           </div>
 
-          <div className="p-6 flex-1 bg-slate-50/30">
+          <div className="p-6 flex-1 bg-slate-50/30 overflow-y-auto custom-scrollbar">
             {allProjects.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-slate-400 py-20">
                 <div className="w-20 h-20 bg-white shadow-sm border border-slate-100 rounded-full flex items-center justify-center mb-6">
