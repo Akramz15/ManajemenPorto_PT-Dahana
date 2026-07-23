@@ -144,17 +144,16 @@ export default function PengembanganUsahaDashboard() {
       );
       setRecentUpdates(combined.slice(0, 15));
 
-      const { data: kurvaSData } = await supabase
-        .from("kurva_s_manual")
-        .select("project_id, bobot_realisasi_persen")
-        .not("bobot_realisasi_persen", "is", null);
+      const { data: ppaData } = await supabase
+        .from("project_progress_activities")
+        .select("project_id, weight_percentage");
 
       const progressMap: Record<string, string | number> = {};
-      kurvaSData?.forEach((row) => {
+      ppaData?.forEach((row) => {
         const existing = (progressMap[row.project_id] as number) || 0;
-        if (row.bobot_realisasi_persen > existing) {
-          progressMap[row.project_id] = row.bobot_realisasi_persen;
-        }
+        const newTotal = existing + Number(row.weight_percentage || 0);
+        // round to 1 decimal to avoid float precision issues
+        progressMap[row.project_id] = parseFloat(newTotal.toFixed(1));
       });
       
       const { data: kajianTahapan } = await supabase
