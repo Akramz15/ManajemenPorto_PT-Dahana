@@ -76,7 +76,7 @@ export default function PengembanganUsahaDashboard() {
         .limit(10);
 
       const { data: projMonthlyData, error: err3 } = await supabase
-        .from("project_monthly_progress")
+        .from("project_progress_activities")
         .select(`*, projects(nama_proyek)`)
         .order("updated_at", { ascending: false })
         .limit(10);
@@ -95,7 +95,7 @@ export default function PengembanganUsahaDashboard() {
       const combined = [
         ...(progressData || []).map((t: any) => ({ ...t, type: "progress" })),
         ...(kajianData || []).map((t: any) => ({ ...t, type: "kajian" })),
-        ...(projMonthlyData || []).map((t: any) => ({ ...t, type: "monthly" })),
+        ...(projMonthlyData || []).map((t: any) => ({ ...t, type: "monthly", assigned_to: t.created_by })),
         ...(projectsData2 || []).map((t: any) => ({ 
           ...t, 
           type: "project", 
@@ -389,8 +389,8 @@ export default function PengembanganUsahaDashboard() {
                       } else if (isKajian) {
                         actionText = `Memperbarui tahapan "${update.nama_kajian || update.tahapan}" menjadi ${update.status}`;
                       } else if (isMonthly) {
-                        const progValue = update.progress !== undefined ? update.progress : 0;
-                        actionText = `Memperbarui laporan progress bulanan (${progValue}%)`;
+                        const progValue = update.weight_percentage !== undefined ? update.weight_percentage : 0;
+                        actionText = `Menambahkan aktivitas: ${update.activity_name || "Progress Bulanan"} (${progValue}%)`;
                       } else if (isProject) {
                         actionText = `Menambahkan proyek baru: ${projectName}`;
                       }
