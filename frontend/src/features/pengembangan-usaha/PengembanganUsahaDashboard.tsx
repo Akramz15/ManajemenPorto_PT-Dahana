@@ -178,7 +178,7 @@ export default function PengembanganUsahaDashboard() {
   const totalKajian = proyekKajian.length;
 
   return (
-    <div className="px-6 pt-0 pb-0 max-w-[1600px] mx-auto flex flex-col gap-6 bg-slate-50/50 h-[calc(100vh-2rem)]">
+    <div className="px-6 pt-0 pb-0 max-w-[1600px] mx-auto flex flex-col gap-6 h-[calc(100vh-2rem)]">
       <div className="page-header mb-4">
         <div className="flex items-center text-sm font-medium text-slate-500">
           <span>Pengembangan Usaha</span>
