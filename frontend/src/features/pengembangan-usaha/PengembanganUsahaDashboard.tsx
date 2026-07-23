@@ -328,7 +328,7 @@ export default function PengembanganUsahaDashboard() {
             <div className="flex-1 overflow-y-auto pr-2 pl-1 py-1 custom-scrollbar z-10">
               <div className="relative">
                 {recentUpdates.length > 0 && (
-                  <div className="absolute left-[15px] top-4 bottom-8 w-px bg-slate-200/80 z-0"></div>
+                  <div className="absolute left-3.75 top-4 bottom-8 w-px bg-slate-200/80 z-0"></div>
                 )}
 
                 <div className="flex flex-col">
@@ -388,7 +388,7 @@ export default function PengembanganUsahaDashboard() {
                             </p>
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest">
                               <FolderOpen size={12} />
-                              <span className="truncate max-w-[150px]">
+                              <span className="truncate max-w-37.5">
                                 {projectName}
                               </span>
                             </div>
