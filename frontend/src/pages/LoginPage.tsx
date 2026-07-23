@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { alert, confirm } = useDialogStore();
+  const { alert, confirm, prompt } = useDialogStore();
 
   if (session) return <Navigate to="/select-module" replace />;
 
@@ -23,7 +23,11 @@ export default function LoginPage() {
   };
 
   const handleForgotPassword = async () => {
-    const inputEmail = window.prompt("Masukkan email Anda untuk reset password:", email);
+    const inputEmail = await prompt("Masukkan email Anda:", {
+      title: "Reset Password",
+      confirmText: "Kirim Tautan",
+      defaultValue: email,
+    });
     
     if (!inputEmail) return;
     

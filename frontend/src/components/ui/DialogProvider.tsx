@@ -1,9 +1,19 @@
 import { useDialogStore } from "@/store/dialogStore";
 import { AlertTriangle, CheckCircle, Info, X } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export function DialogProvider() {
-  const { confirmState, alertState, resolveConfirm, closeAlert } =
+  const { confirmState, alertState, promptState, resolveConfirm, resolvePrompt, closeAlert } =
     useDialogStore();
+  const [promptInput, setPromptInput] = useState("");
+
+  useEffect(() => {
+    if (promptState?.defaultValue) {
+      setPromptInput(promptState.defaultValue);
+    } else {
+      setPromptInput("");
+    }
+  }, [promptState]);
 
   return (
     <>
@@ -69,6 +79,53 @@ export function DialogProvider() {
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Prompt Dialog */}
+      {promptState && (
+        <div className="fixed inset-0 z-9999 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+            onClick={() => resolvePrompt(null)}
+          />
+
+          <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-200/60 p-6 animate-in fade-in zoom-in-95 duration-200">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">
+              {promptState.title || "Input Dibutuhkan"}
+            </h3>
+            <p className="text-sm text-slate-600 mb-4">
+              {promptState.message}
+            </p>
+            
+            <input
+              autoFocus
+              type="text"
+              value={promptInput}
+              onChange={(e) => setPromptInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  resolvePrompt(promptInput);
+                }
+              }}
+              className="w-full bg-slate-50 border-2 border-slate-200 text-slate-900 focus:bg-white focus:border-primary-500 rounded-xl p-3 outline-none font-medium mb-6"
+            />
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => resolvePrompt(null)}
+                className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+              >
+                {promptState.cancelText || "Batal"}
+              </button>
+              <button
+                onClick={() => resolvePrompt(promptInput)}
+                className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 shadow-sm shadow-primary-500/20 transition-colors"
+              >
+                {promptState.confirmText || "Submit"}
+              </button>
             </div>
           </div>
         </div>
