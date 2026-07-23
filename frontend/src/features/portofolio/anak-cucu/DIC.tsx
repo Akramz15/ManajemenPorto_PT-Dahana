@@ -37,7 +37,7 @@ export default function DIC() {
 
   if (loading && !chartData) {
     return (
-      <div className="p-8 max-w-7xl mx-auto min-h-screen flex items-center justify-center">
+      <div className="p-8 pt-0 max-w-7xl mx-auto min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-4 border-slate-200 border-t-primary-500 rounded-full animate-spin"></div>
           <p className="text-sm font-medium text-slate-500 animate-pulse">
@@ -49,7 +49,7 @@ export default function DIC() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 min-h-screen">
+    <div className="p-8 pt-0 max-w-7xl mx-auto space-y-8 min-h-screen">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 card p-6! border-0! bg-white/80! shadow-sm!">
         <div>
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">
