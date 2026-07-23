@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { KurvaSManager } from "@/components/charts";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import type { Project } from "@/types";
 import { formatDistanceToNow } from "date-fns";
@@ -47,7 +47,7 @@ export default function PengembanganUsahaDashboard() {
     "kajian" | "berjalan"
   >("kajian");
 
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const navigate = useNavigate();
 
   const [onTrackPercent, setOnTrackPercent] = useState(0);
   const [totalDelay, setTotalDelay] = useState(0);
@@ -277,7 +277,7 @@ export default function PengembanganUsahaDashboard() {
                 ).map((p) => (
                   <div
                     key={p.id}
-                    onClick={() => setSelectedProject(p)}
+                    onClick={() => navigate(`/pu/${p.divisi}/${activePipelineTab}?project=${p.id}`)}
                     className="group flex items-center justify-between py-4 px-4 rounded-2xl hover:bg-slate-50/80 transition-colors cursor-pointer border border-transparent hover:border-slate-100/50"
                   >
                     <div className="flex items-center gap-4">
@@ -404,38 +404,6 @@ export default function PengembanganUsahaDashboard() {
         </div>
       </div>
 
-      {selectedProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-            onClick={() => setSelectedProject(null)}
-          ></div>
-          <div className="bg-white rounded-3xl shadow-xl w-full max-w-4xl relative z-10 animate-in fade-in zoom-in-95 duration-200 overflow-hidden flex flex-col h-[80vh]">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary-50 rounded-bl-[150px] -z-10 opacity-50"></div>
-
-            <div className="flex items-center justify-between p-6 border-b border-slate-100">
-              <div>
-                <h3 className="text-2xl font-black text-slate-900">
-                  {selectedProject.nama_proyek}
-                </h3>
-                <p className="text-sm text-slate-500 mt-1 font-medium">
-                  Kurva S Progress Aktual vs Rencana
-                </p>
-              </div>
-              <button
-                onClick={() => setSelectedProject(null)}
-                className="w-10 h-10 bg-slate-100 text-slate-500 hover:bg-negative-100 hover:text-negative-600 rounded-full flex items-center justify-center transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="p-6 flex-1 flex flex-col min-h-0 relative overflow-y-auto">
-              <KurvaSManager projectId={selectedProject.id} />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
