@@ -43,7 +43,6 @@ export function UserPanel() {
     if (
       await confirm("Apakah Anda yakin ingin keluar?", {
         severity: "danger",
-        confirmText: "Keluar",
       })
     ) {
       signOut();

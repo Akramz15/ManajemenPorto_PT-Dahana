@@ -242,7 +242,7 @@ export default function TodoListPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 min-h-0 pb-2 lg:pb-0">
         {/* Kolom Kiri: Tugas Aktif */}
-        <div className="bg-white rounded-3xl p-5 md:p-6 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col h-full min-h-[400px]">
+        <div className="bg-white rounded-3xl p-5 md:p-6 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col h-full min-h-100">
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 shrink-0">
             <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
@@ -320,7 +320,7 @@ export default function TodoListPage() {
           </div>
 
         {/* Kolom Kanan: Riwayat Selesai */}
-        <div className="bg-white/60 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-slate-100/60 shadow-[0_2px_15px_-8px_rgba(0,0,0,0.02)] flex flex-col h-full min-h-[400px]">
+        <div className="bg-white/60 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-slate-100/60 shadow-[0_2px_15px_-8px_rgba(0,0,0,0.02)] flex flex-col h-full min-h-100">
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 shrink-0">
             <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">

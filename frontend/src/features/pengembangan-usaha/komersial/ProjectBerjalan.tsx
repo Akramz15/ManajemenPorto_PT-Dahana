@@ -286,7 +286,7 @@ export default function ProjectBerjalan() {
       </div>
 
       {showManager && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 sm:p-6">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 sm:p-6">
           <div className="bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] max-w-4xl w-full max-h-[90vh] flex flex-col relative overflow-hidden">
             <button
               onClick={() => setShowManager(false)}
@@ -388,7 +388,7 @@ export default function ProjectBerjalan() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 h-[calc(100vh-140px)] min-h-[500px] flex flex-col overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 h-[calc(100vh-140px)] min-h-125 flex flex-col overflow-hidden">
           {/* Header Workspace */}
           <div className="border-b border-slate-100 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">

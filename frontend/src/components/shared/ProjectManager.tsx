@@ -295,7 +295,7 @@ export function ProjectManager({
             Daftar Proyek
           </h3>
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="overflow-y-auto custom-scrollbar max-h-[300px]">
+            <div className="overflow-y-auto custom-scrollbar max-h-75">
               <table className="w-full text-left text-sm relative">
                 <thead className="bg-slate-50/90 border-b border-slate-200 sticky top-0 z-10 backdrop-blur-sm">
                   <tr>
