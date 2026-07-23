@@ -171,7 +171,7 @@ export default function TodoListPage() {
     );
 
   return (
-    <div className="p-6 pt-0 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
+    <div className="px-6 pt-0 pb-0 max-w-[1600px] mx-auto flex flex-col gap-6 h-[calc(100vh-2rem)]">
       {/* Header & Calendar Strip Container */}
       <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 lg:p-6 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         {/* Title */}
@@ -240,9 +240,9 @@ export default function TodoListPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 min-h-0 pb-2 lg:pb-0">
         {/* Kolom Kiri: Tugas Aktif */}
-        <div className="bg-white rounded-3xl p-5 md:p-6 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col h-150">
+        <div className="bg-white rounded-3xl p-5 md:p-6 shadow-[0_2px_20px_-8px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col h-full min-h-[400px]">
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 shrink-0">
             <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
@@ -320,7 +320,7 @@ export default function TodoListPage() {
           </div>
 
         {/* Kolom Kanan: Riwayat Selesai */}
-        <div className="bg-white/60 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-slate-100/60 shadow-[0_2px_15px_-8px_rgba(0,0,0,0.02)] flex flex-col h-150">
+        <div className="bg-white/60 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-slate-100/60 shadow-[0_2px_15px_-8px_rgba(0,0,0,0.02)] flex flex-col h-full min-h-[400px]">
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100/80 shrink-0">
             <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
