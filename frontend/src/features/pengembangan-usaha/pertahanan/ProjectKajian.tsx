@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useSearchParams } from "react-router-dom";
 import { ProjectManager, ProjectDocumentsTable } from "@/components/shared";
 import { useAuth } from "@/hooks/useAuth";
@@ -233,7 +234,7 @@ export default function ProjectKajian() {
         </div>
       </div>
 
-      {showManager && (
+      {showManager && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 sm:p-6">
           <div className="bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] max-w-4xl w-full max-h-[90vh] flex flex-col relative overflow-hidden">
             <button
@@ -254,7 +255,8 @@ export default function ProjectKajian() {
               />
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Main Content */}
