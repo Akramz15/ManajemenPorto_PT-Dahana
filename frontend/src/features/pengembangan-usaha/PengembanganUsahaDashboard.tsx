@@ -268,7 +268,7 @@ export default function PengembanganUsahaDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 h-150 flex flex-col">
+          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 h-[calc(100vh-17.5rem)] min-h-[500px] flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6 shrink-0 border-b border-slate-100/80 pb-6">
               <h3 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
                 <span className="w-10 h-10 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center">
@@ -349,7 +349,7 @@ export default function PengembanganUsahaDashboard() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 h-150 flex flex-col relative overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 h-[calc(100vh-17.5rem)] min-h-[500px] flex flex-col relative overflow-hidden">
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary-50/50 rounded-full blur-3xl"></div>
 
             <h3 className="text-xl font-bold tracking-tight text-slate-900 mb-8 flex items-center gap-3 border-b border-slate-100/80 pb-6 relative z-10 shrink-0">
