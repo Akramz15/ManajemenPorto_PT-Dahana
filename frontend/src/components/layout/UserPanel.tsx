@@ -25,7 +25,7 @@ export function UserPanel() {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + "/login",
+        redirectTo: window.location.origin + "/update-password",
       });
       if (error) throw error;
       alert("Tautan reset password telah dikirim ke email Anda.", {

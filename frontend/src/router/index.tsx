@@ -7,6 +7,7 @@ import {
 import { AuthGuard } from "@/features/auth/AuthGuard";
 import { AppShell } from "@/components/layout/AppShell";
 import LoginPage from "@/pages/LoginPage";
+import UpdatePasswordPage from "@/pages/UpdatePasswordPage";
 import ModulSelectPage from "@/pages/ModulSelectPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { Spinner } from "@/components/ui/Spinner";
@@ -45,6 +46,7 @@ function PageLoader() {
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
+  { path: "/update-password", element: <UpdatePasswordPage /> },
   {
     path: "/select-module",
     element: (

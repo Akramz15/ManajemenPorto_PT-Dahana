@@ -4,6 +4,8 @@ import { useAuth, useSignIn } from "@/hooks/useAuth";
 import { Spinner } from "@/components/ui/Spinner";
 import { Eye, EyeOff } from "lucide-react";
 import logoDahana from "@/assets/Logo_Dahana.png";
+import { supabase } from "@/lib/supabase";
+import { useDialogStore } from "@/store/dialogStore";
 
 export default function LoginPage() {
   const { session } = useAuth();
@@ -11,12 +13,37 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const { alert, confirm, prompt } = useDialogStore();
 
   if (session) return <Navigate to="/select-module" replace />;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     signIn(email, password);
+  };
+
+  const handleForgotPassword = async () => {
+    const inputEmail = await prompt("Masukkan email Anda untuk reset password:", {
+      confirmText: "Kirim Tautan",
+      defaultValue: email,
+    });
+    
+    if (!inputEmail) return;
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(inputEmail, {
+        redirectTo: window.location.origin + "/update-password",
+      });
+      if (error) throw error;
+      alert("Tautan reset password telah dikirim ke email Anda.", {
+        severity: "success",
+      });
+    } catch (err: any) {
+      console.error(err);
+      alert("Gagal mengirim tautan reset password: " + err.message, {
+        severity: "danger",
+      });
+    }
   };
 
   return (
@@ -93,6 +120,16 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
+          </div>
+          
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="text-sm font-bold text-primary-600 hover:text-primary-700 transition-colors"
+            >
+              Lupa Password?
+            </button>
           </div>
 
           {error && (
