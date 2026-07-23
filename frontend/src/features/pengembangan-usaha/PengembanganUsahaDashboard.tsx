@@ -178,7 +178,7 @@ export default function PengembanganUsahaDashboard() {
   const totalKajian = proyekKajian.length;
 
   return (
-    <div className="p-6 pt-0 max-w-[1600px] mx-auto space-y-6 bg-slate-50/50 min-h-screen">
+    <div className="px-6 pt-0 pb-0 max-w-[1600px] mx-auto flex flex-col gap-6 bg-slate-50/50 h-[calc(100vh-2rem)]">
       <div className="page-header mb-4">
         <div className="flex items-center text-sm font-medium text-slate-500">
           <span>Pengembangan Usaha</span>
@@ -266,9 +266,9 @@ export default function PengembanganUsahaDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 h-[calc(100vh-17.5rem)] min-h-[500px] flex flex-col">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 flex-1 min-h-0 pb-2 lg:pb-0">
+        <div className="lg:col-span-2 flex flex-col h-full min-h-0">
+          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 h-full flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6 shrink-0 border-b border-slate-100/80 pb-6">
               <h3 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
                 <span className="w-10 h-10 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center">
@@ -348,8 +348,8 @@ export default function PengembanganUsahaDashboard() {
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 h-[calc(100vh-17.5rem)] min-h-[500px] flex flex-col relative overflow-hidden">
+        <div className="flex flex-col h-full min-h-0">
+          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-6 md:p-8 h-full flex flex-col relative overflow-hidden">
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary-50/50 rounded-full blur-3xl"></div>
 
             <h3 className="text-xl font-bold tracking-tight text-slate-900 mb-8 flex items-center gap-3 border-b border-slate-100/80 pb-6 relative z-10 shrink-0">
