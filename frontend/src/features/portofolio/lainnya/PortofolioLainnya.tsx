@@ -270,9 +270,7 @@ export default function PortofolioLainnya() {
                       kategori: "lainnya",
                       start_date: periodData.start_date,
                       end_date: periodData.end_date,
-                      created_by: "system",
-                      progress: currentProject.progress || 0,
-                      status: currentProject.status || "Berjalan"
+                      created_by: "system"
                     });
                     if (error) throw error;
                     

@@ -27,8 +27,8 @@ export interface ProgressTask {
 
 export interface Project {
   id: string;
-  divisi: "komersial" | "pertahanan";
-  kategori: "berjalan" | "kajian";
+  divisi: "komersial" | "pertahanan" | "lainnya";
+  kategori: "berjalan" | "kajian" | "lainnya";
   nama_proyek: string;
   mitra: string | null;
   nilai_kontrak: number | null;
