@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { ExternalLink, Plus, Trash2, Link, FileText, X, Edit2, Save, Download } from "lucide-react";
+import { ExternalLink, Plus, Trash2, Link, FileText, X, Edit2, Save, Download, Search } from "lucide-react";
 import { useDialogStore } from "@/store/dialogStore";
 import { Spinner } from "@/components/ui";
 
@@ -28,6 +28,8 @@ export function ProjectDocumentsTable({
   const [docType, setDocType] = useState<"link" | "file">("link");
   const [fileObj, setFileObj] = useState<File | null>(null);
   
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("");
   // Edit state
   const [editingDocId, setEditingDocId] = useState<string | null>(null);
   const [editFileName, setEditFileName] = useState("");
@@ -362,6 +364,10 @@ export function ProjectDocumentsTable({
     </div>
   );
 
+  const filteredDocuments = documents.filter((doc) =>
+    doc.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden flex flex-col h-full">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-b border-slate-100 gap-4 bg-white">
@@ -375,7 +381,19 @@ export function ProjectDocumentsTable({
           </p>
         </div>
 
-        <div>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search size={16} className="text-slate-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Cari dokumen..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all"
+            />
+          </div>
           <button
             onClick={() => setIsAdding(!isAdding)}
             className="cursor-pointer px-4 py-2.5 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-500/20 hover:shadow-primary-500/40 flex items-center gap-2 whitespace-nowrap shrink-0"
@@ -429,8 +447,24 @@ export function ProjectDocumentsTable({
                   </div>
                 </td>
               </tr>
+            ) : filteredDocuments.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="py-16 text-center">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
+                      <Search size={24} className="text-slate-300" />
+                    </div>
+                    <p className="font-bold text-slate-600 text-center">
+                      Dokumen tidak ditemukan
+                    </p>
+                    <p className="text-xs font-medium text-slate-400 mt-1 max-w-md text-center text-balance mx-auto">
+                      Tidak ada dokumen yang cocok dengan kata kunci "{searchQuery}".
+                    </p>
+                  </div>
+                </td>
+              </tr>
             ) : (
-              documents.map((doc) => {
+              filteredDocuments.map((doc) => {
                 const isEditing = editingDocId === doc.id;
                 const displayName = doc.user_profiles?.display_name || "Tim";
                 const firstName = displayName.split(" ")[0];
