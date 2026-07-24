@@ -150,7 +150,8 @@ export default function ProjectKajian() {
   );
 
   return (
-    <div className="px-6 pt-0 pb-0 max-w-[1600px] mx-auto flex flex-col gap-6 h-[calc(100vh-2rem)] overflow-y-auto custom-scrollbar">
+    <div className="flex flex-col h-[calc(100vh-2rem)] overflow-y-auto overflow-x-hidden custom-scrollbar">
+      <div className="px-6 pt-0 pb-6 max-w-[1600px] mx-auto w-full flex flex-col gap-6">
       {/* Breadcrumbs & Header */}
       {selectedProject && (
         <button
@@ -419,6 +420,7 @@ export default function ProjectKajian() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

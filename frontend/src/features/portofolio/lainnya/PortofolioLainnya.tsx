@@ -100,7 +100,7 @@ export default function PortofolioLainnya() {
   }, [fetchDynamicSCurve]);
 
   return (
-    <div className="px-6 pt-0 pb-6 max-w-[1600px] mx-auto flex flex-col gap-6 min-h-screen">
+    <div className="px-6 pt-0 pb-6 max-w-[1600px] mx-auto flex flex-col gap-6 min-h-screen overflow-x-hidden">
       <div className="page-header">
         <div className="flex items-center text-sm font-medium text-slate-500">
           <span>Portofolio</span>
