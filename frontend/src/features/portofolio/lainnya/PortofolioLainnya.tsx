@@ -178,13 +178,11 @@ export default function PortofolioLainnya() {
               onClick={() => setIsUpdateProgressOpen(false)} 
             />
             <div className="relative z-10 w-full max-w-5xl max-h-[90vh] animate-in zoom-in-95 duration-200 flex flex-col">
-              <button 
-                  className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors z-20" 
-                  onClick={() => setIsUpdateProgressOpen(false)}
-              >
-                  <X size={20} />
-              </button>
-              <MonthlyProgressTracker project={mockProject} onUpdate={fetchDynamicSCurve} />
+              <MonthlyProgressTracker 
+                  project={mockProject} 
+                  onUpdate={fetchDynamicSCurve} 
+                  onClose={() => setIsUpdateProgressOpen(false)}
+              />
             </div>
           </div>
         )}

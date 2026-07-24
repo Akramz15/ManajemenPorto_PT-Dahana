@@ -9,6 +9,7 @@ import type { Project, ProjectProgressActivity } from "@/types/api.types";
 interface MonthlyProgressTrackerProps {
   project: Project;
   onUpdate?: () => void;
+  onClose?: () => void;
 }
 
 const MONTHS = [
@@ -29,6 +30,7 @@ const MONTHS = [
 export function MonthlyProgressTracker({
   project,
   onUpdate,
+  onClose,
 }: MonthlyProgressTrackerProps) {
   const { session } = useAuth();
   const currentUserId = session?.user?.id;
@@ -154,17 +156,28 @@ export function MonthlyProgressTracker({
           </p>
         </div>
 
-        <select
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-          className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-700 outline-none focus:border-primary-500 shadow-sm"
-        >
-          {years.map((y) => (
-            <option key={y} value={y}>
-              Tahun {y}
-            </option>
-          ))}
-        </select>
+        <div className="flex items-center gap-4">
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+            className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-700 outline-none focus:border-primary-500 shadow-sm"
+          >
+            {years.map((y) => (
+              <option key={y} value={y}>
+                Tahun {y}
+              </option>
+            ))}
+          </select>
+          {onClose && (
+            <button 
+              onClick={onClose}
+              className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors border border-transparent hover:border-rose-100"
+              title="Tutup Modal"
+            >
+              <X size={20} />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="p-6 overflow-x-auto pb-8 -mb-2 custom-scrollbar">
