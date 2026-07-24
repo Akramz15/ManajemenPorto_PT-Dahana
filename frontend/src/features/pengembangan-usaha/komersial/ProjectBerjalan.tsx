@@ -290,7 +290,7 @@ export default function ProjectBerjalan() {
       </div>
 
       {showManager && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 sm:p-6">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 sm:p-6">
           <div className="bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] max-w-4xl w-full max-h-[90vh] flex flex-col relative overflow-hidden">
             <button
               onClick={() => setShowManager(false)}
@@ -395,7 +395,7 @@ export default function ProjectBerjalan() {
 
           {/* Modal Update Progress */}
           {isUpdateProgressOpen && projectData && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+            <div className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6">
               <div 
                 className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" 
                 onClick={() => setIsUpdateProgressOpen(false)} 
