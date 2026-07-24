@@ -388,9 +388,9 @@ export function ProjectDocumentsTable({
 
       {isAdding && renderAddForm()}
 
-      <div className="overflow-x-auto flex-1">
+      <div className="overflow-x-auto overflow-y-auto custom-scrollbar flex-1 max-h-[400px]">
         <table className="w-full text-left text-sm whitespace-nowrap">
-          <thead className="bg-slate-50/50 border-b border-slate-100">
+          <thead className="bg-slate-50/95 backdrop-blur-sm border-b border-slate-100 sticky top-0 z-10 shadow-sm">
             <tr>
               <th className="px-6 py-3.5 font-bold text-slate-500 uppercase tracking-wider text-[10px]">
                 Nama Dokumen

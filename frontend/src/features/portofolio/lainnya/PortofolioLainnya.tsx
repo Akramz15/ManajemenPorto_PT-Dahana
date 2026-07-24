@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Briefcase, Building2 } from "lucide-react";
+import { Briefcase, Building2, Edit3, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { SCurveProgressChart } from "@/components/charts";
 import { MonthlyProgressTracker, ProjectDocumentsTable } from "@/components/shared";
@@ -10,6 +10,7 @@ export default function PortofolioLainnya() {
     "streamlining",
   );
   const [sCurveData, setSCurveData] = useState<any[]>([]);
+  const [isUpdateProgressOpen, setIsUpdateProgressOpen] = useState(false);
 
   const projectId = `porto-lainnya-${activeTab}`;
   
@@ -149,19 +150,44 @@ export default function PortofolioLainnya() {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative h-125 flex flex-col">
           <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary-100 rounded-full -z-10 blur-3xl opacity-50"></div>
           <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-indigo-100 rounded-full -z-10 blur-3xl opacity-50"></div>
+          
+          {/* Tombol Update Progres */}
+          <div className="absolute top-6 right-6 z-20">
+            <button
+              onClick={() => setIsUpdateProgressOpen(true)}
+              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-500/20 hover:shadow-primary-500/40 flex items-center gap-2"
+            >
+              <Edit3 size={16} />
+              Update Progres Bulanan
+            </button>
+          </div>
+
           <SCurveProgressChart data={sCurveData} />
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {/* Monthly Progress Tracker */}
-          <MonthlyProgressTracker
-            project={mockProject}
-            onUpdate={fetchDynamicSCurve}
-          />
-
+        <div className="mt-2">
           {/* Project Documents */}
           <ProjectDocumentsTable projectId={projectId} />
         </div>
+
+        {/* Modal Update Progress */}
+        {isUpdateProgressOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+            <div 
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" 
+              onClick={() => setIsUpdateProgressOpen(false)} 
+            />
+            <div className="relative z-10 w-full max-w-5xl max-h-[90vh] animate-in zoom-in-95 duration-200 flex flex-col">
+              <button 
+                  className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors z-20" 
+                  onClick={() => setIsUpdateProgressOpen(false)}
+              >
+                  <X size={20} />
+              </button>
+              <MonthlyProgressTracker project={mockProject} onUpdate={fetchDynamicSCurve} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
