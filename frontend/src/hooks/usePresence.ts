@@ -9,7 +9,7 @@ interface OnlineUser {
 }
 
 export function usePresence(roomId = "global") {
-  const { session } = useAuth();
+  const { session, profile } = useAuth();
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export function usePresence(roomId = "global") {
         if (status === "SUBSCRIBED") {
           await channel.track({
             user_id: session.user.id,
-            display_name: session.user.email ?? "User",
+            display_name: profile?.display_name || session.user.email || "User",
             online_at: new Date().toISOString(),
           });
         }
@@ -44,7 +44,7 @@ export function usePresence(roomId = "global") {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [session, roomId]);
+  }, [session, profile, roomId]);
 
   return onlineUsers;
 }

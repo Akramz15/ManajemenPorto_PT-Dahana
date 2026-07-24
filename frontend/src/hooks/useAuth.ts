@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<{ display_name?: string, role?: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,6 +20,11 @@ export function useAuth() {
         },
         { onConflict: 'id', ignoreDuplicates: true }
       );
+      
+      const { data } = await supabase.from('user_profiles').select('*').eq('id', user.id).single();
+      if (mounted && data) {
+        setProfile(data);
+      }
     };
 
     const initializeAuth = async () => {
@@ -60,7 +66,7 @@ export function useAuth() {
     };
   }, []);
 
-  return { session, user: session?.user ?? null, loading };
+  return { session, user: session?.user ?? null, profile, loading };
 }
 
 export function useSignIn() {

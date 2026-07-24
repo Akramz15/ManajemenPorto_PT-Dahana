@@ -29,8 +29,8 @@ const modules = [
 
 export default function ModulSelectPage() {
   const navigate = useNavigate();
+  const { user, profile } = useAuth();
   const { setActiveModule } = useAppStore();
-  const { user } = useAuth();
 
   const handleSelect = (
     id: "pengembangan-usaha" | "portofolio",
@@ -57,7 +57,7 @@ export default function ModulSelectPage() {
         <div className="w-full max-w-4xl relative z-10">
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight mb-3">
-              Halo{user?.email ? `, ${user.email.split("@")[0]}` : ""}! 👋
+              Halo{profile?.display_name ? `, ${profile.display_name}` : (user?.email ? `, ${user.email.split("@")[0]}` : "")}! 👋
             </h2>
             <p className="text-slate-500 text-sm md:text-base lg:text-lg font-medium max-w-xl mx-auto px-4">
               Pilih modul di bawah ini untuk mulai mengelola portofolio dan
