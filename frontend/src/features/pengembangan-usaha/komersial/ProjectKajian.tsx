@@ -296,7 +296,7 @@ export default function ProjectKajian() {
                 {projectData?.start_date && (
                   <div>
                     <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                      Start Date
+                      Tanggal Mulai
                     </p>
                     <p className="text-sm font-semibold text-slate-700">
                       {new Date(projectData.start_date).toLocaleDateString(
@@ -309,7 +309,7 @@ export default function ProjectKajian() {
                 {projectData?.end_date && (
                   <div>
                     <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                      End Date
+                      Tanggal Selesai
                     </p>
                     <p className="text-sm font-semibold text-slate-700">
                       {new Date(projectData.end_date).toLocaleDateString(

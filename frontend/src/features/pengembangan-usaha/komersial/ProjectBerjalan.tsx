@@ -341,7 +341,7 @@ export default function ProjectBerjalan() {
             </div>
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
               <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                Start Date
+                Tanggal Mulai
               </p>
               <p className="text-sm font-bold text-slate-800">
                 {projectData?.start_date
@@ -354,7 +354,7 @@ export default function ProjectBerjalan() {
             </div>
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
               <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                End Date
+                Tanggal Selesai
               </p>
               <p className="text-sm font-bold text-slate-800">
                 {projectData?.end_date

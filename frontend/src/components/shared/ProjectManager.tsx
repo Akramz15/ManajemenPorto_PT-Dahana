@@ -244,7 +244,7 @@ export function ProjectManager({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">
-                  Mulai (Start Date) *
+                  Tanggal Mulai *
                 </label>
                 <input
                   type="date"
@@ -258,7 +258,7 @@ export function ProjectManager({
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 mb-1.5">
-                  Selesai (End Date) *
+                  Tanggal Selesai *
                 </label>
                 <input
                   type="date"
