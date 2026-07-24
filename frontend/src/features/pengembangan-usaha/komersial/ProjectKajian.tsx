@@ -5,7 +5,6 @@ import { ProjectManager, ProjectDocumentsTable } from "@/components/shared";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import {
-  MapPin,
   Plus,
   Settings,
   FolderOpen,
