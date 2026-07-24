@@ -365,7 +365,7 @@ export function ProjectDocumentsTable({
   );
 
   const filteredDocuments = documents.filter((doc) =>
-    doc.name.toLowerCase().includes(searchQuery.toLowerCase())
+    doc.file_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
