@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { LogOut, KeyRound } from "lucide-react";
 import { useAuth, useSignIn } from "@/hooks/useAuth";
 import { OnlineIndicator } from "@/components/shared";
@@ -9,8 +10,29 @@ export function UserPanel() {
   const { signOut } = useSignIn();
   const { alert, confirm } = useDialogStore();
 
-  const initials = user?.email?.charAt(0).toUpperCase() ?? "U";
+  const [displayName, setDisplayName] = useState<string>("");
   const email = user?.email ?? "";
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const fetchProfile = async () => {
+      const { data } = await supabase
+        .from("user_profiles")
+        .select("display_name")
+        .eq("id", user.id)
+        .single();
+      if (data?.display_name) {
+        setDisplayName(data.display_name);
+      }
+    };
+    fetchProfile();
+  }, [user?.id]);
+
+  const initials = displayName 
+    ? displayName.charAt(0).toUpperCase() 
+    : user?.email?.charAt(0).toUpperCase() ?? "U";
+  
+  const displayString = displayName || email;
 
   const handleResetPassword = async () => {
     if (!email) return;
@@ -67,9 +89,9 @@ export function UserPanel() {
             <div className="min-w-0 pr-1">
               <p
                 className="text-xs font-medium text-slate-700 truncate"
-                title={email}
+                title={displayString}
               >
-                {email}
+                {displayString}
               </p>
               <p className="text-[10px] text-slate-500">Member</p>
             </div>
