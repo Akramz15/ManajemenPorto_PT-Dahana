@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+
 import { LogOut, KeyRound } from "lucide-react";
 import { useAuth, useSignIn } from "@/hooks/useAuth";
 import { OnlineIndicator } from "@/components/shared";
@@ -6,33 +6,14 @@ import { supabase } from "@/lib/supabase";
 import { useDialogStore } from "@/store/dialogStore";
 
 export function UserPanel() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { signOut } = useSignIn();
   const { alert, confirm } = useDialogStore();
 
-  const [displayName, setDisplayName] = useState<string>("");
   const email = user?.email ?? "";
-
-  useEffect(() => {
-    if (!user?.id) return;
-    const fetchProfile = async () => {
-      const { data } = await supabase
-        .from("user_profiles")
-        .select("display_name")
-        .eq("id", user.id)
-        .single();
-      if (data?.display_name) {
-        setDisplayName(data.display_name);
-      }
-    };
-    fetchProfile();
-  }, [user?.id]);
-
-  const initials = displayName 
-    ? displayName.charAt(0).toUpperCase() 
-    : user?.email?.charAt(0).toUpperCase() ?? "U";
   
-  const displayString = displayName || email;
+  const displayString = profile?.display_name || email;
+  const initials = displayString.charAt(0).toUpperCase();
 
   const handleResetPassword = async () => {
     if (!email) return;

@@ -1,72 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import { AuthContext } from "@/providers/AuthProvider";
 
 export function useAuth() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<{ display_name?: string, role?: string } | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const upsertProfile = async (user: any) => {
-      await supabase.from("user_profiles").upsert(
-        {
-          id: user.id,
-          display_name: user.email?.split('@')[0] || 'User',
-          role: 'member',
-        },
-        { onConflict: 'id', ignoreDuplicates: true }
-      );
-      
-      const { data } = await supabase.from('user_profiles').select('*').eq('id', user.id).single();
-      if (mounted && data) {
-        setProfile(data);
-      }
-    };
-
-    const initializeAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (mounted) {
-          setSession(session);
-          if (session?.user) {
-            await upsertProfile(session.user);
-          }
-        }
-      } catch (error) {
-        console.error("Error getting session:", error);
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    initializeAuth();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'INITIAL_SESSION') return;
-      if (mounted) {
-        setSession(session);
-        if (session?.user) {
-          await upsertProfile(session.user);
-        }
-        setLoading(false);
-      }
-    });
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  return { session, user: session?.user ?? null, profile, loading };
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }
 
 export function useSignIn() {
