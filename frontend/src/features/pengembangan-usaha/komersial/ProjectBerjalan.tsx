@@ -222,7 +222,7 @@ export default function ProjectBerjalan() {
 
   return (
     <div className={`flex flex-col h-[calc(100vh-2rem)] overflow-x-hidden custom-scrollbar ${selectedProject ? 'overflow-y-auto' : 'overflow-hidden'}`}>
-      <div className={`px-6 pt-0 pb-6 max-w-[1600px] mx-auto w-full flex flex-col gap-6 ${selectedProject ? '' : 'h-full'}`}>
+      <div className={`px-6 pt-0 max-w-[1600px] mx-auto w-full flex flex-col gap-6 ${selectedProject ? 'pb-6' : 'h-full pb-0'}`}>
       {/* Breadcrumbs & Header */}
       {selectedProject && (
         <button
