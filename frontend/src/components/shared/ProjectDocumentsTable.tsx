@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { ExternalLink, Plus, Trash2, Link, FileText, X, Edit2, Save, Download, Search } from "lucide-react";
+import { ExternalLink, Plus, Trash2, Link, FileText, X, Edit2, Save, Download, Search, Eye } from "lucide-react";
 import { useDialogStore } from "@/store/dialogStore";
 import { Spinner } from "@/components/ui";
 
@@ -102,6 +102,26 @@ export function ProjectDocumentsTable({
         console.error(err);
         alert("Gagal membuka dokumen: " + err.message, { severity: "danger" });
       }
+    }
+  };
+
+  const handleDownloadFile = async (doc: any) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("project-documents")
+        .createSignedUrl(doc.document_url, 60 * 60, { download: doc.file_name }); // 1 jam
+      if (error) throw error;
+      if (data?.signedUrl) {
+        const a = document.createElement('a');
+        a.href = data.signedUrl;
+        a.download = doc.file_name || 'document';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert("Gagal mengunduh dokumen: " + err.message, { severity: "danger" });
     }
   };
 
@@ -592,10 +612,19 @@ export function ProjectDocumentsTable({
                               ? "text-purple-600 hover:bg-purple-50"
                               : "text-blue-600 hover:bg-blue-50"
                           }`}
-                          title={isFile ? "Unduh / Lihat File" : "Buka Tautan"}
+                          title={isFile ? "Lihat File" : "Buka Tautan"}
                         >
-                          {isFile ? <Download size={16} /> : <ExternalLink size={16} />}
+                          {isFile ? <Eye size={16} /> : <ExternalLink size={16} />}
                         </button>
+                        {isFile && (
+                          <button
+                            onClick={() => handleDownloadFile(doc)}
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Unduh File"
+                          >
+                            <Download size={16} />
+                          </button>
+                        )}
                         <button
                           onClick={() => startEdit(doc)}
                           className="p-1.5 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
