@@ -391,10 +391,8 @@ export default function ProjectBerjalan() {
             <SCurveProgressChart data={sCurveData} />
           </div>
 
-          <div className="mt-6">
-            {/* Project Documents */}
-            <ProjectDocumentsTable projectId={selectedProject} />
-          </div>
+          {/* Project Documents */}
+          <ProjectDocumentsTable projectId={selectedProject} />
 
           {/* Modal Update Progress */}
           {isUpdateProgressOpen && projectData && (

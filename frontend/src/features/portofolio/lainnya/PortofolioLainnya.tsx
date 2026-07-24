@@ -165,10 +165,8 @@ export default function PortofolioLainnya() {
           <SCurveProgressChart data={sCurveData} />
         </div>
 
-        <div className="mt-2">
-          {/* Project Documents */}
-          <ProjectDocumentsTable projectId={projectId} />
-        </div>
+        {/* Project Documents */}
+        <ProjectDocumentsTable projectId={projectId} />
 
         {/* Modal Update Progress */}
         {isUpdateProgressOpen && (
