@@ -203,10 +203,10 @@ export default function ProjectKajian() {
               <>
                 <button
                   onClick={() => setShowManager(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/40 hover:-translate-y-0.5"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-500 text-white font-bold text-sm hover:bg-slate-600 transition-all shadow-lg shadow-slate-500/20 hover:shadow-slate-500/40 hover:-translate-y-0.5"
                 >
                   <Settings size={18} />
-                  Edit Project
+                  Edit Proyek
                 </button>
                 <button
                   onClick={() => handleDeleteProject(selectedProject)}
