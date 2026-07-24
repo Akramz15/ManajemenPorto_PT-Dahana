@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Briefcase, Building2, Edit3, X } from "lucide-react";
+import { Briefcase, Building2, Edit3 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { SCurveProgressChart } from "@/components/charts";
 import { MonthlyProgressTracker, ProjectDocumentsTable } from "@/components/shared";

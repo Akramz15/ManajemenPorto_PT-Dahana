@@ -355,7 +355,7 @@ export function MonthlyProgressTracker({
                               disabled={isSaving}
                               className="p-1.5 text-primary-600 hover:text-primary-700 transition-colors disabled:opacity-50"
                             >
-                              {isSaving ? <Spinner size="xs" /> : <Save size={16} />}
+                              {isSaving ? <Spinner size="sm" /> : <Save size={16} />}
                             </button>
                           </div>
                         </form>
