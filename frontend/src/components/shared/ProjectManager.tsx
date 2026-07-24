@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import type { Project } from "@/types";
 import { Plus, Edit2, Trash2, FolderSync } from "lucide-react";
@@ -54,6 +54,25 @@ export function ProjectManager({
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
+
+  const autoEditedRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (selectedProjectId && projects.length > 0 && autoEditedRef.current !== selectedProjectId) {
+      const proj = projects.find((p) => p.id === selectedProjectId);
+      if (proj) {
+        setEditingProject(proj);
+        setFormData({
+          nama_proyek: proj.nama_proyek,
+          mitra: proj.mitra || "",
+          nilai_kontrak: proj.nilai_kontrak ? proj.nilai_kontrak.toString() : "",
+          start_date: proj.start_date || "",
+          end_date: proj.end_date || "",
+        });
+        autoEditedRef.current = selectedProjectId;
+      }
+    }
+  }, [selectedProjectId, projects]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
