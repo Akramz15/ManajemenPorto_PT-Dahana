@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { alert, confirm, prompt } = useDialogStore();
+  const { alert, prompt } = useDialogStore();
 
   if (session) return <Navigate to="/select-module" replace />;
 

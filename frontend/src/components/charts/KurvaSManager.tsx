@@ -274,7 +274,7 @@ export function KurvaSManager({ projectId, rightContent }: KurvaSManagerProps) {
         </div>
       </div>
       
-      {rightContent && rightContent}
+      {rightContent}
       </div>
     </div>
   );
