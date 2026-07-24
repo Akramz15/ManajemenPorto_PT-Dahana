@@ -3,7 +3,7 @@ import { useDialogStore } from "@/store/dialogStore";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { Spinner } from "@/components/ui";
-import { PlayCircle, Lock, ListChecks, Plus, Trash2, X } from "lucide-react";
+import { PlayCircle, Lock, ListChecks, Plus, Trash2, X, Edit2, Save } from "lucide-react";
 import type { Project, ProjectProgressActivity } from "@/types/api.types";
 
 interface MonthlyProgressTrackerProps {
@@ -45,6 +45,11 @@ export function MonthlyProgressTracker({
   const [isSaving, setIsSaving] = useState(false);
   const [newActivityName, setNewActivityName] = useState("");
   const [newActivityWeight, setNewActivityWeight] = useState("");
+  
+  // Edit state
+  const [editingActivityId, setEditingActivityId] = useState<string | null>(null);
+  const [editActivityName, setEditActivityName] = useState("");
+  const [editActivityWeight, setEditActivityWeight] = useState("");
 
   const fetchActivities = useCallback(async () => {
     setLoading(true);
@@ -87,10 +92,37 @@ export function MonthlyProgressTracker({
       setNewActivityName("");
       setNewActivityWeight("");
       await fetchActivities();
+      useDialogStore.getState().alert("Pekerjaan berhasil ditambahkan!", { severity: "success" });
+    } catch (err: any) {
+      console.error(err);
+      useDialogStore.getState().alert("Gagal menambahkan pekerjaan: " + err.message, { severity: "danger" });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleUpdateActivity = async (e: React.FormEvent, actId: string) => {
+    e.preventDefault();
+    if (!editActivityName.trim() || !editActivityWeight || isSaving) return;
+
+    try {
+      setIsSaving(true);
+      const { error } = await supabase
+        .from("project_progress_activities")
+        .update({
+          activity_name: editActivityName.trim(),
+          weight_percentage: parseFloat(editActivityWeight),
+        })
+        .eq("id", actId);
+
+      if (error) throw error;
+      
+      setEditingActivityId(null);
+      await fetchActivities();
       if (onUpdate) onUpdate();
     } catch (err: any) {
       console.error(err);
-      useDialogStore.getState().alert("Gagal menambah pekerjaan: " + err.message, { severity: "danger" });
+      useDialogStore.getState().alert("Gagal mengubah pekerjaan: " + err.message, { severity: "danger" });
     } finally {
       setIsSaving(false);
     }
@@ -282,24 +314,88 @@ export function MonthlyProgressTracker({
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {activities.filter(a => a.month === editingMonth).map(act => (
-                    <div key={act.id} className="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-3">
-                      <div>
-                        <p className="font-bold text-sm text-slate-800">{act.activity_name}</p>
-                        <p className="text-[10px] font-semibold text-slate-400 mt-0.5">DITAMBAHKAN PADA {new Date(act.created_at).toLocaleDateString("id-ID")}</p>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <span className="font-black text-primary-600 text-sm bg-primary-100 px-2 py-1 rounded-lg">{Number(act.weight_percentage).toFixed(1)}%</span>
-                        <button 
-                          onClick={() => handleDeleteActivity(act.id)}
-                          disabled={isSaving}
-                          className="text-rose-400 hover:text-rose-600 transition-colors disabled:opacity-50"
+                  {activities.filter(a => a.month === editingMonth).map(act => {
+                    if (editingActivityId === act.id) {
+                      return (
+                        <form 
+                          key={act.id} 
+                          onSubmit={(e) => handleUpdateActivity(e, act.id)}
+                          className="flex items-center gap-3 bg-blue-50/50 border border-blue-100 rounded-xl p-3"
                         >
-                          <Trash2 size={16} />
-                        </button>
+                          <input 
+                            type="text"
+                            required
+                            value={editActivityName}
+                            onChange={(e) => setEditActivityName(e.target.value)}
+                            className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-primary-500 shadow-sm"
+                          />
+                          <div className="relative w-24 shrink-0">
+                            <input 
+                              type="number"
+                              required
+                              min="0.1"
+                              max="100"
+                              step="0.1"
+                              value={editActivityWeight}
+                              onChange={(e) => setEditActivityWeight(e.target.value)}
+                              className="w-full bg-white border border-slate-200 rounded-lg pl-3 pr-6 py-1.5 text-sm outline-none focus:border-primary-500 shadow-sm"
+                            />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button 
+                              type="button"
+                              onClick={() => setEditingActivityId(null)}
+                              className="p-1.5 text-slate-500 hover:text-slate-700 transition-colors"
+                            >
+                              <X size={16} />
+                            </button>
+                            <button 
+                              type="submit"
+                              disabled={isSaving}
+                              className="p-1.5 text-primary-600 hover:text-primary-700 transition-colors disabled:opacity-50"
+                            >
+                              {isSaving ? <Spinner size="xs" /> : <Save size={16} />}
+                            </button>
+                          </div>
+                        </form>
+                      );
+                    }
+
+                    return (
+                      <div key={act.id} className="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-3 group">
+                        <div>
+                          <p className="font-bold text-sm text-slate-800">{act.activity_name}</p>
+                          <p className="text-[10px] font-semibold text-slate-400 mt-0.5">DITAMBAHKAN PADA {new Date(act.created_at).toLocaleDateString("id-ID")}</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="font-black text-primary-600 text-sm bg-primary-100 px-2 py-1 rounded-lg">{Number(act.weight_percentage).toFixed(1)}%</span>
+                          <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                            <button 
+                              onClick={() => {
+                                setEditingActivityId(act.id);
+                                setEditActivityName(act.activity_name);
+                                setEditActivityWeight(act.weight_percentage.toString());
+                              }}
+                              disabled={isSaving}
+                              className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
+                              title="Edit Pekerjaan"
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteActivity(act.id)}
+                              disabled={isSaving}
+                              className="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-50"
+                              title="Hapus Pekerjaan"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
