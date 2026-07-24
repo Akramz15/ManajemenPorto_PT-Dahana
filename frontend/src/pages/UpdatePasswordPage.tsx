@@ -39,7 +39,7 @@ export default function UpdatePasswordPage() {
     
     if (password.length < 6) {
       alert("Password minimal harus 6 karakter.", {
-        severity: "warning",
+        severity: "info",
       });
       return;
     }
