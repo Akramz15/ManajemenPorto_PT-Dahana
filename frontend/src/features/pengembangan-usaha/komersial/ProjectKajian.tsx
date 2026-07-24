@@ -264,62 +264,57 @@ export default function ProjectKajian() {
       {selectedProject ? (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="space-y-6">
-            {/* Info Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative overflow-hidden">
-              <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary-50/50 rounded-full blur-2xl"></div>
-              <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
-                Informasi Proyek
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
-                <div>
-                  <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                    <User size={12} /> Ditambahkan Oleh
-                  </p>
-                  <p className="text-sm font-semibold text-slate-700">
-                    {/* @ts-ignore */}
-                    {projectData?.user_profiles?.display_name ||
-                      "Pengguna (Tidak Diketahui)"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                    <Clock size={12} /> Dibuat Pada
-                  </p>
-                  <p className="text-sm font-semibold text-slate-700">
-                    {projectData?.created_at
-                      ? new Date(projectData.created_at).toLocaleDateString(
-                          "id-ID",
-                          { day: "numeric", month: "long", year: "numeric" },
-                        )
-                      : "-"}
-                  </p>
-                </div>
-                {projectData?.start_date && (
-                  <div>
-                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                      Tanggal Mulai
-                    </p>
-                    <p className="text-sm font-semibold text-slate-700">
-                      {new Date(projectData.start_date).toLocaleDateString(
+            {/* Top Info Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                  <User size={12} /> Ditambahkan Oleh
+                </p>
+                <p className="text-sm font-bold text-slate-800 truncate">
+                  {/* @ts-ignore */}
+                  {projectData?.user_profiles?.display_name ||
+                    "Pengguna (Tidak Diketahui)"}
+                </p>
+              </div>
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                  <Clock size={12} /> Dibuat Pada
+                </p>
+                <p className="text-sm font-bold text-slate-800">
+                  {projectData?.created_at
+                    ? new Date(projectData.created_at).toLocaleDateString(
                         "id-ID",
                         { day: "numeric", month: "long", year: "numeric" },
-                      )}
-                    </p>
-                  </div>
-                )}
-                {projectData?.end_date && (
-                  <div>
-                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                      Tanggal Selesai
-                    </p>
-                    <p className="text-sm font-semibold text-slate-700">
-                      {new Date(projectData.end_date).toLocaleDateString(
+                      )
+                    : "-"}
+                </p>
+              </div>
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                  Tanggal Mulai
+                </p>
+                <p className="text-sm font-bold text-slate-800">
+                  {projectData?.start_date
+                    ? new Date(projectData.start_date).toLocaleDateString(
                         "id-ID",
                         { day: "numeric", month: "long", year: "numeric" },
-                      )}
-                    </p>
-                  </div>
-                )}
+                      )
+                    : "Tidak diatur"}
+                </p>
+              </div>
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                  Tanggal Selesai
+                </p>
+                <p className="text-sm font-bold text-slate-800">
+                  {projectData?.end_date
+                    ? new Date(projectData.end_date).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })
+                    : "Tidak diatur"}
+                </p>
               </div>
             </div>
 
