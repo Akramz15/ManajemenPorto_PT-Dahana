@@ -177,20 +177,7 @@ export default function ProjectKajian() {
                 ? projectData?.nama_proyek
                 : "Workspace: Project Kajian"}
             </h1>
-            {selectedProject ? (
-              <div className="flex items-center gap-3 mt-2 text-sm text-slate-600 font-medium">
-                <div className="flex items-center gap-1.5">
-                  <MapPin size={16} className="text-primary-600" />
-                  <span>Area Komersial (Kajian)</span>
-                </div>
-                <span className="text-slate-300">|</span>
-                <span className="font-bold text-slate-800 px-2 py-0.5 bg-slate-200 rounded-md">
-                  {projectData?.id
-                    ? `ID-${projectData.id.split("-")[0].toUpperCase()}`
-                    : "ID-XXXX"}
-                </span>
-              </div>
-            ) : (
+            {!selectedProject && (
               <p className="text-slate-500 mt-1">
                 Kelola timeline proposal dan studi kelayakan proyek divisi
                 komersial.
