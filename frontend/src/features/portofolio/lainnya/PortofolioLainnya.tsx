@@ -119,14 +119,14 @@ export default function PortofolioLainnya() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-4 border-b border-slate-200">
+      {/* Tabs (Apple-style Segmented Control) */}
+      <div className="inline-flex bg-slate-100/80 p-1.5 rounded-2xl w-fit self-start shadow-inner">
         <button
           onClick={() => setActiveTab("streamlining")}
-          className={`px-6 py-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-colors ${
+          className={`px-6 py-2.5 font-bold text-sm flex items-center gap-2 rounded-xl transition-all duration-300 ${
             activeTab === "streamlining"
-              ? "border-primary-600 text-primary-600"
-              : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+              ? "bg-white text-primary-600 shadow-sm"
+              : "text-slate-500 hover:text-slate-700"
           }`}
         >
           <Briefcase size={18} />
@@ -134,10 +134,10 @@ export default function PortofolioLainnya() {
         </button>
         <button
           onClick={() => setActiveTab("akuisisi")}
-          className={`px-6 py-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-colors ${
+          className={`px-6 py-2.5 font-bold text-sm flex items-center gap-2 rounded-xl transition-all duration-300 ${
             activeTab === "akuisisi"
-              ? "border-primary-600 text-primary-600"
-              : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+              ? "bg-white text-primary-600 shadow-sm"
+              : "text-slate-500 hover:text-slate-700"
           }`}
         >
           <Building2 size={18} />
