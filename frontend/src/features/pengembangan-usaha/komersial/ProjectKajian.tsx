@@ -270,7 +270,7 @@ export default function ProjectKajian() {
               <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
                 Informasi Proyek
               </h3>
-              <div className="flex flex-wrap gap-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
                 <div>
                   <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
                     <User size={12} /> Ditambahkan Oleh
