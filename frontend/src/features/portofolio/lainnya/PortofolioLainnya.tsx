@@ -47,7 +47,7 @@ export default function PortofolioLainnya() {
     
     if (data) {
       setProjectData(data as Project);
-    } else {
+    } else if (user?.id) {
       // Auto-create project to satisfy foreign key constraints for documents/progress
       const defaultProject = {
         id: projectId,
@@ -56,14 +56,18 @@ export default function PortofolioLainnya() {
         end_date: `${new Date().getFullYear()}-12-31`,
         divisi: "lainnya",
         kategori: "lainnya",
-        created_by: user?.id || "00000000-0000-0000-0000-000000000000",
+        created_by: user.id,
       };
       
-      const { data: createdData } = await supabase
+      const { data: createdData, error } = await supabase
         .from("projects")
         .upsert(defaultProject)
         .select()
         .single();
+        
+      if (error) {
+        console.error("Auto-create project error:", error);
+      }
         
       if (createdData) {
         setProjectData(createdData as Project);
@@ -71,7 +75,7 @@ export default function PortofolioLainnya() {
         setProjectData(null);
       }
     }
-  }, [projectId, activeTab]);
+  }, [projectId, activeTab, user?.id]);
 
   useEffect(() => {
     fetchProject();
