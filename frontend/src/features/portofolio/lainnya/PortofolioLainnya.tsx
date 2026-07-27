@@ -28,8 +28,8 @@ export default function PortofolioLainnya() {
   const currentProject: Project = projectData || {
     id: projectId,
     nama_proyek: activeTab === "streamlining" ? "Streamlining" : "Akuisisi",
-    start_date: `${new Date().getFullYear()}-01-01`,
-    end_date: `${new Date().getFullYear()}-12-31`,
+    start_date: null,
+    end_date: null,
     divisi: "komersial",
     kategori: "berjalan",
     mitra: null,
@@ -52,8 +52,8 @@ export default function PortofolioLainnya() {
       const defaultProject = {
         id: projectId,
         nama_proyek: activeTab === "streamlining" ? "Streamlining" : "Akuisisi",
-        start_date: `${new Date().getFullYear()}-01-01`,
-        end_date: `${new Date().getFullYear()}-12-31`,
+        start_date: null,
+        end_date: null,
         divisi: "komersial", // MUST be komersial or pertahanan due to DB check constraint
         kategori: "berjalan", // MUST be berjalan or kajian due to DB check constraint
         created_by: user.id,
@@ -235,8 +235,18 @@ export default function PortofolioLainnya() {
               Atur Periode
             </button>
             <button
-              onClick={() => setIsUpdateProgressOpen(true)}
-              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-500/20 hover:shadow-primary-500/40 flex items-center gap-2"
+              onClick={() => {
+                if (!currentProject.start_date || !currentProject.end_date) {
+                  alert("Silakan atur periode proyek (tanggal mulai dan selesai) terlebih dahulu melalui tombol 'Atur Periode'.", { severity: "warning" });
+                  return;
+                }
+                setIsUpdateProgressOpen(true);
+              }}
+              className={`px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-md flex items-center gap-2 ${
+                currentProject.start_date && currentProject.end_date
+                  ? "bg-primary-600 text-white hover:bg-primary-700 shadow-primary-500/20 hover:shadow-primary-500/40"
+                  : "bg-slate-200 text-slate-500 hover:bg-slate-300"
+              }`}
             >
               <Edit3 size={16} />
               Update Progres Bulanan
