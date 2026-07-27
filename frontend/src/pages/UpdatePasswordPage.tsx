@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useDialogStore } from "@/store/dialogStore";
-import logoDahana from "@/assets/Dahana.png";
+import logoDahana from "@/assets/Logo_Dahana.png";
 
 export default function UpdatePasswordPage() {
   const navigate = useNavigate();
@@ -78,8 +78,8 @@ export default function UpdatePasswordPage() {
           <div className="flex items-center justify-center">
             <img
               src={logoDahana}
-              alt="PT DAHANA ORBIT"
-              className="h-16 w-auto object-contain drop-shadow-sm transition-transform hover:scale-105 duration-300"
+              alt="PT Dahana BizPort"
+              className="h-24 w-auto object-contain drop-shadow-sm"
             />
           </div>
 

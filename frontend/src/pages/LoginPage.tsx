@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth, useSignIn } from "@/hooks/useAuth";
 import { Spinner } from "@/components/ui/Spinner";
 import { Eye, EyeOff } from "lucide-react";
-import logoDahana from "@/assets/Dahana.png";
+import logoDahana from "@/assets/Logo_Dahana.png";
 import { supabase } from "@/lib/supabase";
 import { useDialogStore } from "@/store/dialogStore";
 
@@ -55,8 +55,8 @@ export default function LoginPage() {
           <div className="flex items-center justify-center">
             <img
               src={logoDahana}
-              alt="PT DAHANA ORBIT"
-              className="h-16 md:h-20 w-auto object-contain drop-shadow-sm transition-transform hover:scale-105 duration-300"
+              alt="PT Dahana BizPort"
+              className="h-24 w-auto object-contain drop-shadow-sm"
             />
           </div>
 

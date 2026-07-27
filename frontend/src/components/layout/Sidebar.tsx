@@ -3,7 +3,7 @@ import { useAppStore } from "@/store/useAppStore";
 
 import { UserPanel } from "./UserPanel";
 import { navConfig } from "@/router/navConfig";
-import logoDahana from "@/assets/Dahana.png";
+import logoDahana from "@/assets/Logo_Dahana.png";
 
 export function Sidebar() {
   const { activeModule } = useAppStore();
@@ -15,7 +15,7 @@ export function Sidebar() {
       <div className="px-6 py-6 border-b border-white/40 bg-white/40 flex items-center justify-center">
         <img
           src={logoDahana}
-          alt="PT DAHANA ORBIT"
+          alt="PT Dahana BizPort"
           className="h-14 w-auto object-contain drop-shadow-sm"
         />
       </div>

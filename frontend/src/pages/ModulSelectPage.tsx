@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { TrendingUp, PieChart } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useAuth } from "@/hooks/useAuth";
-import logoDahana from "@/assets/Dahana.png";
+import logoDahana from "@/assets/Logo_Dahana.png";
 
 const modules = [
   {
@@ -47,7 +47,7 @@ export default function ModulSelectPage() {
         <div className="bg-white/70 backdrop-blur-xl border border-white/60 shadow-floating px-10 py-6 md:px-14 md:py-8 rounded-[2.5rem] flex items-center justify-center">
           <img
             src={logoDahana}
-            alt="DAHANA ORBIT"
+            alt="PT Dahana BizPort"
             className="h-20 md:h-28 w-auto object-contain drop-shadow-sm"
           />
         </div>
