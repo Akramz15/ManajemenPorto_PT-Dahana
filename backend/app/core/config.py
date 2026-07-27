@@ -7,7 +7,14 @@ class Settings(BaseSettings):
     supabase_url: str
     supabase_service_role_key: str
     supabase_jwt_secret: str
-    allowed_origins: list[str] = ["http://localhost:5173"]
+    # API Settings
+    api_v1_str: str = "/api/v1"
+    
+    # CORS
+    allowed_origins: list[str] = [
+        "http://localhost:5173",
+        "http://localhost:5174"
+    ]
 
 
 settings = Settings()
