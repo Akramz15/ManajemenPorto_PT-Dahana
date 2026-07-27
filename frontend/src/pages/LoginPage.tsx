@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth, useSignIn } from "@/hooks/useAuth";
 import { Spinner } from "@/components/ui/Spinner";
 import { Eye, EyeOff } from "lucide-react";
-import logoDahana from "@/assets/Logo_Dahana.png";
+import logoDahana from "@/assets/Dahana.png";
 import { supabase } from "@/lib/supabase";
 import { useDialogStore } from "@/store/dialogStore";
 

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useDialogStore } from "@/store/dialogStore";
-import logoDahana from "@/assets/Logo_Dahana.png";
+import logoDahana from "@/assets/Dahana.png";
 
 export default function UpdatePasswordPage() {
   const navigate = useNavigate();

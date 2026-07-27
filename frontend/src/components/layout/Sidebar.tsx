@@ -3,7 +3,7 @@ import { useAppStore } from "@/store/useAppStore";
 
 import { UserPanel } from "./UserPanel";
 import { navConfig } from "@/router/navConfig";
-import logoDahana from "@/assets/Logo_Dahana.png";
+import logoDahana from "@/assets/Dahana.png";
 
 export function Sidebar() {
   const { activeModule } = useAppStore();
