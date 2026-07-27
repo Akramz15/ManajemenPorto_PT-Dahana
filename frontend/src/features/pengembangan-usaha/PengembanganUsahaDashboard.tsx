@@ -122,11 +122,25 @@ export default function PengembanganUsahaDashboard() {
         }
       }
 
+      // Ambil data project yang terhambat (blocked/delay) secara real dari seluruh database
+      const { data: blockedProgressTasks } = await supabase
+        .from("progress_tasks")
+        .select("project_id")
+        .eq("status", "blocked");
+        
+      const { data: blockedKajianTasks } = await supabase
+        .from("kajian_tasks")
+        .select("project_id")
+        .eq("status", "blocked");
+
       const blockedProjectIds = new Set<string>();
-      combined.forEach((task) => {
-        if (task.project_id && task.status === "blocked") {
-          blockedProjectIds.add(task.project_id);
-        }
+      
+      blockedProgressTasks?.forEach((t) => {
+        if (t.project_id) blockedProjectIds.add(t.project_id);
+      });
+      
+      blockedKajianTasks?.forEach((t) => {
+        if (t.project_id) blockedProjectIds.add(t.project_id);
       });
 
       const totalProjects = projectsData ? projectsData.length : 0;
