@@ -5,10 +5,12 @@ import { SCurveProgressChart } from "@/components/charts";
 import { MonthlyProgressTracker, ProjectDocumentsTable } from "@/components/shared";
 import { Spinner } from "@/components/ui";
 import { useDialogStore } from "@/store/dialogStore";
+import { useAuth } from "@/hooks/useAuth";
 import type { Project } from "@/types/api.types";
 
 export default function PortofolioLainnya() {
   const { alert } = useDialogStore();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"streamlining" | "akuisisi">(
     "streamlining",
   );
@@ -32,7 +34,7 @@ export default function PortofolioLainnya() {
     kategori: "lainnya",
     mitra: null,
     nilai_kontrak: null,
-    created_by: "system",
+    created_by: user?.id || "00000000-0000-0000-0000-000000000000",
     created_at: new Date().toISOString(),
   };
 
@@ -54,7 +56,7 @@ export default function PortofolioLainnya() {
         end_date: `${new Date().getFullYear()}-12-31`,
         divisi: "lainnya",
         kategori: "lainnya",
-        created_by: "system",
+        created_by: user?.id || "00000000-0000-0000-0000-000000000000",
       };
       
       const { data: createdData } = await supabase
@@ -292,7 +294,7 @@ export default function PortofolioLainnya() {
                       kategori: "lainnya",
                       start_date: periodData.start_date,
                       end_date: periodData.end_date,
-                      created_by: "system"
+                      created_by: user?.id || "00000000-0000-0000-0000-000000000000"
                     });
                     if (error) throw error;
                     
