@@ -28,8 +28,8 @@ export default function PortofolioLainnya() {
   const currentProject: Project = projectData || {
     id: projectId,
     nama_proyek: activeTab === "streamlining" ? "Streamlining" : "Akuisisi",
-    start_date: null,
-    end_date: null,
+    start_date: undefined,
+    end_date: undefined,
     divisi: "komersial",
     kategori: "berjalan",
     mitra: null,
@@ -52,8 +52,8 @@ export default function PortofolioLainnya() {
       const defaultProject = {
         id: projectId,
         nama_proyek: activeTab === "streamlining" ? "Streamlining" : "Akuisisi",
-        start_date: null,
-        end_date: null,
+        start_date: undefined,
+        end_date: undefined,
         divisi: "komersial", // MUST be komersial or pertahanan due to DB check constraint
         kategori: "berjalan", // MUST be berjalan or kajian due to DB check constraint
         created_by: user.id,
@@ -237,7 +237,7 @@ export default function PortofolioLainnya() {
             <button
               onClick={() => {
                 if (!currentProject.start_date || !currentProject.end_date) {
-                  alert("Silakan atur periode proyek (tanggal mulai dan selesai) terlebih dahulu melalui tombol 'Atur Periode'.", { severity: "warning" });
+                  alert("Silakan atur periode proyek (tanggal mulai dan selesai) terlebih dahulu melalui tombol 'Atur Periode'.", { severity: "info" });
                   return;
                 }
                 setIsUpdateProgressOpen(true);
