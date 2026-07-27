@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { TrendingUp, PieChart } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useAuth } from "@/hooks/useAuth";
-import logoDahana from "@/assets/Logo_Dahana.png";
+import logoDahana from "@/assets/DAHANA ORBIT.png";
 
 const modules = [
   {
