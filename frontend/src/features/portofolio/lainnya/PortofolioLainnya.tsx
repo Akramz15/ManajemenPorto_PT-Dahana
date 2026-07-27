@@ -19,8 +19,9 @@ export default function PortofolioLainnya() {
   const [isSaving, setIsSaving] = useState(false);
   const [projectData, setProjectData] = useState<Project | null>(null);
 
-  const projectId = `porto-lainnya-${activeTab}`;
-  
+  const STREAMLINING_ID = "50000000-0000-4000-a000-000000000001";
+  const AKUISISI_ID = "50000000-0000-4000-a000-000000000002";
+  const projectId = activeTab === "streamlining" ? STREAMLINING_ID : AKUISISI_ID;
   // Default mock project if not found in DB
   const currentProject: Project = projectData || {
     id: projectId,
@@ -45,9 +46,30 @@ export default function PortofolioLainnya() {
     if (data) {
       setProjectData(data as Project);
     } else {
-      setProjectData(null);
+      // Auto-create project to satisfy foreign key constraints for documents/progress
+      const defaultProject = {
+        id: projectId,
+        nama_proyek: activeTab === "streamlining" ? "Streamlining" : "Akuisisi",
+        start_date: `${new Date().getFullYear()}-01-01`,
+        end_date: `${new Date().getFullYear()}-12-31`,
+        divisi: "lainnya",
+        kategori: "lainnya",
+        created_by: "system",
+      };
+      
+      const { data: createdData } = await supabase
+        .from("projects")
+        .upsert(defaultProject)
+        .select()
+        .single();
+        
+      if (createdData) {
+        setProjectData(createdData as Project);
+      } else {
+        setProjectData(null);
+      }
     }
-  }, [projectId]);
+  }, [projectId, activeTab]);
 
   useEffect(() => {
     fetchProject();
