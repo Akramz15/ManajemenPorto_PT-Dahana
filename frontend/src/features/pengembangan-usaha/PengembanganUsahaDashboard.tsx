@@ -143,14 +143,7 @@ export default function PengembanganUsahaDashboard() {
         if (t.project_id) blockedProjectIds.add(t.project_id);
       });
 
-      const totalProjects = projectsData ? projectsData.length : 0;
-      const delayCount = blockedProjectIds.size;
-      const amanCount = totalProjects - delayCount;
-      const percent =
-        totalProjects === 0 ? 0 : Math.round((amanCount / totalProjects) * 100);
 
-      setTotalDelay(delayCount);
-      setOnTrackPercent(percent);
 
       combined.sort(
         (a, b) =>
@@ -178,6 +171,42 @@ export default function PengembanganUsahaDashboard() {
       kajianTahapan?.forEach((row) => {
         if (row.tahapan) progressMap[row.project_id] = row.tahapan;
       });
+      
+      // Hitung deviasi S-Curve untuk proyek berjalan
+      projectsData?.forEach((p: any) => {
+        if (p.kategori === "berjalan") {
+          const start = p.start_date ? new Date(p.start_date) : new Date(new Date().getFullYear(), 0, 1);
+          const end = p.end_date ? new Date(p.end_date) : new Date(new Date().getFullYear(), 11, 31);
+          const totalMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()) + 1;
+          
+          if (totalMonths > 0) {
+            const today = new Date();
+            let monthsPassed = (today.getFullYear() - start.getFullYear()) * 12 + (today.getMonth() - start.getMonth()) + 1;
+            
+            // Limit months passed between 0 and totalMonths
+            if (monthsPassed < 0) monthsPassed = 0;
+            if (monthsPassed > totalMonths) monthsPassed = totalMonths;
+            
+            const expectedProgress = (100 / totalMonths) * monthsPassed;
+            const actualProgress = (progressMap[p.id] as number) || 0;
+            
+            // Jika progres aktual lebih rendah dari target (deviasi negatif), tandai sebagai delay
+            if (actualProgress < expectedProgress - 0.1) {
+              blockedProjectIds.add(p.id);
+            }
+          }
+        }
+      });
+
+      // Kalkulasi akhir metrik dashboard
+      const totalProjects = projectsData ? projectsData.length : 0;
+      const delayCount = blockedProjectIds.size;
+      const amanCount = totalProjects - delayCount;
+      const percent =
+        totalProjects === 0 ? 0 : Math.round((amanCount / totalProjects) * 100);
+
+      setTotalDelay(delayCount);
+      setOnTrackPercent(percent);
       
       setProjectProgressMap(progressMap);
     };
