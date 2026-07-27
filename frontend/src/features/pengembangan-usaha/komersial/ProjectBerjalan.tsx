@@ -51,6 +51,8 @@ export default function ProjectBerjalan() {
         .select(`*, user_profiles(display_name)`)
         .eq("divisi", "komersial")
         .eq("kategori", "berjalan")
+        .neq("id", "50000000-0000-4000-a000-000000000001")
+        .neq("id", "50000000-0000-4000-a000-000000000002")
         .order("created_at", { ascending: false });
 
       if (data && !error) {
@@ -62,6 +64,8 @@ export default function ProjectBerjalan() {
           .select("*")
           .eq("divisi", "komersial")
           .eq("kategori", "berjalan")
+          .neq("id", "50000000-0000-4000-a000-000000000001") // Exclude Streamlining
+          .neq("id", "50000000-0000-4000-a000-000000000002") // Exclude Akuisisi
           .order("created_at", { ascending: false });
         const projectsData = fallback.data || [];
         const userIds = [

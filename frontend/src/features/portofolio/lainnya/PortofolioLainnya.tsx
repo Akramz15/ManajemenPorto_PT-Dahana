@@ -30,8 +30,8 @@ export default function PortofolioLainnya() {
     nama_proyek: activeTab === "streamlining" ? "Streamlining" : "Akuisisi",
     start_date: `${new Date().getFullYear()}-01-01`,
     end_date: `${new Date().getFullYear()}-12-31`,
-    divisi: "lainnya",
-    kategori: "lainnya",
+    divisi: "komersial",
+    kategori: "berjalan",
     mitra: null,
     nilai_kontrak: null,
     created_by: user?.id || "00000000-0000-0000-0000-000000000000",
@@ -54,8 +54,8 @@ export default function PortofolioLainnya() {
         nama_proyek: activeTab === "streamlining" ? "Streamlining" : "Akuisisi",
         start_date: `${new Date().getFullYear()}-01-01`,
         end_date: `${new Date().getFullYear()}-12-31`,
-        divisi: "lainnya",
-        kategori: "lainnya",
+        divisi: "komersial", // MUST be komersial or pertahanan due to DB check constraint
+        kategori: "berjalan", // MUST be berjalan or kajian due to DB check constraint
         created_by: user.id,
       };
       
@@ -294,8 +294,8 @@ export default function PortofolioLainnya() {
                     const { error } = await supabase.from("projects").upsert({
                       id: projectId,
                       nama_proyek: activeTab === "streamlining" ? "Streamlining" : "Akuisisi",
-                      divisi: "lainnya",
-                      kategori: "lainnya",
+                      divisi: "komersial",
+                      kategori: "berjalan",
                       start_date: periodData.start_date,
                       end_date: periodData.end_date,
                       created_by: user?.id || "00000000-0000-0000-0000-000000000000"
