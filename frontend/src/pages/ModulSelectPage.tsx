@@ -48,7 +48,7 @@ export default function ModulSelectPage() {
           <img
             src={logoDahana}
             alt="PT Dahana BizPort"
-            className="h-32 md:h-48 w-auto object-contain drop-shadow-sm -my-6 md:-my-10"
+            className="h-16 md:h-20 w-auto object-contain drop-shadow-sm"
           />
         </div>
       </div>

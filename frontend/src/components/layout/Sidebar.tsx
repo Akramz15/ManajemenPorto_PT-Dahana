@@ -16,7 +16,7 @@ export function Sidebar() {
         <img
           src={logoDahana}
           alt="PT Dahana BizPort"
-          className="h-24 w-auto object-contain drop-shadow-sm -my-4"
+          className="h-10 w-auto object-contain drop-shadow-sm"
         />
       </div>
 

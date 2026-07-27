@@ -79,7 +79,7 @@ export default function UpdatePasswordPage() {
             <img
               src={logoDahana}
               alt="PT Dahana BizPort"
-              className="h-40 w-auto object-contain drop-shadow-sm -my-8"
+              className="h-16 w-auto object-contain drop-shadow-sm"
             />
           </div>
 
