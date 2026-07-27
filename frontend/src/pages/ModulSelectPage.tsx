@@ -47,7 +47,7 @@ export default function ModulSelectPage() {
         <div className="bg-white/70 backdrop-blur-xl border border-white/60 shadow-floating px-10 py-6 md:px-14 md:py-8 rounded-[2.5rem] flex items-center justify-center">
           <img
             src={logoDahana}
-            alt="PT Dahana BizPort"
+            alt="DAHANA ORBIT"
             className="h-20 md:h-28 w-auto object-contain drop-shadow-sm"
           />
         </div>

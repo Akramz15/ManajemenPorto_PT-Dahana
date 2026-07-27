@@ -15,7 +15,7 @@ export function Sidebar() {
       <div className="px-6 py-6 border-b border-white/40 bg-white/40 flex items-center justify-center">
         <img
           src={logoDahana}
-          alt="PT Dahana BizPort"
+          alt="PT DAHANA ORBIT"
           className="h-14 w-auto object-contain drop-shadow-sm"
         />
       </div>

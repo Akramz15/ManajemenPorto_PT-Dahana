@@ -78,8 +78,8 @@ export default function UpdatePasswordPage() {
           <div className="flex items-center justify-center">
             <img
               src={logoDahana}
-              alt="PT Dahana BizPort"
-              className="h-24 w-auto object-contain drop-shadow-sm"
+              alt="PT DAHANA ORBIT"
+              className="h-16 w-auto object-contain drop-shadow-sm transition-transform hover:scale-105 duration-300"
             />
           </div>
 
