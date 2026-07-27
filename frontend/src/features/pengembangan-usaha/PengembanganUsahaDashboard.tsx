@@ -304,7 +304,7 @@ export default function PengembanganUsahaDashboard() {
                     className="group flex items-center justify-between py-4 px-4 rounded-2xl hover:bg-slate-50/80 transition-colors cursor-pointer border border-transparent hover:border-slate-100/50"
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`w-2 h-10 rounded-full ${activePipelineTab === "kajian" ? "bg-amber-400" : "bg-primary-400"} opacity-50 group-hover:opacity-100 transition-opacity`}></div>
+                      <div className={`w-2 h-10 rounded-full bg-primary-400 opacity-50 group-hover:opacity-100 transition-opacity`}></div>
                       <div>
                         <h4 className="font-bold text-slate-800 text-base mb-0.5 group-hover:text-primary-600 transition-colors">
                           {p.nama_proyek}
@@ -313,11 +313,7 @@ export default function PengembanganUsahaDashboard() {
                           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
                             Divisi {p.divisi}
                           </span>
-                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${
-                            activePipelineTab === "kajian" 
-                              ? "text-amber-600 bg-amber-50" 
-                              : "text-primary-600 bg-primary-50"
-                          }`}>
+                          <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md text-primary-600 bg-primary-50">
                             {activePipelineTab === "kajian" 
                               ? (projectProgressMap[p.id] || "BELUM DIMULAI") 
                               : `PROGRESS: ${projectProgressMap[p.id] || 0}%`}
