@@ -92,6 +92,7 @@ export function MonthlyProgressTracker({
       setNewActivityName("");
       setNewActivityWeight("");
       await fetchActivities();
+      if (onUpdate) onUpdate();
       useDialogStore.getState().alert("Pekerjaan berhasil ditambahkan!", { severity: "success" });
     } catch (err: any) {
       console.error(err);
