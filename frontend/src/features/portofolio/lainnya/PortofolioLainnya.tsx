@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Briefcase, Building2, Edit3, Calendar, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { SCurveProgressChart } from "@/components/charts";
@@ -14,7 +14,7 @@ export default function PortofolioLainnya() {
   const [activeTab, setActiveTab] = useState<"streamlining" | "akuisisi">(
     "streamlining",
   );
-  const [sCurveData, setSCurveData] = useState<any[]>([]);
+
   const [isUpdateProgressOpen, setIsUpdateProgressOpen] = useState(false);
   const [isEditPeriodOpen, setIsEditPeriodOpen] = useState(false);
   const [periodData, setPeriodData] = useState({ start_date: "", end_date: "" });
@@ -81,14 +81,23 @@ export default function PortofolioLainnya() {
     fetchProject();
   }, [fetchProject]);
 
-  const fetchDynamicSCurve = useCallback(async () => {
-    const { data: progressData } = await supabase
+  const [progressData, setProgressData] = useState<any[]>([]);
+
+  const fetchProgressData = useCallback(async () => {
+    const { data } = await supabase
       .from("project_progress_activities")
       .select("*")
       .eq("project_id", projectId)
       .order("year", { ascending: true })
       .order("month", { ascending: true });
+    setProgressData(data || []);
+  }, [projectId]);
 
+  useEffect(() => {
+    fetchProgressData();
+  }, [fetchProgressData]);
+
+  const sCurveData = useMemo(() => {
     const start = currentProject.start_date
       ? new Date(currentProject.start_date)
       : new Date(new Date().getFullYear(), 0, 1);
@@ -101,26 +110,13 @@ export default function PortofolioLainnya() {
       (end.getMonth() - start.getMonth()) +
       1;
 
-    if (totalMonths <= 0) {
-      setSCurveData([]);
-      return;
-    }
+    if (totalMonths <= 0) return [];
 
     const step = 100 / totalMonths;
     const curve: any[] = [];
     const MONTHS = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "Mei",
-      "Jun",
-      "Jul",
-      "Ags",
-      "Sep",
-      "Okt",
-      "Nov",
-      "Des",
+      "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+      "Jul", "Ags", "Sep", "Okt", "Nov", "Des",
     ];
 
     let currentRealisasi = 0;
@@ -161,12 +157,8 @@ export default function PortofolioLainnya() {
       });
     }
 
-    setSCurveData(curve);
-  }, [projectId, currentProject.start_date, currentProject.end_date]);
-
-  useEffect(() => {
-    fetchDynamicSCurve();
-  }, [fetchDynamicSCurve]);
+    return curve;
+  }, [progressData, currentProject.start_date, currentProject.end_date]);
 
   return (
     <div className="px-6 pt-0 pb-6 max-w-[1600px] mx-auto flex flex-col gap-6 min-h-screen overflow-x-hidden">
@@ -269,7 +261,7 @@ export default function PortofolioLainnya() {
             <div className="relative z-10 w-full max-w-5xl max-h-[90vh] animate-in zoom-in-95 duration-200 flex flex-col">
               <MonthlyProgressTracker 
                   project={currentProject} 
-                  onUpdate={fetchDynamicSCurve} 
+                  onUpdate={fetchProgressData} 
                   onClose={() => setIsUpdateProgressOpen(false)}
               />
             </div>
