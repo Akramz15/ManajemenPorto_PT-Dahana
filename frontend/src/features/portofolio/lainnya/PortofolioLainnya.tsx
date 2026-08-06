@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { Building2, Calendar, X, FolderOpen, Search, Settings, Plus, Trash2 } from "lucide-react";
+import { Building2, Calendar, X, FolderOpen, Search, Settings, Plus, Trash2, Edit3, User, Clock } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -16,6 +16,7 @@ export default function PortofolioLainnya() {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedProjectId = searchParams.get("project") || "";
 
+  const [isEditPeriodOpen, setIsEditPeriodOpen] = useState(false);
   const [isUpdateProgressOpen, setIsUpdateProgressOpen] = useState(false);
   const [periodData, setPeriodData] = useState({ start_date: "", end_date: "" });
   const [isSaving, setIsSaving] = useState(false);
@@ -168,7 +169,7 @@ export default function PortofolioLainnya() {
       alert("Periode pelaksanaan berhasil diperbarui!", {
         severity: "success",
       });
-      setIsUpdateProgressOpen(false);
+      setIsEditPeriodOpen(false);
       fetchProject();
     } catch (err) {
       console.error("Failed to update period:", err);
@@ -392,7 +393,7 @@ export default function PortofolioLainnya() {
                   start_date: projectData.start_date || "",
                   end_date: projectData.end_date || "",
                 });
-                setIsUpdateProgressOpen(true);
+                setIsEditPeriodOpen(true);
               }}
               className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl font-bold text-sm transition-all shadow-sm"
             >
@@ -445,24 +446,109 @@ export default function PortofolioLainnya() {
         )}
 
         {/* Content Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <SCurveProgressChart data={sCurveData} />
-            <MonthlyProgressTracker project={projectData} />
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {/* Top Info Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <User size={12} /> Ditambahkan Oleh
+              </p>
+              <p className="text-sm font-bold text-slate-800 truncate">
+                {/* @ts-ignore */}
+                {projectData?.user_profiles?.display_name ||
+                  "Pengguna Tidak Diketahui"}
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <Clock size={12} /> Dibuat Pada
+              </p>
+              <p className="text-sm font-bold text-slate-800">
+                {projectData?.created_at
+                  ? new Date(projectData.created_at).toLocaleDateString(
+                      "id-ID",
+                      { day: "numeric", month: "long", year: "numeric" },
+                    )
+                  : "-"}
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                Tanggal Mulai
+              </p>
+              <p className="text-sm font-bold text-slate-800">
+                {projectData?.start_date
+                  ? new Date(projectData.start_date).toLocaleDateString(
+                      "id-ID",
+                      { day: "numeric", month: "long", year: "numeric" },
+                    )
+                  : "Tidak diatur"}
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                Tanggal Selesai
+              </p>
+              <p className="text-sm font-bold text-slate-800">
+                {projectData?.end_date
+                  ? new Date(projectData.end_date).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "Tidak diatur"}
+              </p>
+            </div>
           </div>
 
-          <ProjectDocumentsTable
-            projectId={selectedProjectId}
-          />
+          {/* S-Curve Chart (Full Width) */}
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 relative h-125 flex flex-col">
+            <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary-100 rounded-full -z-10 blur-3xl opacity-50"></div>
+            <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-indigo-100 rounded-full -z-10 blur-3xl opacity-50"></div>
+            
+            {/* Tombol Update Progres */}
+            <div className="absolute top-6 right-6 z-20">
+              <button
+                onClick={() => setIsUpdateProgressOpen(true)}
+                className="px-4 py-2 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-500/20 hover:shadow-primary-500/40 flex items-center gap-2"
+              >
+                <Edit3 size={16} />
+                Update Progres Bulanan
+              </button>
+            </div>
+
+            <SCurveProgressChart data={sCurveData} />
+          </div>
+
+          {/* Project Documents */}
+          <ProjectDocumentsTable projectId={selectedProjectId} />
+
+          {/* Modal Update Progress */}
+          {isUpdateProgressOpen && projectData && createPortal(
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+              <div 
+                className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" 
+                onClick={() => setIsUpdateProgressOpen(false)} 
+              />
+              <div className="relative z-10 w-full max-w-5xl max-h-[90vh] animate-in zoom-in-95 duration-200 flex flex-col">
+                <MonthlyProgressTracker 
+                    project={projectData} 
+                    onUpdate={fetchProject} 
+                    onClose={() => setIsUpdateProgressOpen(false)}
+                />
+              </div>
+            </div>,
+            document.body
+          )}
         </div>
       </div>
 
       {/* Modal Update Periode */}
-      {isUpdateProgressOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {isEditPeriodOpen && (
+        <div className="fixed inset-0 z-[50] flex items-center justify-center p-4">
           <div
             className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
-            onClick={() => setIsUpdateProgressOpen(false)}
+            onClick={() => setIsEditPeriodOpen(false)}
           ></div>
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
@@ -473,7 +559,7 @@ export default function PortofolioLainnya() {
                 Tentukan tanggal mulai dan selesai untuk kurva-S
               </p>
               <button
-                onClick={() => setIsUpdateProgressOpen(false)}
+                onClick={() => setIsEditPeriodOpen(false)}
                 className="p-2 text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-full transition-colors"
               >
                 <X size={18} />
@@ -515,7 +601,7 @@ export default function PortofolioLainnya() {
               <div className="flex gap-3 pt-4">
                 <button
                   type="button"
-                  onClick={() => setIsUpdateProgressOpen(false)}
+                  onClick={() => setIsEditPeriodOpen(false)}
                   className="flex-1 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
                 >
                   Batal
