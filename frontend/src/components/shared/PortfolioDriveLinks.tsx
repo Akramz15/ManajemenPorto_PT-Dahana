@@ -130,7 +130,7 @@ export function PortfolioDriveLinks({ context }: PortfolioDriveLinksProps) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="border border-slate-200 rounded-2xl p-4 text-left cursor-pointer transition-all duration-300 flex items-center gap-4 min-h-[72px] hover:border-primary-400 hover:bg-slate-50 hover:shadow-sm group"
+        className="border border-slate-200 rounded-2xl p-4 text-left cursor-pointer transition-all duration-300 flex items-center gap-4 min-h-18 hover:border-primary-400 hover:bg-slate-50 hover:shadow-sm group"
       >
         <div className="w-10 h-10 rounded-full flex items-center justify-center transition-colors shrink-0 bg-slate-100 text-slate-500 group-hover:bg-primary-100 group-hover:text-primary-600">
           <Link2 size={20} />
