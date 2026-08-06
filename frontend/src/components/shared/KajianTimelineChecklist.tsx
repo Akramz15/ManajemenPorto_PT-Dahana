@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { useDialogStore } from "@/store/dialogStore";
-import { Plus, CheckCircle2, Circle, Trash2, Calendar, FileText, ChevronDown } from "lucide-react";
+import { Plus, CheckCircle2, Circle, Trash2, Calendar, FileText } from "lucide-react";
 import { Spinner } from "@/components/ui/Spinner";
 import type { KajianTask, TaskStatus } from "@/types";
 
@@ -207,7 +207,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
         </div>
       )}
 
-      <div className="p-6 bg-slate-50/30 overflow-y-auto custom-scrollbar max-h-[600px]">
+      <div className="p-6 bg-slate-50/30 overflow-y-auto custom-scrollbar max-h-150">
         {loading ? (
           <div className="flex justify-center p-12">
             <Spinner className="text-primary-500 w-8 h-8" />
