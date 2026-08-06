@@ -62,6 +62,15 @@ export interface Document {
   uploaded_at: string;
 }
 
+export interface PortfolioLink {
+  id: string;
+  portfolio_type: string;
+  title: string;
+  url: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ProjectProgressActivity {
   id: string;
   project_id: string;

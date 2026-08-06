@@ -8,7 +8,7 @@ import {
   EkuitasChart,
 } from "@/components/charts";
 import { formatRupiah } from "@/lib/formatters";
-import { ExcelUploader } from "@/components/shared";
+import { ExcelUploader, PortfolioDriveLinks } from "@/components/shared";
 
 type RkapType = "ytd" | "bulanan";
 
@@ -60,12 +60,15 @@ export default function DIC() {
           </p>
         </div>
 
-        <div className="w-full md:w-64">
-          <ExcelUploader
-            context="dic"
-            compact={true}
-            onSuccess={() => refetch()}
-          />
+        <div className="w-full md:w-auto flex items-center justify-end gap-3 shrink-0">
+          <PortfolioDriveLinks context="dic" />
+          <div className="w-full md:w-64">
+            <ExcelUploader
+              context="dic"
+              compact={true}
+              onSuccess={() => refetch()}
+            />
+          </div>
         </div>
       </div>
 
