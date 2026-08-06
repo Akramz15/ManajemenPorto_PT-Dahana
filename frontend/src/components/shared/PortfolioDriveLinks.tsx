@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { supabase } from "@/lib/supabase";
 import { Link2, ExternalLink, Plus, Trash2, Edit2, X, Link } from "lucide-react";
 import { Spinner } from "@/components/ui/Spinner";
@@ -135,7 +136,7 @@ export function PortfolioDriveLinks({ context }: PortfolioDriveLinksProps) {
         Tautan Eksternal
       </button>
 
-      {isOpen && (
+      {isOpen && typeof document !== "undefined" && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Header */}
@@ -289,7 +290,7 @@ export function PortfolioDriveLinks({ context }: PortfolioDriveLinksProps) {
             </div>
           </div>
         </div>
-      )}
+      , document.body)}
     </>
   );
 }
