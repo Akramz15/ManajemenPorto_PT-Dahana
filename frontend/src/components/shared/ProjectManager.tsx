@@ -66,8 +66,8 @@ export function ProjectManager({
           nama_proyek: proj.nama_proyek,
           mitra: proj.mitra || "",
           nilai_kontrak: proj.nilai_kontrak ? proj.nilai_kontrak.toString() : "",
-          start_date: proj.start_date || "",
-          end_date: proj.end_date || "",
+          start_date: proj.start_date ? proj.start_date.split("T")[0] : "",
+          end_date: proj.end_date ? proj.end_date.split("T")[0] : "",
         });
         autoEditedRef.current = selectedProjectId;
       }
