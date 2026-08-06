@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { Building2, Calendar, X, FolderOpen, Search, User, Clock, Trash2, Settings, Edit3, Plus } from "lucide-react";
+import { Building2, Calendar, X, FolderOpen, Search, Settings, Plus, Trash2 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -11,8 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import type { Project } from "@/types/api.types";
 
 export default function PortofolioLainnya() {
-  const { alert } = useDialogStore();
-  const { user } = useAuth();
+  const { alert, confirm } = useDialogStore();
   
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedProjectId = searchParams.get("project") || "";
@@ -172,6 +171,7 @@ export default function PortofolioLainnya() {
       setIsUpdateProgressOpen(false);
       fetchProject();
     } catch (err) {
+      console.error("Failed to update period:", err);
       alert("Gagal memperbarui periode pelaksanaan", { severity: "danger" });
     }
     setIsSaving(false);
@@ -190,6 +190,7 @@ export default function PortofolioLainnya() {
       setSelectedProjectId("");
       fetchAllProjects();
     } catch (e) {
+      console.error("Failed to delete project:", e);
       alert("Gagal menghapus proyek.", { severity: "danger" });
     }
   };
