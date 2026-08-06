@@ -7,8 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useDialogStore } from "@/store/dialogStore";
 
 interface ProjectManagerProps {
-  divisi: "komersial" | "pertahanan";
-  kategori: "berjalan" | "kajian";
+  divisi: "komersial" | "pertahanan" | "lainnya";
+  kategori: "berjalan" | "kajian" | "lainnya";
   onProjectSelected?: (projectId: string) => void;
   selectedProjectId?: string;
   onRefresh?: () => void;
@@ -214,7 +214,7 @@ export function ProjectManager({
     <div className="flex flex-col w-full">
       <div className="flex items-center justify-between mb-8 pr-12">
         <h2 className="text-2xl font-black text-slate-800">
-          Kelola Proyek {kategori === "kajian" ? "Kajian" : "Berjalan"}
+          Kelola Proyek {kategori === "kajian" ? "Kajian" : kategori === "berjalan" ? "Berjalan" : "Lainnya"}
         </h2>
       </div>
 
