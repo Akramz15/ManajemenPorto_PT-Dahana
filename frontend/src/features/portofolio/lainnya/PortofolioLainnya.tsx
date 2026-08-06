@@ -447,12 +447,11 @@ export default function PortofolioLainnya() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <SCurveProgressChart data={sCurveData} />
-            <MonthlyProgressTracker projectId={selectedProjectId} />
+            <MonthlyProgressTracker project={projectData} />
           </div>
 
           <ProjectDocumentsTable
             projectId={selectedProjectId}
-            uploadedBy={user?.id || ""}
           />
         </div>
       </div>
