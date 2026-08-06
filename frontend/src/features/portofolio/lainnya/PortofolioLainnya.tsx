@@ -420,7 +420,7 @@ export default function PortofolioLainnya() {
               <p className="text-sm font-bold text-slate-800 truncate">
                 {/* @ts-ignore */}
                 {projectData?.user_profiles?.display_name ||
-                  "Pengguna Tidak Diketahui"}
+                  "Sistem"}
               </p>
             </div>
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-5 flex flex-col justify-center">
