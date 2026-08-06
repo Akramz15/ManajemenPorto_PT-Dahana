@@ -52,7 +52,7 @@ export default function PortofolioLainnya() {
     }
     const { data } = await supabase
       .from("projects")
-      .select("*")
+      .select("*, user_profiles(display_name)")
       .eq("id", selectedProjectId)
       .single();
     
