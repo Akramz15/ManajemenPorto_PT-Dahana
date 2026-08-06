@@ -14,19 +14,10 @@ export default function UpdatePasswordPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check if the user is currently logged in or recovering
-    const checkSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      
-      // If there's no session, they shouldn't be on this page directly
-      if (!session) {
-        navigate("/login", { replace: true });
-      }
-    };
-    checkSession();
-  }, [navigate]);
+    // The Supabase client automatically handles parsing the token from the URL hash.
+    // We don't enforce a strict session check here to avoid race conditions where 
+    // the user is redirected to /login before the token is fully processed.
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
