@@ -158,8 +158,8 @@ export function ProjectManager({
       nilai_kontrak: project.nilai_kontrak
         ? project.nilai_kontrak.toString()
         : "",
-      start_date: project.start_date || "",
-      end_date: project.end_date || "",
+      start_date: project.start_date ? project.start_date.split("T")[0] : "",
+      end_date: project.end_date ? project.end_date.split("T")[0] : "",
     });
   };
 
