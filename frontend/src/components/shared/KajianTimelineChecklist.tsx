@@ -24,16 +24,40 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
 
   const fetchTasks = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("kajian_tasks")
-      .select(`*, user_profiles(display_name)`)
-      .eq("project_id", projectId)
-      .order("target_date", { ascending: false, nullsFirst: false });
+    try {
+      const { data, error } = await supabase
+        .from("kajian_tasks")
+        .select("*")
+        .eq("project_id", projectId)
+        .order("target_date", { ascending: false, nullsFirst: false });
+        
+      if (error) throw error;
       
-    if (data && !error) {
-      setTasks(data as any[]);
+      const tasksData = data || [];
+      const userIds = [...new Set(tasksData.map(t => t.assigned_to).filter(Boolean))];
+      
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("user_profiles")
+          .select("id, display_name")
+          .in("id", userIds);
+          
+        if (profiles) {
+          const profileMap = Object.fromEntries(profiles.map(p => [p.id, p]));
+          tasksData.forEach(t => {
+            if (t.assigned_to && profileMap[t.assigned_to]) {
+              (t as any).user_profiles = profileMap[t.assigned_to];
+            }
+          });
+        }
+      }
+      
+      setTasks(tasksData as any[]);
+    } catch (error) {
+      console.error("Failed to fetch tasks:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [projectId]);
 
   useEffect(() => {
