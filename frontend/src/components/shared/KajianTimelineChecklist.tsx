@@ -160,7 +160,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 flex flex-col overflow-hidden relative">
       <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white shadow-lg shadow-primary-500/30">
+          <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white shadow-lg shadow-primary-500/30">
             <FileText size={22} strokeWidth={1.5} />
           </div>
           <div>
@@ -185,7 +185,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
 
       {isAdding && (
         <div className="p-6 bg-slate-50/50 border-b border-slate-100 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent pointer-events-none"></div>
+          <div className="absolute inset-0 bg-linear-to-r from-primary-500/5 to-transparent pointer-events-none"></div>
           <form onSubmit={handleAddTask} className="flex flex-col gap-5 max-w-3xl relative z-10">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               <div className="sm:col-span-2 space-y-1.5">
