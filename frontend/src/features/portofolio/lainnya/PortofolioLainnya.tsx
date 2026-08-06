@@ -140,12 +140,16 @@ export default function PortofolioLainnya() {
 
       const plotRealisasi = hasAnyActivity && (isPastOrCurrent || monthActivities.length > 0);
 
+      const MONTHS = [
+        "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"
+      ];
       curve.push({
-        name: `${m}/${y.toString().slice(2)}`,
+        periode: `${MONTHS[m - 1]} ${y}`,
         rencana: parseFloat(expectedAccum.toFixed(1)),
         realisasi: plotRealisasi
           ? parseFloat(currentRealisasi.toFixed(1))
           : null,
+        activities: monthActivities,
       });
     }
 
