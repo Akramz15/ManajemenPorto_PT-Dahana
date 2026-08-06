@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { Building2, X, FolderOpen, Search, Settings, Plus, Trash2, Edit3, User, Clock } from "lucide-react";
+import { Building2, FolderOpen, Search, Settings, Plus, Trash2, Edit3, User, Clock } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -7,7 +7,7 @@ import { SCurveProgressChart } from "@/components/charts";
 import { MonthlyProgressTracker, ProjectDocumentsTable, ProjectManager } from "@/components/shared";
 import { Spinner } from "@/components/ui";
 import { useDialogStore } from "@/store/dialogStore";
-import { useAuth } from "@/hooks/useAuth";
+
 import type { Project } from "@/types/api.types";
 
 export default function PortofolioLainnya() {
@@ -493,7 +493,7 @@ export default function PortofolioLainnya() {
 
           {/* Modal Update Progress */}
           {isUpdateProgressOpen && projectData && createPortal(
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+            <div className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6">
               <div 
                 className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" 
                 onClick={() => setIsUpdateProgressOpen(false)} 
