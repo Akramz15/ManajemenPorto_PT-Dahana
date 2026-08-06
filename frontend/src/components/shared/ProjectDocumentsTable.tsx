@@ -414,13 +414,15 @@ export function ProjectDocumentsTable({
               className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all"
             />
           </div>
-          <button
-            onClick={() => setIsAdding(!isAdding)}
-            className="cursor-pointer px-4 py-2.5 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-500/20 hover:shadow-primary-500/40 flex items-center gap-2 whitespace-nowrap shrink-0"
-          >
-            <Plus size={16} />
-            Tambah Dokumen
-          </button>
+          {!isAdding && (
+            <button
+              onClick={() => setIsAdding(true)}
+              className="cursor-pointer px-4 py-2.5 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-500/20 hover:shadow-primary-500/40 flex items-center gap-2 whitespace-nowrap shrink-0"
+            >
+              <Plus size={16} />
+              Tambah Dokumen
+            </button>
+          )}
         </div>
       </div>
 

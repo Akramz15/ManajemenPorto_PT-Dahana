@@ -186,7 +186,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
       {isAdding && (
         <div className="p-6 bg-slate-50/50 border-b border-slate-100 relative overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-r from-primary-500/5 to-transparent pointer-events-none"></div>
-          <form onSubmit={handleAddTask} className="flex flex-col gap-5 max-w-3xl relative z-10">
+          <form onSubmit={handleAddTask} className="flex flex-col gap-5 w-full relative z-10">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               <div className="sm:col-span-2 space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Nama Kegiatan / Tugas</label>
@@ -212,12 +212,12 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
             </div>
             <div className="space-y-1.5">
               <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Catatan Tambahan (Opsional)</label>
-              <input 
-                type="text" 
+              <textarea 
+                rows={3}
                 placeholder="Tambahkan detail informasi atau tautan dokumen..."
                 value={newTaskNotes}
                 onChange={(e) => setNewTaskNotes(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 shadow-sm transition-all"
+                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 shadow-sm transition-all resize-y min-h-[80px]"
               />
             </div>
             <div className="flex justify-end pt-2 gap-3">
