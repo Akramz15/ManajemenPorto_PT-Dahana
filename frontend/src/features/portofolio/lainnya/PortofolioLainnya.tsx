@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { Building2, Calendar, X, FolderOpen, Search, Settings, Plus, Trash2, Edit3, User, Clock } from "lucide-react";
+import { Building2, X, FolderOpen, Search, Settings, Plus, Trash2, Edit3, User, Clock } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -16,10 +16,7 @@ export default function PortofolioLainnya() {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedProjectId = searchParams.get("project") || "";
 
-  const [isEditPeriodOpen, setIsEditPeriodOpen] = useState(false);
   const [isUpdateProgressOpen, setIsUpdateProgressOpen] = useState(false);
-  const [periodData, setPeriodData] = useState({ start_date: "", end_date: "" });
-  const [isSaving, setIsSaving] = useState(false);
   const [projectData, setProjectData] = useState<Project | null>(null);
 
   // States for list view
@@ -152,31 +149,7 @@ export default function PortofolioLainnya() {
     return curve;
   }, [projectData, progressData]);
 
-  const handleUpdatePeriod = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedProjectId) return;
-    setIsSaving(true);
-    try {
-      const { error } = await supabase
-        .from("projects")
-        .update({
-          start_date: periodData.start_date,
-          end_date: periodData.end_date,
-        })
-        .eq("id", selectedProjectId);
 
-      if (error) throw error;
-      alert("Periode pelaksanaan berhasil diperbarui!", {
-        severity: "success",
-      });
-      setIsEditPeriodOpen(false);
-      fetchProject();
-    } catch (err) {
-      console.error("Failed to update period:", err);
-      alert("Gagal memperbarui periode pelaksanaan", { severity: "danger" });
-    }
-    setIsSaving(false);
-  };
 
   const handleDeleteProject = async (projectId: string) => {
     if (
@@ -387,19 +360,7 @@ export default function PortofolioLainnya() {
           </div>
           
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            <button
-              onClick={() => {
-                setPeriodData({
-                  start_date: projectData.start_date || "",
-                  end_date: projectData.end_date || "",
-                });
-                setIsEditPeriodOpen(true);
-              }}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl font-bold text-sm transition-all shadow-sm"
-            >
-              <Calendar size={18} className="text-slate-400" />
-              <span>Update Periode</span>
-            </button>
+
 
             <button
               onClick={() => setShowManager(true)}
@@ -542,83 +503,6 @@ export default function PortofolioLainnya() {
           )}
         </div>
       </div>
-
-      {/* Modal Update Periode */}
-      {isEditPeriodOpen && (
-        <div className="fixed inset-0 z-[50] flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
-            onClick={() => setIsEditPeriodOpen(false)}
-          ></div>
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-800 mb-1">
-                Update Periode Pelaksanaan
-              </h3>
-              <p className="text-sm text-slate-500 mb-6">
-                Tentukan tanggal mulai dan selesai untuk kurva-S
-              </p>
-              <button
-                onClick={() => setIsEditPeriodOpen(false)}
-                className="p-2 text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-full transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <form onSubmit={handleUpdatePeriod} className="p-6 space-y-5">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                    Tanggal Mulai
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={periodData.start_date}
-                    onChange={(e) =>
-                      setPeriodData({ ...periodData, start_date: e.target.value })
-                    }
-                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                    Tanggal Selesai
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={periodData.end_date}
-                    min={periodData.start_date}
-                    onChange={(e) =>
-                      setPeriodData({ ...periodData, end_date: e.target.value })
-                    }
-                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsEditPeriodOpen(false)}
-                  className="flex-1 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="flex-1 py-2.5 rounded-xl font-bold text-sm text-white bg-primary-600 hover:bg-primary-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                  {isSaving ? <Spinner className="w-4 h-4" /> : null}
-                  Simpan Perubahan
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
