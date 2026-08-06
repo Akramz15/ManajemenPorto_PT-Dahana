@@ -130,10 +130,19 @@ export function PortfolioDriveLinks({ context }: PortfolioDriveLinksProps) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-primary-600 hover:border-primary-200 rounded-xl font-bold text-sm transition-all shadow-sm group"
+        className="border border-slate-200 rounded-2xl p-4 text-left cursor-pointer transition-all duration-300 flex items-center gap-4 min-h-[72px] hover:border-primary-400 hover:bg-slate-50 hover:shadow-sm group"
       >
-        <Link2 size={18} className="text-slate-400 group-hover:text-primary-500 transition-colors" />
-        Tautan Eksternal
+        <div className="w-10 h-10 rounded-full flex items-center justify-center transition-colors shrink-0 bg-slate-100 text-slate-500 group-hover:bg-primary-100 group-hover:text-primary-600">
+          <Link2 size={20} />
+        </div>
+        <div className="flex-1 pr-2">
+          <p className="text-sm font-bold text-slate-700 leading-tight group-hover:text-primary-700 transition-colors">
+            Tautan Eksternal
+          </p>
+          <p className="text-xs text-slate-400 font-medium mt-0.5 whitespace-nowrap">
+            Kelola URL / Drive
+          </p>
+        </div>
       </button>
 
       {isOpen && typeof document !== "undefined" && createPortal(
