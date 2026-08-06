@@ -47,6 +47,7 @@ export interface KajianTask {
   assigned_to: string;
   status: TaskStatus;
   tahapan: string | null;
+  target_date?: string | null;
   notes: string | null;
   updated_at: string;
 }

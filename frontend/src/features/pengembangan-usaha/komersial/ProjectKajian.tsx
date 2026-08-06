@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useSearchParams } from "react-router-dom";
-import { ProjectManager, ProjectDocumentsTable } from "@/components/shared";
+import { ProjectManager, ProjectDocumentsTable, KajianTimelineChecklist } from "@/components/shared";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import {
@@ -304,6 +304,7 @@ export default function ProjectKajian() {
               </div>
             </div>
 
+            <KajianTimelineChecklist projectId={selectedProject} />
             <ProjectDocumentsTable projectId={selectedProject} />
           </div>
         </div>

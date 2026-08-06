@@ -7,3 +7,4 @@ export * from "./UploadToast";
 export * from "./ProjectManager";
 export * from "./ProjectDocumentsTable";
 export * from "./MonthlyProgressTracker";
+export * from "./KajianTimelineChecklist";
