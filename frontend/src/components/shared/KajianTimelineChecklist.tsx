@@ -217,7 +217,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
                 placeholder="Tambahkan detail informasi atau tautan dokumen..."
                 value={newTaskNotes}
                 onChange={(e) => setNewTaskNotes(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 shadow-sm transition-all resize-y min-h-[80px]"
+                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 shadow-sm transition-all resize-y min-h-20"
               />
             </div>
             <div className="flex justify-end pt-2 gap-3">
