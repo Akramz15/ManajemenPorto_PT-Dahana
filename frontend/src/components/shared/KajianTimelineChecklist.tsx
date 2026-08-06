@@ -158,73 +158,83 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200/60 flex flex-col overflow-hidden relative">
-      <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
-        <div>
-          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-            <FileText className="text-primary-500" size={20} />
-            Jurnal & Rencana Pengerjaan
-          </h3>
-          <p className="text-xs text-slate-500 mt-1">
-            Catat apa saja yang sudah dikerjakan (hari ini/lampau) atau buat checklist rencana (masa depan).
-          </p>
+      <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white shadow-lg shadow-primary-500/30">
+            <FileText size={22} strokeWidth={1.5} />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 tracking-tight">
+              Jurnal & Rencana Kerja
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5 font-medium">
+              Kelola daftar checklist rencana dan rekam jejak pekerjaan.
+            </p>
+          </div>
         </div>
         
-        <button 
-          onClick={() => setIsAdding(!isAdding)}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm ${
-            isAdding 
-            ? "bg-slate-200 text-slate-700 hover:bg-slate-300" 
-            : "bg-primary-600 text-white hover:bg-primary-700 shadow-primary-500/30 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary-500/40"
-          }`}
-        >
-          {isAdding ? "Batal" : <><Plus size={18} /> Tambah Log</>}
-        </button>
+        {!isAdding && (
+          <button 
+            onClick={() => setIsAdding(true)}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/30 hover:-translate-y-0.5"
+          >
+            <Plus size={18} /> Tambah Log
+          </button>
+        )}
       </div>
 
       {isAdding && (
-        <div className="p-6 bg-primary-50/50 border-b border-primary-100">
-          <form onSubmit={handleAddTask} className="flex flex-col gap-4 max-w-2xl">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Nama Kegiatan / Tugas</label>
+        <div className="p-6 bg-slate-50/50 border-b border-slate-100 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent pointer-events-none"></div>
+          <form onSubmit={handleAddTask} className="flex flex-col gap-5 max-w-3xl relative z-10">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              <div className="sm:col-span-2 space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Nama Kegiatan / Tugas</label>
                 <input 
                   type="text" 
                   required
                   placeholder="Contoh: Menyusun draf kelayakan..."
                   value={newTaskName}
                   onChange={(e) => setNewTaskName(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 shadow-sm"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 shadow-sm transition-all"
                 />
               </div>
-              <div className="w-full sm:w-48 shrink-0">
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Tanggal</label>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Tanggal Target</label>
                 <input 
                   type="date" 
                   required
                   value={newTaskDate}
                   onChange={(e) => setNewTaskDate(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 shadow-sm"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 shadow-sm transition-all"
                 />
               </div>
             </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Catatan Tambahan (Opsional)</label>
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Catatan Tambahan (Opsional)</label>
               <input 
                 type="text" 
-                placeholder="Detail informasi..."
+                placeholder="Tambahkan detail informasi atau tautan dokumen..."
                 value={newTaskNotes}
                 onChange={(e) => setNewTaskNotes(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 shadow-sm"
+                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 shadow-sm transition-all"
               />
             </div>
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setIsAdding(false)}
+                className="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-200 hover:text-slate-800 transition-colors"
+              >
+                Batal
+              </button>
               <button 
                 type="submit"
                 disabled={isSaving || !newTaskName || !newTaskDate}
-                className="bg-primary-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-primary-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="bg-primary-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:-translate-y-0.5"
               >
                 {isSaving && <Spinner className="w-4 h-4" />}
-                Simpan Log
+                Simpan Ke Jurnal
               </button>
             </div>
           </form>
@@ -237,11 +247,20 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
             <Spinner className="text-primary-500 w-8 h-8" />
           </div>
         ) : groupedTasks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-12 text-center">
-            <div className="w-16 h-16 bg-white border border-slate-100 shadow-sm rounded-full flex items-center justify-center mb-4">
-              <Calendar className="text-slate-300 w-8 h-8" />
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <div className="w-20 h-20 bg-slate-50 border border-slate-100 shadow-sm rounded-2xl flex items-center justify-center mb-5 rotate-3 hover:rotate-0 transition-transform duration-300">
+              <FileText className="text-slate-300 w-10 h-10 -rotate-3 hover:rotate-0 transition-transform duration-300" strokeWidth={1.5} />
             </div>
-            <p className="text-slate-500 font-medium">Belum ada jurnal atau rencana kegiatan.</p>
+            <h4 className="text-base font-bold text-slate-700 mb-1">Belum Ada Catatan</h4>
+            <p className="text-sm text-slate-500 max-w-xs mb-6 font-medium">Mulai catat log pekerjaan harian Anda atau buat rencana kegiatan untuk proyek ini.</p>
+            {!isAdding && (
+              <button
+                onClick={() => setIsAdding(true)}
+                className="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-primary-600 hover:border-primary-300 hover:bg-primary-50 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2"
+              >
+                <Plus size={16} /> Buat Jurnal Pertama
+              </button>
+            )}
           </div>
         ) : (
           <div className="space-y-8">
