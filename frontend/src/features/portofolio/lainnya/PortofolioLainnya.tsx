@@ -34,10 +34,8 @@ export default function PortofolioLainnya() {
   }, []);
 
   useEffect(() => {
-    if (!selectedProjectId) {
-      fetchAllProjects();
-    }
-  }, [selectedProjectId, fetchAllProjects, showManager]);
+    fetchAllProjects();
+  }, [fetchAllProjects, showManager]);
 
   const setSelectedProjectId = (id: string) => {
     if (id) {
@@ -86,6 +84,11 @@ export default function PortofolioLainnya() {
   useEffect(() => {
     fetchProgressData();
   }, [fetchProgressData]);
+
+  const fetchDynamicSCurve = useCallback(async () => {
+    await fetchProject();
+    await fetchProgressData();
+  }, [fetchProject, fetchProgressData]);
 
   const sCurveData = useMemo(() => {
     if (!projectData) return [];
@@ -170,7 +173,7 @@ export default function PortofolioLainnya() {
   };
 
   const filteredProjects = allProjects.filter((p) =>
-    p.nama_proyek.toLowerCase().includes(searchQuery.toLowerCase()),
+    p.nama_proyek?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   if (!selectedProjectId) {
@@ -494,7 +497,7 @@ export default function PortofolioLainnya() {
               <div className="relative z-10 w-full max-w-5xl max-h-[90vh] animate-in zoom-in-95 duration-200 flex flex-col">
                 <MonthlyProgressTracker 
                     project={projectData} 
-                    onUpdate={fetchProject} 
+                    onUpdate={fetchDynamicSCurve} 
                     onClose={() => setIsUpdateProgressOpen(false)}
                 />
               </div>
