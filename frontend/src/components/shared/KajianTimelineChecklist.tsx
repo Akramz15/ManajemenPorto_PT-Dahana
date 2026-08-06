@@ -176,7 +176,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
         {!isAdding && (
           <button 
             onClick={() => setIsAdding(true)}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/30 hover:-translate-y-0.5"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary-600 text-white font-bold text-sm hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/20 hover:shadow-primary-600/30 hover:-translate-y-0.5"
           >
             <Plus size={18} /> Tambah Log
           </button>
