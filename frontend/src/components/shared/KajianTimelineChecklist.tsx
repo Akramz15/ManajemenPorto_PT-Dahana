@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { useDialogStore } from "@/store/dialogStore";
-import { Plus, CheckCircle2, Circle, Trash2, FileText } from "lucide-react";
+import { Plus, CheckCircle2, Circle, Trash2, FileText, Edit3 } from "lucide-react";
 import { Spinner } from "@/components/ui/Spinner";
 import type { KajianTask, TaskStatus } from "@/types";
 
