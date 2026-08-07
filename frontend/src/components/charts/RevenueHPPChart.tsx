@@ -130,11 +130,11 @@ export function RevenueHPPChart({ data }: { data: DataPoint[] }) {
                 paddingTop: "20px",
                 fontWeight: 600,
               }}
-              iconType="circle"
+              iconType="plainline"
             />
             <Area
               type="monotone"
-              name="penjualan"
+              name="Realisasi Penjualan"
               dataKey="penjualan"
               stroke="#3B82F6"
               strokeWidth={3.5}
@@ -147,7 +147,7 @@ export function RevenueHPPChart({ data }: { data: DataPoint[] }) {
             />
             <Area
               type="monotone"
-              name="hpp"
+              name="Realisasi HPP"
               dataKey="hpp"
               stroke="#F43F5E"
               strokeWidth={3.5}
