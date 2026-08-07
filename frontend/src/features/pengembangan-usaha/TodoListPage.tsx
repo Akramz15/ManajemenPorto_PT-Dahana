@@ -39,7 +39,8 @@ export default function TodoListPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [newTask, setNewTask] = useState("");
-  const [newTaskTime, setNewTaskTime] = useState("");
+  const [taskHour, setTaskHour] = useState("");
+  const [taskMinute, setTaskMinute] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Calendar States
@@ -99,18 +100,23 @@ export default function TodoListPage() {
     const dateStr = format(selectedDate, "yyyy-MM-dd");
 
     try {
+      const finalTime = taskHour && taskMinute 
+        ? `${taskHour.padStart(2, "0")}:${taskMinute.padStart(2, "0")}` 
+        : null;
+
       const { error } = await supabase.from("user_todos").insert([
         {
           user_id: user.id,
           task: newTask.trim(),
           target_date: dateStr,
-          target_time: newTaskTime || null,
+          target_time: finalTime,
         },
       ]);
 
       if (error) throw error;
       setNewTask("");
-      setNewTaskTime("");
+      setTaskHour("");
+      setTaskMinute("");
       await fetchTodos();
     } catch (err) {
       console.error(err);
@@ -270,28 +276,39 @@ export default function TodoListPage() {
                 disabled={isSubmitting}
               />
             </div>
-            <div className="relative shrink-0 w-28">
-              <select
-                className="w-full h-full bg-slate-50 border border-slate-200/60 rounded-2xl px-2 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-primary-500/20 transition-all outline-none appearance-none cursor-pointer"
-                value={newTaskTime}
-                onChange={(e) => setNewTaskTime(e.target.value)}
+            <div className="relative shrink-0 flex items-center gap-1 bg-slate-50 border border-slate-200/60 rounded-2xl px-2 h-12 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-300 transition-all">
+              <Clock size={16} className="text-slate-400 ml-1 shrink-0" />
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={2}
+                placeholder="09"
+                className="w-8 h-full bg-transparent text-center text-sm font-bold text-slate-700 placeholder:text-slate-400 focus:outline-none placeholder:font-medium"
+                value={taskHour}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '');
+                  if (val === "" || (parseInt(val) >= 0 && parseInt(val) <= 23)) {
+                    setTaskHour(val);
+                  }
+                }}
                 disabled={isSubmitting}
-                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundPosition: `right 10px center`, backgroundRepeat: `no-repeat`, backgroundSize: `16px` }}
-              >
-                <option value="">Waktu</option>
-                {Array.from({ length: 48 }).map((_, i) => {
-                  const hour = Math.floor(i / 2)
-                    .toString()
-                    .padStart(2, "0");
-                  const minute = i % 2 === 0 ? "00" : "30";
-                  const time = `${hour}:${minute}`;
-                  return (
-                    <option key={time} value={time}>
-                      {time}
-                    </option>
-                  );
-                })}
-              </select>
+              />
+              <span className="text-slate-400 font-bold mb-0.5">:</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={2}
+                placeholder="30"
+                className="w-8 h-full bg-transparent text-center text-sm font-bold text-slate-700 placeholder:text-slate-400 focus:outline-none placeholder:font-medium"
+                value={taskMinute}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '');
+                  if (val === "" || (parseInt(val) >= 0 && parseInt(val) <= 59)) {
+                    setTaskMinute(val);
+                  }
+                }}
+                disabled={isSubmitting}
+              />
             </div>
             <button
               type="submit"
