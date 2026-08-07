@@ -17,6 +17,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
   
   // Add task state
   const [isAdding, setIsAdding] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [newTaskName, setNewTaskName] = useState("");
   const [newTaskDate, setNewTaskDate] = useState("");
   const [newTaskNotes, setNewTaskNotes] = useState("");
@@ -70,26 +71,39 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
     
     setIsSaving(true);
     try {
-      const { error } = await supabase.from("kajian_tasks").insert([
-        {
-          project_id: projectId,
-          nama_kajian: newTaskName,
-          target_date: newTaskDate,
-          notes: newTaskNotes,
-          assigned_to: session.user.id,
-          divisi: "komersial", // Defaulting to komersial based on current context
-          status: "not_started"
-        }
-      ]);
-      
-      if (error) throw error;
+      if (editingTaskId) {
+        const { error } = await supabase
+          .from("kajian_tasks")
+          .update({
+            nama_kajian: newTaskName,
+            target_date: newTaskDate,
+            notes: newTaskNotes,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", editingTaskId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("kajian_tasks").insert([
+          {
+            project_id: projectId,
+            nama_kajian: newTaskName,
+            target_date: newTaskDate,
+            notes: newTaskNotes,
+            assigned_to: session.user.id,
+            divisi: "komersial", // Defaulting to komersial based on current context
+            status: "not_started"
+          }
+        ]);
+        if (error) throw error;
+      }
       
       setNewTaskName("");
       setNewTaskDate("");
       setNewTaskNotes("");
+      setEditingTaskId(null);
       setIsAdding(false);
       fetchTasks();
-      useDialogStore.getState().alert("Berhasil menambahkan catatan kerja.", { severity: "success" });
+      useDialogStore.getState().alert(editingTaskId ? "Berhasil memperbarui catatan kerja." : "Berhasil menambahkan catatan kerja.", { severity: "success" });
     } catch (err) {
       console.error(err);
       useDialogStore.getState().alert("Gagal menambahkan catatan kerja.", { severity: "danger" });
@@ -131,6 +145,15 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
       console.error(err);
       useDialogStore.getState().alert("Gagal menghapus catatan.", { severity: "danger" });
     }
+  };
+
+  const handleEditTask = (task: KajianTask) => {
+    setEditingTaskId(task.id);
+    setNewTaskName(task.nama_kajian);
+    setNewTaskDate(task.target_date || "");
+    setNewTaskNotes(task.notes || "");
+    setIsAdding(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Group tasks by date
@@ -175,7 +198,13 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
         
         {!isAdding && (
           <button 
-            onClick={() => setIsAdding(true)}
+            onClick={() => {
+              setEditingTaskId(null);
+              setNewTaskName("");
+              setNewTaskDate("");
+              setNewTaskNotes("");
+              setIsAdding(true);
+            }}
             className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary-600 text-white font-bold text-sm hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/20 hover:shadow-primary-600/30 hover:-translate-y-0.5"
           >
             <Plus size={18} /> Tambah Log
@@ -223,7 +252,10 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
             <div className="flex justify-end pt-2 gap-3">
               <button
                 type="button"
-                onClick={() => setIsAdding(false)}
+                onClick={() => {
+                  setIsAdding(false);
+                  setEditingTaskId(null);
+                }}
                 className="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-200 hover:text-slate-800 transition-colors"
               >
                 Batal
@@ -234,7 +266,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
                 className="bg-primary-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:-translate-y-0.5"
               >
                 {isSaving && <Spinner className="w-4 h-4" />}
-                Simpan Ke Jurnal
+                {editingTaskId ? "Simpan Perubahan" : "Simpan Ke Jurnal"}
               </button>
             </div>
           </form>
@@ -328,13 +360,22 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
                           </div>
                         </div>
 
-                        <button 
-                          onClick={() => handleDeleteTask(task.id)}
-                          className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                          title="Hapus"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-all">
+                          <button 
+                            onClick={() => handleEditTask(task)}
+                            className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all"
+                            title="Edit"
+                          >
+                            <Edit3 size={16} />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteTask(task.id)}
+                            className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                            title="Hapus"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
