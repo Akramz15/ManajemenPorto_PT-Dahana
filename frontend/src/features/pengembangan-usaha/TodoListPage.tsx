@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -42,6 +42,7 @@ export default function TodoListPage() {
   const [taskHour, setTaskHour] = useState("");
   const [taskMinute, setTaskMinute] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const minuteInputRef = useRef<HTMLInputElement>(null);
 
   // Calendar States
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -289,12 +290,16 @@ export default function TodoListPage() {
                   const val = e.target.value.replace(/\D/g, '');
                   if (val === "" || (parseInt(val) >= 0 && parseInt(val) <= 23)) {
                     setTaskHour(val);
+                    if (val.length === 2) {
+                      minuteInputRef.current?.focus();
+                    }
                   }
                 }}
                 disabled={isSubmitting}
               />
               <span className="text-slate-400 font-bold mb-0.5">:</span>
               <input
+                ref={minuteInputRef}
                 type="text"
                 inputMode="numeric"
                 maxLength={2}
