@@ -290,7 +290,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
                 onClick={() => setIsAdding(true)}
                 className="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-primary-600 hover:border-primary-300 hover:bg-primary-50 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2"
               >
-                <Plus size={16} /> Buat Jurnal Pertama
+                <Plus size={16} /> Buat Update Pertama
               </button>
             )}
           </div>
