@@ -30,6 +30,7 @@ interface Todo {
   created_at: string;
   completed_at: string | null;
   target_date: string;
+  target_time?: string | null;
 }
 
 export default function TodoListPage() {
@@ -38,6 +39,7 @@ export default function TodoListPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [newTask, setNewTask] = useState("");
+  const [newTaskTime, setNewTaskTime] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Calendar States
@@ -102,11 +104,13 @@ export default function TodoListPage() {
           user_id: user.id,
           task: newTask.trim(),
           target_date: dateStr,
+          target_time: newTaskTime || null,
         },
       ]);
 
       if (error) throw error;
       setNewTask("");
+      setNewTaskTime("");
       await fetchTodos();
     } catch (err) {
       console.error(err);
@@ -255,23 +259,34 @@ export default function TodoListPage() {
             </span>
           </div>
 
-          <form onSubmit={handleAddTask} className="relative mb-5 shrink-0">
+          <form onSubmit={handleAddTask} className="flex gap-2 mb-5 shrink-0 relative">
+            <div className="relative flex-1">
               <input
                 type="text"
                 placeholder="Tambahkan tugas baru..."
-                className="w-full bg-slate-50 border-none rounded-2xl py-3.5 pl-5 pr-14 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                className="w-full bg-slate-50 border border-slate-200/60 rounded-2xl py-3.5 pl-5 pr-4 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-primary-500/20 transition-all"
                 value={newTask}
                 onChange={(e) => setNewTask(e.target.value)}
                 disabled={isSubmitting}
               />
-              <button
-                type="submit"
-                disabled={isSubmitting || !newTask.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-primary-600 hover:bg-primary-700 text-white rounded-xl flex items-center justify-center transition-colors disabled:opacity-50"
-              >
-                <Plus size={18} />
-              </button>
-            </form>
+            </div>
+            <div className="relative shrink-0 w-28">
+              <input
+                type="time"
+                className="w-full h-full bg-slate-50 border border-slate-200/60 rounded-2xl px-3 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                value={newTaskTime}
+                onChange={(e) => setNewTaskTime(e.target.value)}
+                disabled={isSubmitting}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isSubmitting || !newTask.trim()}
+              className="shrink-0 w-12 h-[50px] bg-primary-600 hover:bg-primary-700 text-white rounded-2xl flex items-center justify-center transition-colors disabled:opacity-50"
+            >
+              <Plus size={20} />
+            </button>
+          </form>
 
             <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-2">
               {loading ? (
@@ -302,10 +317,16 @@ export default function TodoListPage() {
                     >
                       <Check size={14} className="text-transparent" />
                     </button>
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <p className="text-sm font-semibold text-slate-700 leading-snug wrap-break-word">
                         {todo.task}
                       </p>
+                      {todo.target_time && (
+                        <p className="text-xs text-primary-600 font-bold mt-1 flex items-center gap-1.5 opacity-90">
+                          <Clock size={12} />
+                          {todo.target_time}
+                        </p>
+                      )}
                     </div>
                     <button
                       onClick={() => handleDelete(todo.id)}
