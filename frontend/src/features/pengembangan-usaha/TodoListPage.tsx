@@ -273,6 +273,7 @@ export default function TodoListPage() {
             <div className="relative shrink-0 w-28">
               <input
                 type="time"
+                lang="en-GB"
                 className="w-full h-full bg-slate-50 border border-slate-200/60 rounded-2xl px-3 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-primary-500/20 transition-all"
                 value={newTaskTime}
                 onChange={(e) => setNewTaskTime(e.target.value)}
