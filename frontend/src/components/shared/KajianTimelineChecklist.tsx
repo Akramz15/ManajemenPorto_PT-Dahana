@@ -188,7 +188,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
           </div>
           <div>
             <h3 className="text-lg font-bold text-slate-800 tracking-tight">
-              Jurnal & Rencana Kerja
+              Update
             </h3>
             <p className="text-xs text-slate-500 mt-0.5 font-medium">
               Kelola daftar checklist rencana dan rekam jejak pekerjaan.
@@ -229,7 +229,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Tanggal Target</label>
+                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Tanggal</label>
                 <input 
                   type="date" 
                   required
@@ -266,7 +266,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
                 className="bg-primary-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:-translate-y-0.5"
               >
                 {isSaving && <Spinner className="w-4 h-4" />}
-                {editingTaskId ? "Simpan Perubahan" : "Simpan Ke Jurnal"}
+                {editingTaskId ? "Simpan Perubahan" : "Simpan"}
               </button>
             </div>
           </form>
