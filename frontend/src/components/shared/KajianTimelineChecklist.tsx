@@ -61,7 +61,7 @@ export function KajianTimelineChecklist({ projectId, type }: KajianTimelineCheck
     } finally {
       setLoading(false);
     }
-  }, [projectId]);
+  }, [projectId, type]);
 
   useEffect(() => {
     fetchTasks();
