@@ -271,14 +271,27 @@ export default function TodoListPage() {
               />
             </div>
             <div className="relative shrink-0 w-28">
-              <input
-                type="time"
-                lang="en-GB"
-                className="w-full h-full bg-slate-50 border border-slate-200/60 rounded-2xl px-3 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-primary-500/20 transition-all"
+              <select
+                className="w-full h-full bg-slate-50 border border-slate-200/60 rounded-2xl px-2 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-primary-500/20 transition-all outline-none appearance-none cursor-pointer"
                 value={newTaskTime}
                 onChange={(e) => setNewTaskTime(e.target.value)}
                 disabled={isSubmitting}
-              />
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundPosition: `right 10px center`, backgroundRepeat: `no-repeat`, backgroundSize: `16px` }}
+              >
+                <option value="">Waktu</option>
+                {Array.from({ length: 48 }).map((_, i) => {
+                  const hour = Math.floor(i / 2)
+                    .toString()
+                    .padStart(2, "0");
+                  const minute = i % 2 === 0 ? "00" : "30";
+                  const time = `${hour}:${minute}`;
+                  return (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
             <button
               type="submit"
