@@ -8,9 +8,10 @@ import type { KajianTask, TaskStatus } from "@/types";
 
 interface KajianTimelineChecklistProps {
   projectId: string;
+  type: "update" | "rencana_kedepan";
 }
 
-export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistProps) {
+export function KajianTimelineChecklist({ projectId, type }: KajianTimelineChecklistProps) {
   const { session } = useAuth();
   const [tasks, setTasks] = useState<KajianTask[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,6 +31,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
         .from("kajian_tasks")
         .select("*")
         .eq("project_id", projectId)
+        .eq("task_type", type)
         .order("target_date", { ascending: false, nullsFirst: false });
         
       if (error) throw error;
@@ -86,6 +88,7 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
         const { error } = await supabase.from("kajian_tasks").insert([
           {
             project_id: projectId,
+            task_type: type,
             nama_kajian: newTaskName,
             target_date: newTaskDate,
             notes: newTaskNotes,
@@ -188,10 +191,12 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
           </div>
           <div>
             <h3 className="text-lg font-bold text-slate-800 tracking-tight">
-              Update
+              {type === "update" ? "Update" : "Rencana Kedepan"}
             </h3>
             <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              Kelola daftar checklist rencana dan rekam jejak pekerjaan.
+              {type === "update" 
+                ? "Kelola daftar catatan dan rekam jejak pekerjaan." 
+                : "Kelola rencana ke depan atau mitigasi jika rencana sebelumnya tidak terealisasi."}
             </p>
           </div>
         </div>
@@ -284,13 +289,17 @@ export function KajianTimelineChecklist({ projectId }: KajianTimelineChecklistPr
               <FileText className="text-slate-300 w-10 h-10 -rotate-3 hover:rotate-0 transition-transform duration-300" strokeWidth={1.5} />
             </div>
             <h4 className="text-base font-bold text-slate-700 mb-1">Belum Ada Catatan</h4>
-            <p className="text-sm text-slate-500 max-w-xs mb-6 font-medium">Mulai catat log pekerjaan harian Anda atau buat rencana kegiatan untuk proyek ini.</p>
+            <p className="text-sm text-slate-500 max-w-xs mb-6 font-medium">
+              {type === "update" 
+                ? "Mulai catat log pekerjaan harian Anda atau buat rencana kegiatan untuk proyek ini." 
+                : "Catat rencana dan target yang akan dicapai ke depannya."}
+            </p>
             {!isAdding && (
               <button
                 onClick={() => setIsAdding(true)}
                 className="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-primary-600 hover:border-primary-300 hover:bg-primary-50 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2"
               >
-                <Plus size={16} /> Buat Update Pertama
+                <Plus size={16} /> {type === "update" ? "Buat Update Pertama" : "Buat Rencana Pertama"}
               </button>
             )}
           </div>
