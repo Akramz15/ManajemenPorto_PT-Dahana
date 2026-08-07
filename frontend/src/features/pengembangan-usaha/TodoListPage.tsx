@@ -271,7 +271,7 @@ export default function TodoListPage() {
               <input
                 type="text"
                 placeholder="Tambahkan tugas baru..."
-                className="w-full bg-slate-50 border border-slate-200/60 rounded-2xl py-3.5 pl-5 pr-4 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                className="w-full h-12 bg-slate-50 border border-slate-200/60 rounded-2xl pl-5 pr-4 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-primary-500/20 transition-all"
                 value={newTask}
                 onChange={(e) => setNewTask(e.target.value)}
                 disabled={isSubmitting}
@@ -318,7 +318,7 @@ export default function TodoListPage() {
             <button
               type="submit"
               disabled={isSubmitting || !newTask.trim()}
-              className="shrink-0 w-12 h-[50px] bg-primary-600 hover:bg-primary-700 text-white rounded-2xl flex items-center justify-center transition-colors disabled:opacity-50"
+              className="shrink-0 w-12 h-12 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl flex items-center justify-center transition-colors disabled:opacity-50"
             >
               <Plus size={20} />
             </button>
