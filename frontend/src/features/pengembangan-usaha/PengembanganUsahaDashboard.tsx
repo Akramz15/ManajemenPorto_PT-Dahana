@@ -11,7 +11,7 @@ import {
   CheckCircle2,
   FolderOpen,
   Activity,
-  ChevronRight,
+  Activity,
 } from "lucide-react";
 import { PipelineProjectItem } from "@/components/shared";
 
@@ -47,7 +47,7 @@ export default function PengembanganUsahaDashboard() {
     "kajian" | "berjalan"
   >("kajian");
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [onTrackPercent, setOnTrackPercent] = useState(0);
   const [totalDelay, setTotalDelay] = useState(0);
@@ -348,7 +348,7 @@ export default function PengembanganUsahaDashboard() {
                     activePipelineTab={activePipelineTab} 
                     progressText={
                       activePipelineTab === "kajian" 
-                        ? (projectProgressMap[p.id] || "BELUM DIMULAI") 
+                        ? String(projectProgressMap[p.id] || "BELUM DIMULAI") 
                         : `PROGRESS: ${projectProgressMap[p.id] || 0}%`
                     } 
                   />

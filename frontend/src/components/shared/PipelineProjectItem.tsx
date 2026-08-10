@@ -23,7 +23,7 @@ export function PipelineProjectItem({ project, activePipelineTab, progressText }
   const [kajianData, setKajianData] = useState<{ monthKey: string; monthName: string; year: number; updates: KajianTask[]; rencana: KajianTask[] }[]>([]);
   const [berjalanData, setBerjalanData] = useState<{ monthKey: string; monthName: string; year: number; activities: any[] }[]>([]);
 
-  const fetchKajianData = async () => {
+  const fetchKajianData = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -70,9 +70,9 @@ export function PipelineProjectItem({ project, activePipelineTab, progressText }
     } finally {
       setLoading(false);
     }
-  };
+  }, [project.id]);
 
-  const fetchBerjalanData = async () => {
+  const fetchBerjalanData = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -110,7 +110,7 @@ export function PipelineProjectItem({ project, activePipelineTab, progressText }
     } finally {
       setLoading(false);
     }
-  };
+  }, [project.id]);
 
   useEffect(() => {
     if (isExpanded) {
@@ -120,7 +120,7 @@ export function PipelineProjectItem({ project, activePipelineTab, progressText }
         fetchBerjalanData();
       }
     }
-  }, [isExpanded, activePipelineTab, project.id]);
+  }, [isExpanded, activePipelineTab, kajianData.length, berjalanData.length, fetchKajianData, fetchBerjalanData]);
 
   return (
     <div className="group flex flex-col rounded-2xl hover:bg-slate-50/80 transition-colors border border-transparent hover:border-slate-100/50 overflow-hidden">
@@ -182,7 +182,7 @@ export function PipelineProjectItem({ project, activePipelineTab, progressText }
                     kajianData.map((group) => (
                       <div key={group.monthKey} className="pl-2 border-l-2 border-slate-100">
                         <h6 className="text-sm font-bold text-slate-700 mb-3 ml-2 flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary-500 -ml-[13px] ring-4 ring-white"></span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary-500 -ml-3.5 ring-4 ring-white"></span>
                           {group.monthName} {group.year}
                         </h6>
                         
@@ -229,7 +229,7 @@ export function PipelineProjectItem({ project, activePipelineTab, progressText }
                     berjalanData.map((group) => (
                       <div key={group.monthKey} className="pl-2 border-l-2 border-slate-100">
                         <h6 className="text-sm font-bold text-slate-700 mb-3 ml-2 flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary-500 -ml-[13px] ring-4 ring-white"></span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary-500 -ml-3.5 ring-4 ring-white"></span>
                           {group.monthName} {group.year}
                         </h6>
                         
