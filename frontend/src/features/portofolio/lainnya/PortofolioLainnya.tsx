@@ -107,7 +107,6 @@ export default function PortofolioLainnya() {
 
     if (totalMonths <= 0) return [];
 
-    const step = 100 / totalMonths;
     const curve: any[] = [];
 
     let currentRealisasi = 0;

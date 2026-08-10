@@ -145,7 +145,6 @@ export default function ProjectBerjalan() {
       return;
     }
 
-    const step = 100 / totalMonths;
     const curve: any[] = [];
     const MONTHS = [
       "Jan",
