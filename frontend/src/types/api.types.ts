@@ -78,6 +78,7 @@ export interface ProjectProgressActivity {
   year: number;
   activity_name: string;
   weight_percentage: number;
+  activity_type: "rencana" | "realisasi";
   created_by?: string;
   created_at: string;
   updated_at: string;

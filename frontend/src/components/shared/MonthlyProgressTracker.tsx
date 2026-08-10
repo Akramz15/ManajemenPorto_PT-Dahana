@@ -42,6 +42,7 @@ export function MonthlyProgressTracker({
 
   // Modal states
   const [editingMonth, setEditingMonth] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<"rencana" | "realisasi">("realisasi");
   const [isSaving, setIsSaving] = useState(false);
   const [newActivityName, setNewActivityName] = useState("");
   const [newActivityWeight, setNewActivityWeight] = useState("");
@@ -83,6 +84,7 @@ export function MonthlyProgressTracker({
           year: selectedYear,
           activity_name: newActivityName,
           weight_percentage: parseFloat(newActivityWeight),
+          activity_type: activeTab,
           created_by: currentUserId,
         },
       ]);
@@ -213,7 +215,7 @@ export function MonthlyProgressTracker({
         </div>
       </div>
 
-      <div className="p-6 overflow-x-auto pb-8 -mb-2 custom-scrollbar">
+      <div className="p-6 overflow-x-auto pb-6 custom-scrollbar">
         <div className="flex items-stretch gap-4 min-w-max pb-2">
           {MONTHS.map((monthName, index) => {
             const monthNum = index + 1;
@@ -222,7 +224,8 @@ export function MonthlyProgressTracker({
               (selectedYear === endY && monthNum > endM);
             
             const monthActivities = activities.filter((a) => a.month === monthNum);
-            const totalWeight = monthActivities.reduce((acc, curr) => acc + Number(curr.weight_percentage), 0);
+            const totalRencana = monthActivities.filter((a) => a.activity_type === 'rencana').reduce((acc, curr) => acc + Number(curr.weight_percentage), 0);
+            const totalRealisasi = monthActivities.filter((a) => a.activity_type === 'realisasi' || !a.activity_type).reduce((acc, curr) => acc + Number(curr.weight_percentage), 0);
             const hasData = monthActivities.length > 0;
 
             if (isOutOfRange) {
@@ -274,9 +277,16 @@ export function MonthlyProgressTracker({
                 </div>
 
                 <div className="relative space-y-2">
-                  <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col items-center justify-center">
-                    <span className="text-xs text-slate-500 font-medium mb-1">Total Bobot</span>
-                    <span className={`text-lg font-black ${hasData ? "text-primary-600" : "text-slate-400"}`}>{totalWeight.toFixed(1)}%</span>
+                  <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex justify-around gap-2">
+                    <div className="flex flex-col items-center">
+                      <span className="text-[10px] text-slate-500 font-semibold mb-0.5">Rencana</span>
+                      <span className={`text-sm font-black ${totalRencana > 0 ? "text-primary-600" : "text-slate-400"}`}>{totalRencana.toFixed(1)}%</span>
+                    </div>
+                    <div className="w-px bg-slate-200"></div>
+                    <div className="flex flex-col items-center">
+                      <span className="text-[10px] text-slate-500 font-semibold mb-0.5">Realisasi</span>
+                      <span className={`text-sm font-black ${totalRealisasi > 0 ? "text-primary-600" : "text-slate-400"}`}>{totalRealisasi.toFixed(1)}%</span>
+                    </div>
                   </div>
                   <button
                     onClick={() => setEditingMonth(monthNum)}
@@ -308,14 +318,29 @@ export function MonthlyProgressTracker({
               </button>
             </div>
             
+            <div className="flex border-b border-slate-100 bg-white">
+              <button
+                onClick={() => setActiveTab("rencana")}
+                className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${activeTab === "rencana" ? "border-primary-500 text-primary-600 bg-primary-50/50" : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
+              >
+                Rencana
+              </button>
+              <button
+                onClick={() => setActiveTab("realisasi")}
+                className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${activeTab === "realisasi" ? "border-primary-500 text-primary-600 bg-primary-50/50" : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
+              >
+                Realisasi
+              </button>
+            </div>
+
             <div className="p-5 overflow-y-auto flex-1 custom-scrollbar space-y-4">
-              {activities.filter(a => a.month === editingMonth).length === 0 ? (
+              {activities.filter(a => a.month === editingMonth && (a.activity_type === activeTab || (!a.activity_type && activeTab === 'realisasi'))).length === 0 ? (
                 <div className="text-center py-6 text-slate-400 text-sm font-medium">
                   Belum ada pekerjaan di bulan ini.
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {activities.filter(a => a.month === editingMonth).map(act => {
+                  {activities.filter(a => a.month === editingMonth && (a.activity_type === activeTab || (!a.activity_type && activeTab === 'realisasi'))).map(act => {
                     if (editingActivityId === act.id) {
                       return (
                         <form 

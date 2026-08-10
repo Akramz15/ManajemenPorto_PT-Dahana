@@ -173,14 +173,17 @@ export default function ProjectBerjalan() {
       const m = (currentMonthIndex % 12) + 1;
       const y = start.getFullYear() + Math.floor(currentMonthIndex / 12);
 
-      expectedAccum += step;
-      if (expectedAccum > 100) expectedAccum = 100;
-
       // Filter activities for this exact month
       const monthActivities = progressData?.filter((p) => p.month === m && p.year === y) || [];
-      const monthWeight = monthActivities.reduce((acc, curr) => acc + Number(curr.weight_percentage), 0);
-      
-      currentRealisasi += monthWeight;
+      const rencanaActivities = monthActivities.filter((p) => p.activity_type === 'rencana');
+      const realisasiActivities = monthActivities.filter((p) => p.activity_type === 'realisasi' || !p.activity_type);
+
+      const rencanaWeight = rencanaActivities.reduce((acc, curr) => acc + Number(curr.weight_percentage), 0);
+      expectedAccum += rencanaWeight;
+      if (expectedAccum > 100) expectedAccum = 100;
+
+      const realisasiWeight = realisasiActivities.reduce((acc, curr) => acc + Number(curr.weight_percentage), 0);
+      currentRealisasi += realisasiWeight;
       if (currentRealisasi > 100) currentRealisasi = 100;
 
       const isPastOrCurrent =
