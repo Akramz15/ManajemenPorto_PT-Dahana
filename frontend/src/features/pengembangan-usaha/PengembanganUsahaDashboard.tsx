@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { supabase } from "@/lib/supabase";
 import type { Project } from "@/types";
 import { formatDistanceToNow } from "date-fns";
@@ -10,7 +10,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   FolderOpen,
-  Activity,
   Activity,
 } from "lucide-react";
 import { PipelineProjectItem } from "@/components/shared";
