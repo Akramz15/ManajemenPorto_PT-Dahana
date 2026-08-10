@@ -13,6 +13,7 @@ import {
   Activity,
   ChevronRight,
 } from "lucide-react";
+import { PipelineProjectItem } from "@/components/shared";
 
 const getUserColor = (name: string) => {
   const colors = [
@@ -341,33 +342,16 @@ export default function PengembanganUsahaDashboard() {
                   ? proyekKajian
                   : proyekBerjalan
                 ).map((p) => (
-                  <div
-                    key={p.id}
-                    onClick={() => navigate(`/pu/${p.divisi}/${activePipelineTab}?project=${p.id}`)}
-                    className="group flex items-center justify-between py-4 px-4 rounded-2xl hover:bg-slate-50/80 transition-colors cursor-pointer border border-transparent hover:border-slate-100/50"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-2 h-10 rounded-full bg-primary-400 opacity-50 group-hover:opacity-100 transition-opacity`}></div>
-                      <div>
-                        <h4 className="font-bold text-slate-800 text-base mb-0.5 group-hover:text-primary-600 transition-colors">
-                          {p.nama_proyek}
-                        </h4>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
-                            Divisi {p.divisi}
-                          </span>
-                          <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md text-primary-600 bg-primary-50">
-                            {activePipelineTab === "kajian" 
-                              ? (projectProgressMap[p.id] || "BELUM DIMULAI") 
-                              : `PROGRESS: ${projectProgressMap[p.id] || 0}%`}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 shadow-sm group-hover:scale-110 group-hover:text-primary-600 group-hover:border-primary-100 transition-all">
-                      <ChevronRight size={16} />
-                    </div>
-                  </div>
+                  <PipelineProjectItem 
+                    key={p.id} 
+                    project={p} 
+                    activePipelineTab={activePipelineTab} 
+                    progressText={
+                      activePipelineTab === "kajian" 
+                        ? (projectProgressMap[p.id] || "BELUM DIMULAI") 
+                        : `PROGRESS: ${projectProgressMap[p.id] || 0}%`
+                    } 
+                  />
                 ))}
                 {(activePipelineTab === "kajian"
                   ? proyekKajian

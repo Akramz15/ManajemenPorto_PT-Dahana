@@ -9,3 +9,4 @@ export * from "./ProjectDocumentsTable";
 export * from "./MonthlyProgressTracker";
 export * from "./KajianTimelineChecklist";
 export * from "./PortfolioDriveLinks";
+export * from "./PipelineProjectItem";
