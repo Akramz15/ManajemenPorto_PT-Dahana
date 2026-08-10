@@ -306,8 +306,8 @@ export default function ProjectKajian() {
             </div>
 
             <div className="flex flex-col gap-6">
-              <KajianTimelineChecklist projectId={selectedProject} type="update" />
-              <KajianTimelineChecklist projectId={selectedProject} type="rencana_kedepan" />
+              <KajianTimelineChecklist projectId={selectedProject} type="update" divisi="pertahanan" />
+              <KajianTimelineChecklist projectId={selectedProject} type="rencana_kedepan" divisi="pertahanan" />
             </div>
             <ProjectDocumentsTable projectId={selectedProject} />
           </div>

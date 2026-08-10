@@ -101,9 +101,10 @@ export default function TodoListPage() {
     const dateStr = format(selectedDate, "yyyy-MM-dd");
 
     try {
-      const finalTime = taskHour && taskMinute 
-        ? `${taskHour.padStart(2, "0")}:${taskMinute.padStart(2, "0")}` 
-        : null;
+      let finalTime = null;
+      if (taskHour || taskMinute) {
+        finalTime = `${(taskHour || "00").padStart(2, "0")}:${(taskMinute || "00").padStart(2, "0")}`;
+      }
 
       const { error } = await supabase.from("user_todos").insert([
         {

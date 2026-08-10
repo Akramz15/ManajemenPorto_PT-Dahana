@@ -9,9 +9,10 @@ import type { KajianTask, TaskStatus } from "@/types";
 interface KajianTimelineChecklistProps {
   projectId: string;
   type: "update" | "rencana_kedepan";
+  divisi: "komersial" | "pertahanan";
 }
 
-export function KajianTimelineChecklist({ projectId, type }: KajianTimelineChecklistProps) {
+export function KajianTimelineChecklist({ projectId, type, divisi }: KajianTimelineChecklistProps) {
   const { session } = useAuth();
   const [tasks, setTasks] = useState<KajianTask[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +70,7 @@ export function KajianTimelineChecklist({ projectId, type }: KajianTimelineCheck
 
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTaskName || !newTaskDate || !session?.user?.id) return;
+    if (!newTaskName || !session?.user?.id) return;
     
     setIsSaving(true);
     try {
@@ -78,7 +79,7 @@ export function KajianTimelineChecklist({ projectId, type }: KajianTimelineCheck
           .from("kajian_tasks")
           .update({
             nama_kajian: newTaskName,
-            target_date: newTaskDate,
+            target_date: newTaskDate || null,
             notes: newTaskNotes,
             updated_at: new Date().toISOString()
           })
@@ -90,10 +91,10 @@ export function KajianTimelineChecklist({ projectId, type }: KajianTimelineCheck
             project_id: projectId,
             task_type: type,
             nama_kajian: newTaskName,
-            target_date: newTaskDate,
+            target_date: newTaskDate || null,
             notes: newTaskNotes,
             assigned_to: session.user.id,
-            divisi: "komersial", // Defaulting to komersial based on current context
+            divisi: divisi,
             status: "not_started"
           }
         ]);
