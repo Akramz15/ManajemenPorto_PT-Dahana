@@ -19,6 +19,27 @@ export const formatRupiah = (
   }).format(value);
 };
 
+export const formatUSD = (
+  value: number | null | undefined,
+  abbreviated = false,
+): string => {
+  if (value === null || value === undefined) return "N/A";
+
+  if (abbreviated) {
+    const abs = Math.abs(value);
+    if (abs >= 1e9) return `$ ${(value / 1e9).toFixed(1)}B`;
+    if (abs >= 1e6) return `$ ${(value / 1e6).toFixed(1)}M`;
+    if (abs >= 1e3) return `$ ${(value / 1e3).toFixed(1)}K`;
+  }
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+
 export const formatPersen = (
   value: number | null | undefined,
   decimals = 1,

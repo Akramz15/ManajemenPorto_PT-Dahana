@@ -35,6 +35,36 @@ class SupabaseService:
             }
         ).execute()
 
+    def get_excel_update_logs(self, limit: int = 50) -> list[dict]:
+        result = (
+            self._client.table("chart_data")
+            .select("id, context, sub_context, source_file, uploaded_by, created_at")
+            .order("created_at", desc=True)
+            .limit(limit)
+            .execute()
+        )
+        logs = result.data
+        if not logs:
+            return []
+
+        user_ids = list(set([log["uploaded_by"] for log in logs if log.get("uploaded_by")]))
+        profiles = {}
+        if user_ids:
+            users_res = (
+                self._client.table("user_profiles")
+                .select("id, display_name, avatar_url")
+                .in_("id", user_ids)
+                .execute()
+            )
+            for u in users_res.data:
+                profiles[u["id"]] = u
+
+        for log in logs:
+            uid = log.get("uploaded_by")
+            log["user_profiles"] = profiles.get(uid) if uid else None
+
+        return logs
+
     def get_progress_tasks(self, project_id: str) -> list[dict]:
         result = (
             self._client.table("progress_tasks")

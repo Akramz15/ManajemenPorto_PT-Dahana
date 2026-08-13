@@ -554,4 +554,74 @@ class PortofolioParser(BaseExcelParser):
             inv200 = []
             inv400 = []
 
-        return {"inventori_200gr": inv200, "inventori_400gr": inv400}
+        try:
+            df_jodd_r1 = pd.read_excel(xl, sheet_name="Lap. JODD-R1", header=None)
+            
+            month_str = "Periode"
+            for idx, row in df_jodd_r1.iterrows():
+                for cell in row.values:
+                    if isinstance(cell, str) and "YTD " in cell.upper():
+                        month_str = cell
+                        break
+                if month_str != "Periode":
+                    break
+
+            penjualan = self._extract_first_num(df_jodd_r1, "penjualan")
+            hpp = self._extract_first_num(df_jodd_r1, "hpp")
+            laba_kotor = self._extract_first_num(df_jodd_r1, "laba kotor")
+            laba_setelah_pajak = self._extract_first_num(df_jodd_r1, "laba setelah pajak")
+
+            ytd_laba_rugi = {
+                "periode": month_str,
+                "penjualan": penjualan,
+                "hpp": hpp,
+                "laba_kotor": laba_kotor,
+                "laba_bersih": laba_setelah_pajak
+            }
+
+            aset_lancar = self._extract_first_num(df_jodd_r1, "jumlah aset lancar")
+            aset_tidak_lancar = self._extract_first_num(df_jodd_r1, "jumlah aset tidak lancar")
+            komposisi_aset = [
+                {"name": "Aset Lancar", "value": aset_lancar, "color": "#3B82F6"},
+                {"name": "Aset Tidak Lancar", "value": aset_tidak_lancar, "color": "#10B981"},
+            ]
+
+            ekuitas_detail = {
+                "modal_saham": self._extract_first_num(df_jodd_r1, "modal saham"),
+                "disagio_saham": self._extract_first_num(df_jodd_r1, "disagio saham"),
+                "tambahan_modal": self._extract_first_num(df_jodd_r1, "tambahan modal disetor"),
+                "saldo_laba": self._extract_first_num(df_jodd_r1, "saldo laba"),
+            }
+
+            cfo = self._extract_first_num(df_jodd_r1, "kas bersih dari aktivitas operasi")
+            cfi = self._extract_first_num(df_jodd_r1, "kas bersih dari aktivitas investasi")
+            cff = self._extract_first_num(df_jodd_r1, "kas bersih dari aktivitas pendanaan")
+            saldo_akhir = self._extract_first_num(df_jodd_r1, "kas & bank akhir tahun")
+
+            ytd_cashflow = {
+                "periode": month_str,
+                "cfo": cfo,
+                "cfi": cfi,
+                "cff": cff,
+                "saldo_akhir": saldo_akhir
+            }
+
+        except Exception:
+            ytd_laba_rugi = {}
+            ytd_cashflow = {}
+            komposisi_aset = []
+            ekuitas_detail = {
+                "modal_saham": 0.0,
+                "disagio_saham": 0.0,
+                "tambahan_modal": 0.0,
+                "saldo_laba": 0.0,
+            }
+
+        return {
+            "inventori_200gr": inv200, 
+            "inventori_400gr": inv400,
+            "ytd_laba_rugi": ytd_laba_rugi,
+            "ytd_cashflow": ytd_cashflow,
+            "komposisi_aset": komposisi_aset,
+            "ekuitas_detail": ekuitas_detail
+        }

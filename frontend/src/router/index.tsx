@@ -35,6 +35,7 @@ const KAN = lazy(() => import("@/features/portofolio/anak-cucu/KAN"));
 const JODD = lazy(() => import("@/features/portofolio/jo/JODD"));
 const JODB = lazy(() => import("@/features/portofolio/jo/JODB"));
 const PortofolioLainnya = lazy(() => import("@/features/portofolio/lainnya/PortofolioLainnya"));
+const LogUpdateExcelPage = lazy(() => import("@/features/logs/LogUpdateExcelPage"));
 
 function PageLoader() {
   return (
@@ -149,6 +150,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={<PageLoader />}>
                 <JODB />
+              </Suspense>
+            ),
+          },
+          {
+            path: "lainnya/log-update",
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <LogUpdateExcelPage />
               </Suspense>
             ),
           },

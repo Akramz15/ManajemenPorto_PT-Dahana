@@ -17,7 +17,7 @@ interface EkuitasDetail {
   saldo_laba: number;
 }
 
-function EkuitasTooltip({ active, payload }: any) {
+function EkuitasTooltip({ active, payload, formatValue = formatRupiah }: any) {
   if (!active || !payload?.length) return null;
   const data = payload[0].payload;
   const value = payload[0].value;
@@ -36,14 +36,20 @@ function EkuitasTooltip({ active, payload }: any) {
         <span
           className={`font-bold ${isNegative ? "text-rose-400" : "text-emerald-400"}`}
         >
-          {formatRupiah(value)}
+          {formatValue(value)}
         </span>
       </div>
     </div>
   );
 }
 
-export function EkuitasChart({ data }: { data: EkuitasDetail }) {
+export function EkuitasChart({
+  data,
+  formatValue = formatRupiah,
+}: {
+  data: EkuitasDetail;
+  formatValue?: (val: number, abbreviated?: boolean) => string;
+}) {
   const chartData = [
     { name: "Modal Saham", value: data?.modal_saham || 0 },
     { name: "Disagio Saham", value: data?.disagio_saham || 0 },
@@ -82,7 +88,7 @@ export function EkuitasChart({ data }: { data: EkuitasDetail }) {
         <p className="text-xs font-medium text-slate-500">
           Total Ekuitas:{" "}
           <span className="font-bold text-slate-800">
-            {formatRupiah(totalEkuitas, true)}
+            {formatValue(totalEkuitas, true)}
           </span>
         </p>
       </div>
@@ -110,7 +116,7 @@ export function EkuitasChart({ data }: { data: EkuitasDetail }) {
               width={90}
             />
             <Tooltip
-              content={<EkuitasTooltip />}
+              content={<EkuitasTooltip formatValue={formatValue} />}
               cursor={{ fill: "#f1f5f9", opacity: 0.4 }}
             />
             <ReferenceLine x={0} stroke="#cbd5e1" />

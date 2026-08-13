@@ -2,9 +2,9 @@ import axios from "axios";
 import { supabase } from "./supabase";
 
 export const apiClient = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_BASE_URL ||
-    "https://manajemen-porto-pt-dahana.vercel.app",
+  baseURL: import.meta.env.DEV
+    ? "" // Menggunakan proxy Vite (localhost:8000)
+    : import.meta.env.VITE_API_BASE_URL || "https://manajemen-porto-pt-dahana.vercel.app",
   timeout: 30000,
 });
 

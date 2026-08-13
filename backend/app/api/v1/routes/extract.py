@@ -22,6 +22,16 @@ _PARSER_MAP = {
 }
 
 
+@router.get("/logs")
+async def get_update_logs(
+    limit: int = 50,
+    user: dict = Depends(get_current_user),
+):
+    svc = SupabaseService()
+    logs = svc.get_excel_update_logs(limit)
+    return {"status": "success", "data": logs}
+
+
 @router.post("/{context}", response_model=ChartResponse)
 async def extract_excel(
     context: str,

@@ -88,6 +88,11 @@ export const navConfig: Record<string, NavSection[]> = {
       label: "Lainnya",
       items: [
         {
+          label: "Log Update Excel",
+          path: "/porto/lainnya/log-update",
+          icon: CheckSquare,
+        },
+        {
           label: "Portofolio Lainnya",
           path: "/porto/lainnya",
           icon: MoreHorizontal,
